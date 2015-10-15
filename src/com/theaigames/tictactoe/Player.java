@@ -1,8 +1,8 @@
-package com.theaigames.connectfour;
+package com.theaigames.tictactoe;
 
-import com.theaigames.connectfour.Field;
 import com.theaigames.engine.io.IOPlayer;
 import com.theaigames.game.player.AbstractPlayer;
+import com.theaigames.tictactoe.Field;
 
 public class Player extends AbstractPlayer {
 	int mId;

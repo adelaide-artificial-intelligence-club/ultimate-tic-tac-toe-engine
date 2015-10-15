@@ -1,4 +1,4 @@
-package com.theaigames.connectfour;
+package com.theaigames.tictactoe;
 
 import java.io.IOException;
 

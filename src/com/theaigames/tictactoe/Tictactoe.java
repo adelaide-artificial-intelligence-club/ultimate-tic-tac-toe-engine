@@ -1,4 +1,4 @@
-package com.theaigames.connectfour;
+package com.theaigames.tictactoe;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -8,12 +8,12 @@ import java.util.Random;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.theaigames.connectfour.Field;
 import com.theaigames.engine.io.IOPlayer;
 import com.theaigames.game.AbstractGame;
 import com.theaigames.game.player.AbstractPlayer;
+import com.theaigames.tictactoe.Field;
 
-public class Connectfour extends AbstractGame {
+public class Tictactoe extends AbstractGame {
 	
 	private final int TIMEBANK_MAX = 10000;
 	private final int TIME_PER_MOVE = 500;
@@ -60,7 +60,7 @@ public class Connectfour extends AbstractGame {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		Connectfour game = new Connectfour();
+		Tictactoe game = new Tictactoe();
 		
 		game.setupEngine(args);
 		game.runEngine();
