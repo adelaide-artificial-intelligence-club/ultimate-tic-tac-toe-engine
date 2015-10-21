@@ -28,7 +28,7 @@ public class Tictactoe extends AbstractGame {
 		this.players = new ArrayList<Player>();
 		
 		// create the playing field
-		this.mField = new Field(FIELD_COLUMNS, FIELD_ROWS);
+		this.mField = new Field();
 		
 		for(int i=0; i<ioPlayers.size(); i++) {
 			// create the player

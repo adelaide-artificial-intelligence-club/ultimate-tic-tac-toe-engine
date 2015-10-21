@@ -8,17 +8,18 @@ import com.theaigames.game.player.AbstractPlayer;
 public class Field {
 	
 	private int[][] mBoard;
+	private int[][] mMacroboard;
+
 	private int mCols = 0, mRows = 0;
 	private String mLastError = "";
-	private int mLastColumn = 0;
-	private final int INAROW = 4; /* Number of cells in a row needed for a win */
-	private String mWinType = "None";
-	private Disc mWinDisc;
-
-	public Field(int columns, int rows) {
-		mBoard = new int[columns][rows];
-		mCols = columns;
-		mRows = rows;
+	private int mLastX = 0, mLastY = 0;
+	private Boolean mAllMicroboardsActive = true;
+	
+	public Field() {
+		mCols = 9;
+		mRows = 9;
+		mBoard = new int[mCols][mRows];
+		mMacroboard = new int[mCols / 3][mRows / 3];
 		clearBoard();
 	}
 	
@@ -31,16 +32,31 @@ public class Field {
 	}
 	
 	public void dumpBoard() {
-		for (int x = 0; x < mCols; x++) {
-			System.out.print("--");
-		}
-		System.out.print("\n");
+		System.out.print("\n\n");
 		for (int y = 0; y < mRows; y++) {
 			for (int x = 0; x < mCols; x++) {
 				System.out.print(mBoard[x][y]);
 				if (x < mCols-1) {
-					System.out.print(",");
+					String s = ", ";
+					if (x % 3 == 2) {
+						s = "| ";
+					}
+					System.out.print(s);
 				}
+			}
+			if (y % 3 == 2) {
+				System.out.print("\n");
+				for (int x = 0; x < mCols-1; x++) {
+					System.out.print("---");
+				}
+			}
+			System.out.print("\n");
+		}
+		System.out.print("Macroboard:\n");
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+
+				System.out.print(mMacroboard[x][y]);
 			}
 			System.out.print("\n");
 		}
@@ -51,31 +67,51 @@ public class Field {
 	}
 	
 	/**
-	 * Adds a disc to the board
-	 * @param args : command line arguments passed on running of application
+	 * Adds a move to the board
+	 * @param args : int x, int y, int move
 	 * @return : true if disc fits, otherwise false
 	 */
-	public Boolean addDisc(int column, int disc) {
+	public Boolean addMove(int x, int y, int move) {
 		mLastError = "";
-		mLastColumn = column;
-		if (column < mCols) {
-			for (int y = mRows-1; y >= 0; y--) { // From bottom column up
-				if (mBoard[column][y] == 0) {
-					mBoard[column][y] = disc;
+		if (x < mCols && y < mRows && x >= 0 && y >= 0) { /* Move within range */
+			if (isInActiveMicroboard(x, y)) { /* Move in active microboard */
+				if (mBoard[x][y] == 0) { /*Field is available */
+					mBoard[x][y] = move;
+					mLastX = x;
+					mLastY = y;
+					mAllMicroboardsActive = false;
+					updateMacrofields();
 					return true;
 				}
+				mLastError = "Position is full.";
+			} else {
+				mLastError = "Not in active macroboard.";
 			}
-			mLastError = "Column is full.";
 		} else {
 			mLastError = "Move out of bounds.";
 		}
 		return false;
 	}
 	
+	public Boolean isInActiveMicroboard(int x, int y) {
+		if (mAllMicroboardsActive) { return true; }
+		return (x/3 == getActiveMicroboardX() && y/3 == getActiveMicroboardY()); 
+	}
+	
+	public int getActiveMicroboardX() {
+		if (mAllMicroboardsActive) return -1;
+		return mLastX%3;
+	}
+	
+	public int getActiveMicroboardY() {
+		if (mAllMicroboardsActive) return -1;
+		return mLastY%3;
+	}
+	
 	/**
-	 * Returns reason why addDisc returns false
+	 * Returns reason why addMove returns false
 	 * @param args : 
-	 * @return : reason why addDisc returns false
+	 * @return : reason why addMove returns false
 	 */
 	public String getLastError() {
 		return mLastError;
@@ -86,10 +122,18 @@ public class Field {
 	 * @param args : 
 	 * @return : last inserted column
 	 */
-	public int getLastColumn() {
-		return mLastColumn;
+	public int getLastX() {
+		return mLastX;
 	}
 	
+	/**
+	 * Returns last inserted row
+	 * @param args : 
+	 * @return : last inserted row
+	 */
+	public int getLastY() {
+		return mLastY;
+	}
 	
 	@Override
 	/**
@@ -132,120 +176,90 @@ public class Field {
 	 * @return : Returns player id if there is a winner, otherwise returns 0.
 	 */
 	public int getWinner() {
-		/* Check for horizontal wins */
-		for (int x = 0; x < mCols; x++) {
-			for (int y = 0; y < mRows; y++) {
-				int n = mBoard[x][y];
-				Boolean win = true;
-				if (n != 0) {
-					for (int i = 0; i < INAROW; i++) {
-						if (x + i < mCols) {
-							if (n != (mBoard[x + i][y])) {
-								win = false;
-							}
-						} else {
-							win = false;
-						}
-					}
-					if (win) {
-						mWinType = "horizontal";
-						mWinDisc = new Disc(x, y);
-						return n;
-					}
-				}
+		updateMacrofields();
+		return checkMacroboardWinner();
+	}
+	
+	/**
+	 * Checks the microboards for wins and updates internal representation (macroboard)
+	 * @param args : 
+	 * @return : 
+	 */
+	public void updateMacrofields() {
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				int winner = checkMicroboardWinner(x, y);
+				mMacroboard[x][y] = winner;
 			}
 		}
-		
-		/* Check for vertical wins */
-		for (int x = 0; x < mCols; x++) {
-			for (int y = 0; y < mRows; y++) {
-				int n = mBoard[x][y];
-				Boolean win = true;
-				if (n != 0) {
-					for (int i = 0; i < INAROW; i++) {
-						if (y + i < mRows) {
-							if (n != mBoard[x][y + i]) {
-								win = false;
-							}
-						} else {
-							win = false;
-						}
-					}
-					if (win) {
-						mWinType = "vertical";
-						mWinDisc = new Disc(x, y);
-						return n;
-					}
-				}
+	}
+	
+	/**
+	 * Checks the microboard for a winner
+	 * @param args : int x (0-2), int y (0-2)
+	 * @return : player id of winner or 0
+	 */
+	public int checkMicroboardWinner(int macroX, int macroY) {
+		int startX = macroX*3;
+		int startY = macroY*3;
+		int remainderX = macroX%3;
+		int remainderY = macroY%3;
+		/* Check horizontal wins */
+		for (int y = startY; y < startY+3; y++) {
+			if (mBoard[startX+0][y] == mBoard[startX+1][y] && mBoard[startX+1][y] == mBoard[startX+2][y] && mBoard[startX+0][y] > 0) {
+				System.out.println("FOUND A HORIZONTAL WIN AT " + y);
+				return mBoard[startX+0][y];
 			}
 		}
-		
-		/* Check for diagonal wins */
-		for (int x = 0; x < mCols; x++) {
-			for (int y = 0; y < mRows; y++) {
-				int n = mBoard[x][y];
-				Boolean win = true;
-				if (n != 0) {
-					for (int i = 0; i < INAROW; i++) {
-						if (x - i >= 0 && y + i < mRows) {
-							if (n !=mBoard[x - i][y + i]) {
-								win = false;
-							}
-						} else {
-							win = false;
-						}
-					}
-					if (win) {
-						mWinType = "diagonal";
-						mWinDisc = new Disc(x, y);
-						return n;
-					}
-				}
+		/* Check vertical wins */
+		for (int x = startX; x < startX+3; x++) {
+			if (mBoard[x][startY+0] == mBoard[x][startY+1] && mBoard[x][startY+1] == mBoard[x][startY+2] && mBoard[x][startY+0] > 0) {
+				System.out.println("FOUND A VERTICAL WIN AT " + x);
+				return mBoard[x][startY+0];
 			}
 		}
-		/* Check for anti diagonal wins */
-		for (int x = 0; x < mCols; x++) {
-			for (int y = 0; y < mRows; y++) {
-				int n = mBoard[x][y];
-				Boolean win = true;
-				if (n != 0) {
-					for (int i = 0; i < INAROW; i++) {
-						if (x + i < mCols && y + i < mRows) {
-							if (n != mBoard[x + i][y + i]) {
-								win = false;
-							}
-						} else {
-							win = false;
-						}
-					}
-					if (win) {
-						mWinType = "antidiagonal";
-						mWinDisc = new Disc(x, y);
-						return n;
-					}
-				}
-			}
+		/* Check diagonal wins */
+		if (mBoard[startX][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX+2][startY+2] && mBoard[startX+0][startY+0] > 0) {
+			System.out.println("FOUND A DIAGONAL WIN AT " + startX);
+			return mBoard[startX][startY];
+		}
+		if (mBoard[startX+2][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX][startY+2] && mBoard[startX+2][startY+0] > 0) {
+			System.out.println("FOUND A ANTIDIAGONAL WIN AT " + startX);
+			return mBoard[startX+2][startY];
 		}
 		return 0;
 	}
 	
-	
 	/**
-	 * Returns the direction of a win.
-	 * @param args : 
-	 * @return : Returns String with direction of win, or 'None' if there is no win yet.
+	 * Checks the microboard for a winner
+	 * @param args : int x (0-2), int y (0-2)
+	 * @return : player id of winner or 0
 	 */
-	public String getWinType() {
-		return mWinType;
-	}
-	
-	/**
-	 * Returns the direction of a win.
-	 * @param args : 
-	 * @return : Returns String with direction of win, or 'None' if there is no win yet.
-	 */
-	public Disc getWinDisc() {
-		return mWinDisc;
+	public int checkMacroboardWinner() {
+		/* Check horizontal wins */
+		for (int y = 0; y < 3; y++) {
+			if (mMacroboard[0][y] == mMacroboard[1][y] && mMacroboard[1][y] == mMacroboard[2][y] && mMacroboard[0][y] > 0) {
+				System.out.println("FOUND A HORIZONTAL MACROWIN AT " + y);
+				return mMacroboard[0][y];
+			}
+		}
+		/* Check vertical wins */
+		for (int x = 0; x < 3; x++) {
+			if (mMacroboard[x][0] == mMacroboard[x][1] && mMacroboard[x][1] == mMacroboard[x][2] && mMacroboard[x][0] > 0) {
+				System.out.println("FOUND A VERTICAL MACROWIN AT " + x);
+				return mMacroboard[x][0];
+			}
+		}
+		/* Check diagonal wins */
+		if (mMacroboard[0][0] == mMacroboard[1][1] && mMacroboard[1][1] == mMacroboard[2][2] && mMacroboard[0][0] > 0) {
+			System.out.println("FOUND A DIAGONAL MACROWIN");
+			return mMacroboard[0][0];
+		}
+		if (mMacroboard[2][0] == mMacroboard[1][1] && mMacroboard[1][1] == mMacroboard[0][2] && mMacroboard[2][0] > 0) {
+			System.out.println("FOUND A ANTIDIAGONAL MACROWIN");
+			return mMacroboard[2][0];
+		}
+		return 0;
 	}
 
 	public int getNrColumns() {
