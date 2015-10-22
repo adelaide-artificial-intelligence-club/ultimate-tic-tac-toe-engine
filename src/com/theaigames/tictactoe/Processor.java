@@ -56,51 +56,51 @@ public class Processor implements GameHandler {
 				Move move = new Move(player);
 				MoveResult moveResult = new MoveResult(player, mField, player.getId());
 				if (parseResponse(response, player)) {
-					move.setColumn(mField.getLastColumn());
+					move.setColumn(mField.getLastX());
 					move.setIllegalMove(mField.getLastError());
 					mMoves.add(move);
 					moveResult = new MoveResult(player, mField, player.getId());
-					moveResult.setColumn(mField.getLastColumn());
+					moveResult.setColumn(mField.getLastX());
 					moveResult.setIllegalMove(mField.getLastError());
 					mMoveResults.add(moveResult);
 				} else {
 					move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-					move.setColumn(mField.getLastColumn());
+					move.setColumn(mField.getLastX());
 					move.setIllegalMove(mField.getLastError() + " (first try)");
 					mMoves.add(move);
-					moveResult.setColumn(mField.getLastColumn());
+					moveResult.setColumn(mField.getLastX());
 					moveResult.setIllegalMove(mField.getLastError() + " (first try)");
 					mMoveResults.add(moveResult);
 					player.sendUpdate("field", mField.toString());
 					response = player.requestMove("move");
 					if (parseResponse(response, player)) {
 						move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-						move.setColumn(mField.getLastColumn());
+						move.setColumn(mField.getLastX());
 						mMoves.add(move);
-						moveResult.setColumn(mField.getLastColumn());
+						moveResult.setColumn(mField.getLastX());
 						mMoveResults.add(moveResult);
 					} else {
 						move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-						move.setColumn(mField.getLastColumn());
+						move.setColumn(mField.getLastX());
 						move.setIllegalMove(mField.getLastError() + " (second try)");
 						mMoves.add(move);
-						moveResult.setColumn(mField.getLastColumn());
+						moveResult.setColumn(mField.getLastX());
 						moveResult.setIllegalMove(mField.getLastError() + " (second try)");
 						mMoveResults.add(moveResult);
 						player.sendUpdate("field", mField.toString());
 						response = player.requestMove("move");
 						if (parseResponse(response, player)) {
 							move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-							move.setColumn(mField.getLastColumn());
+							move.setColumn(mField.getLastX());
 							mMoves.add(move);							
-							moveResult.setColumn(mField.getLastColumn());
+							moveResult.setColumn(mField.getLastX());
 							mMoveResults.add(moveResult);
 						} else { /* Too many errors, other player wins */
 							move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-							move.setColumn(mField.getLastColumn());
+							move.setColumn(mField.getLastX());
 							move.setIllegalMove(mField.getLastError() + " (last try)");
 							mMoves.add(move);
-							moveResult.setColumn(mField.getLastColumn());
+							moveResult.setColumn(mField.getLastX());
 							moveResult.setIllegalMove(mField.getLastError() + " (last try)");
 							mMoveResults.add(moveResult);
 							mGameOverByPlayerErrorPlayerId = player.getId();
@@ -122,10 +122,11 @@ public class Processor implements GameHandler {
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
 		System.out.println("r " + r);
-        if (parts[0].equals("place_disc")) {
+        if (parts[0].equals("place_move")) {
         	int column = Integer.parseInt(parts[1]);
-        	
-        	if (mField.addDisc(column, player.getId())) {
+        	int row = Integer.parseInt(parts[2]);
+
+        	if (mField.addMove(column, row, player.getId())) {
         		return true;
         	}
         }
@@ -163,53 +164,7 @@ public class Processor implements GameHandler {
 		AbstractPlayer winner = getWinner();
 		
 		/* Create array of winning discs */
-		Disc winDisc = getField().getWinDisc();
-		String winType = getField().getWinType();
-		
-		JSONObject winDiscsJSON = new JSONObject();
-		JSONObject winDiscJSON = new JSONObject();
 		try {
-			/*
-			int winColumn = winDisc.getColumn();
-			int winRow = winDisc.getRow();
-			if (winType.equals("horizontal")) {
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc0", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn+1); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc1", winDiscJSON); winDiscJSON = new JSONObject();				
-				winDiscJSON.put("column", winColumn+2); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc2", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn+3); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc3", winDiscJSON);
-			} else if (winType.equals("vertical")) {
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc0", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow+1);
-				winDiscsJSON.put("windisc1", winDiscJSON); winDiscJSON = new JSONObject();				
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow+2);
-				winDiscsJSON.put("windisc2", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow+3);
-				winDiscsJSON.put("windisc3", winDiscJSON);
-			} else if (winType.equals("diagonal")) {
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc0", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn-1); winDiscJSON.put("row", winRow+1);
-				winDiscsJSON.put("windisc1", winDiscJSON); winDiscJSON = new JSONObject();				
-				winDiscJSON.put("column", winColumn-2); winDiscJSON.put("row", winRow+2);
-				winDiscsJSON.put("windisc2", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn-3); winDiscJSON.put("row", winRow+3);
-				winDiscsJSON.put("windisc3", winDiscJSON);
-			} else if (winType.equals("antidiagonal")) {
-				winDiscJSON.put("column", winColumn); winDiscJSON.put("row", winRow);
-				winDiscsJSON.put("windisc0", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn+1); winDiscJSON.put("row", winRow+1);
-				winDiscsJSON.put("windisc1", winDiscJSON); winDiscJSON = new JSONObject();				
-				winDiscJSON.put("column", winColumn+2); winDiscJSON.put("row", winRow+2);
-				winDiscsJSON.put("windisc2", winDiscJSON); winDiscJSON = new JSONObject();
-				winDiscJSON.put("column", winColumn+3); winDiscJSON.put("row", winRow+3);
-				winDiscsJSON.put("windisc3", winDiscJSON);
-			}
-			*/
 			
 			Hashtable<String,String> settings = new Hashtable<String, String>();
 			
