@@ -52,6 +52,8 @@ public class Processor implements GameHandler {
 		mRoundNumber = roundNumber;
 		for (Player player : mPlayers) {
 			if (getWinner() == null) {
+				player.sendUpdate("activemicroboardx", mField.getActiveMicroboardX());
+				player.sendUpdate("activemicroboardy", mField.getActiveMicroboardY());
 				String response = player.requestMove("move");
 				Move move = new Move(player);
 				MoveResult moveResult = new MoveResult(player, mField, player.getId());
