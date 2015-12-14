@@ -96,8 +96,8 @@ public abstract class AbstractGame implements Logic {
 //		for(int i=0; i<botIds.size(); i++) {
 //			this.engine.addPlayer("/opt/aigames/scripts/run_bot.sh aiplayer1 " + botDirs.get(i), botIds.get(i));
 //		}
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ TTTBot", "player1");
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ TTTBot", "player2");
+		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "player1");
+		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "player2");
 	}
 	
 	/**
@@ -145,6 +145,8 @@ public abstract class AbstractGame implements Logic {
 		if(DEV_MODE) { // print the game file when in DEV_MODE
 			String playedGame = this.processor.getPlayedGame();
 			System.out.println(playedGame);
+			int score = this.processor.getRoundNumber() - 1;
+			System.out.println("score: " + score);
 		} else { // save the game to database
 			try {
 				this.saveGame();

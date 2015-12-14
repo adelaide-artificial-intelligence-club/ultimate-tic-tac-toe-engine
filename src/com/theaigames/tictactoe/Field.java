@@ -41,6 +41,9 @@ public class Field {
 					if (x % 3 == 2) {
 						s = "| ";
 					}
+					if (x == mLastX && y == mLastY) {
+						s = "* ";
+					}
 					System.out.print(s);
 				}
 			}
@@ -56,7 +59,7 @@ public class Field {
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
 
-				System.out.print(mMacroboard[x][y]);
+				System.out.print(padRight(mMacroboard[x][y] + "",3));
 			}
 			System.out.print("\n");
 		}
@@ -73,8 +76,6 @@ public class Field {
 	 */
 	public Boolean addMove(int x, int y, int move) {
 		mLastError = "";
-		mLastX = x;
-		mLastY = y;
 		if (x < mCols && y < mRows && x >= 0 && y >= 0) { /* Move within range */
 			if (isInActiveMicroboard(x, y)) { /* Move in active microboard */
 				if (mBoard[x][y] == 0) { /*Field is available */
@@ -82,22 +83,26 @@ public class Field {
 					mLastX = x;
 					mLastY = y;
 					mAllMicroboardsActive = false;
-					updateMacrofields();
+					updateMacroboards();
 					return true;
+				} else {
+					mLastError = "Position is full.";
+					System.out.println("Position is full.");
 				}
-				mLastError = "Position is full.";
 			} else {
 				mLastError = "Not in active macroboard.";
+				System.out.println("Not in active macroboard.");
 			}
 		} else {
 			mLastError = "Move out of bounds.";
+			System.out.println("Move out of bounds.");
 		}
 		return false;
 	}
 	
 	public Boolean isInActiveMicroboard(int x, int y) {
 		if (mAllMicroboardsActive) { return true; }
-		return (x/3 == getActiveMicroboardX() && y/3 == getActiveMicroboardY()); 
+		return (Math.floor(x/3) == getActiveMicroboardX() && Math.floor(y/3) == getActiveMicroboardY()); 
 	}
 	
 	public int getActiveMicroboardX() {
@@ -139,7 +144,7 @@ public class Field {
 	
 	@Override
 	/**
-	 * Creates comma separated String with player names for every cell.
+	 * Creates comma separated String with player ids for the microboards.
 	 * @param args : 
 	 * @return : String with player names for every cell, or 'empty' when cell is empty.
 	 */
@@ -156,6 +161,43 @@ public class Field {
 			}
 		}
 		return r;
+	}
+	
+	/**
+	 * Creates comma separated String with player ids for the macroboard.
+	 * @param args : 
+	 * @return : String with player names for every cell, or 'empty' when cell is empty.
+	 */
+	public String macroboardToString() {
+		String r = "";
+		int counter = 0;
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				if (counter > 0) {
+					r += ",";
+				}
+				r += mMacroboard[x][y];
+				counter++;
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Returns the number of fields a player has in the macroboard
+	 * @param args int player id: 
+	 * @return : Int with the number of fields a player has in the macroboard
+	 */
+	public int getPlayerFields(int playerid) {
+		int counter = 0;
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				if (mMacroboard[x][y] == playerid) {
+					counter++;
+				}
+			}
+		}
+		return counter;
 	}
 	
 	/**
@@ -178,7 +220,7 @@ public class Field {
 	 * @return : Returns player id if there is a winner, otherwise returns 0.
 	 */
 	public int getWinner() {
-		updateMacrofields();
+		updateMacroboards();
 		return checkMacroboardWinner();
 	}
 	
@@ -187,11 +229,18 @@ public class Field {
 	 * @param args : 
 	 * @return : 
 	 */
-	public void updateMacrofields() {
+	public void updateMacroboards() {
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				int winner = checkMicroboardWinner(x, y);
 				mMacroboard[x][y] = winner;
+				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
+					if (mMacroboard[x][y] == 0) {
+						mMacroboard[x][y] = -1;
+					} else {
+						mAllMicroboardsActive = true;
+					}
+				}
 			}
 		}
 	}

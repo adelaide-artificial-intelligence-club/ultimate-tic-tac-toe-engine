@@ -49,11 +49,10 @@ public class Processor implements GameHandler {
 
 	@Override
 	public void playRound(int roundNumber) {
-		mRoundNumber = roundNumber;
 		for (Player player : mPlayers) {
 			if (getWinner() == null) {
-				player.sendUpdate("activemicroboardx", mField.getActiveMicroboardX());
-				player.sendUpdate("activemicroboardy", mField.getActiveMicroboardY());
+				player.sendUpdate("round", mRoundNumber);
+				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
 				Move move = new Move(player);
 				MoveResult moveResult = new MoveResult(player, mField, player.getId());
@@ -64,6 +63,8 @@ public class Processor implements GameHandler {
 					moveResult = new MoveResult(player, mField, player.getId());
 					moveResult.setColumn(mField.getLastX());
 					moveResult.setIllegalMove(mField.getLastError());
+					moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+					moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 					mMoveResults.add(moveResult);
 				} else {
 					move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
@@ -72,6 +73,8 @@ public class Processor implements GameHandler {
 					mMoves.add(move);
 					moveResult.setColumn(mField.getLastX());
 					moveResult.setIllegalMove(mField.getLastError() + " (first try)");
+					moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+					moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 					mMoveResults.add(moveResult);
 					player.sendUpdate("field", mField.toString());
 					response = player.requestMove("move");
@@ -80,6 +83,8 @@ public class Processor implements GameHandler {
 						move.setColumn(mField.getLastX());
 						mMoves.add(move);
 						moveResult.setColumn(mField.getLastX());
+						moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+						moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 						mMoveResults.add(moveResult);
 					} else {
 						move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
@@ -89,6 +94,8 @@ public class Processor implements GameHandler {
 						moveResult.setColumn(mField.getLastX());
 						moveResult.setIllegalMove(mField.getLastError() + " (second try)");
 						mMoveResults.add(moveResult);
+						moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+						moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 						player.sendUpdate("field", mField.toString());
 						response = player.requestMove("move");
 						if (parseResponse(response, player)) {
@@ -96,6 +103,8 @@ public class Processor implements GameHandler {
 							move.setColumn(mField.getLastX());
 							mMoves.add(move);							
 							moveResult.setColumn(mField.getLastX());
+							moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+							moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 							mMoveResults.add(moveResult);
 						} else { /* Too many errors, other player wins */
 							move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
@@ -104,13 +113,15 @@ public class Processor implements GameHandler {
 							mMoves.add(move);
 							moveResult.setColumn(mField.getLastX());
 							moveResult.setIllegalMove(mField.getLastError() + " (last try)");
+							moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+							moveResult.setPlayer2Fields(mField.getPlayerFields(2));
 							mMoveResults.add(moveResult);
 							mGameOverByPlayerErrorPlayerId = player.getId();
 						}
 					}
 				}
-				
-				player.sendUpdate("field", player, mField.toString());
+				mRoundNumber++;
+				player.sendUpdate("field", mField.toString());
 				mField.dumpBoard();
 			}
 		}
@@ -168,8 +179,6 @@ public class Processor implements GameHandler {
 		/* Create array of winning discs */
 		try {
 			
-			Hashtable<String,String> settings = new Hashtable<String, String>();
-			
 			JSONArray playerNames = new JSONArray();
 			for(Player player : this.mPlayers) {
 				playerNames.put(player.getName());
@@ -191,16 +200,20 @@ public class Processor implements GameHandler {
 			int counter = 0;
 			String winnerstring = "";
 			for (MoveResult move : mMoveResults) {
+				/* TODO: fix this, for example when a game is a draw */
 				if (counter == mMoveResults.size()-1) {
 					winnerstring = winner.getName();
 				}
 				state = new JSONObject();
 				state.put("field", move.toString());
+				state.put("macroboard", move.macroboardToString());
 				state.put("round", counter);
 				state.put("column", move.getColumn());
 				state.put("winner", winnerstring);
 				state.put("player", move.getPlayerId());
 				state.put("illegalMove", move.getIllegalMove());
+				state.put("player1fields", move.getPlayer1Fields());
+				state.put("player2fields", move.getPlayer2Fields());
 				states.put(state);
 				counter++;
 			}
