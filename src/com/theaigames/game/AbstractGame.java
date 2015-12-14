@@ -146,7 +146,6 @@ public abstract class AbstractGame implements Logic {
 			String playedGame = this.processor.getPlayedGame();
 			System.out.println(playedGame);
 			int score = this.processor.getRoundNumber() - 1;
-			System.out.println("score: " + score);
 		} else { // save the game to database
 			try {
 				this.saveGame();

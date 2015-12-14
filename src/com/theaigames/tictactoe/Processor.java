@@ -54,68 +54,20 @@ public class Processor implements GameHandler {
 				player.sendUpdate("round", mRoundNumber);
 				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
-				Move move = new Move(player);
-				MoveResult moveResult = new MoveResult(player, mField, player.getId());
 				if (parseResponse(response, player)) {
-					move.setColumn(mField.getLastX());
-					move.setIllegalMove(mField.getLastError());
-					mMoves.add(move);
-					moveResult = new MoveResult(player, mField, player.getId());
-					moveResult.setColumn(mField.getLastX());
-					moveResult.setIllegalMove(mField.getLastError());
-					moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-					moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-					mMoveResults.add(moveResult);
+					recordMove(response, player);					
 				} else {
-					move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-					move.setColumn(mField.getLastX());
-					move.setIllegalMove(mField.getLastError() + " (first try)");
-					mMoves.add(move);
-					moveResult.setColumn(mField.getLastX());
-					moveResult.setIllegalMove(mField.getLastError() + " (first try)");
-					moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-					moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-					mMoveResults.add(moveResult);
-					player.sendUpdate("field", mField.toString());
-					response = player.requestMove("move");
+					recordMove(response, player);					
 					if (parseResponse(response, player)) {
-						move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-						move.setColumn(mField.getLastX());
-						mMoves.add(move);
-						moveResult.setColumn(mField.getLastX());
-						moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-						moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-						mMoveResults.add(moveResult);
+						recordMove(response, player);						
 					} else {
-						move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-						move.setColumn(mField.getLastX());
-						move.setIllegalMove(mField.getLastError() + " (second try)");
-						mMoves.add(move);
-						moveResult.setColumn(mField.getLastX());
-						moveResult.setIllegalMove(mField.getLastError() + " (second try)");
-						mMoveResults.add(moveResult);
-						moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-						moveResult.setPlayer2Fields(mField.getPlayerFields(2));
+						recordMove(response, player);
 						player.sendUpdate("field", mField.toString());
 						response = player.requestMove("move");
 						if (parseResponse(response, player)) {
-							move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-							move.setColumn(mField.getLastX());
-							mMoves.add(move);							
-							moveResult.setColumn(mField.getLastX());
-							moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-							moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-							mMoveResults.add(moveResult);
+							recordMove(response, player);
 						} else { /* Too many errors, other player wins */
-							move = new Move(player); moveResult = new MoveResult(player, mField, player.getId());
-							move.setColumn(mField.getLastX());
-							move.setIllegalMove(mField.getLastError() + " (last try)");
-							mMoves.add(move);
-							moveResult.setColumn(mField.getLastX());
-							moveResult.setIllegalMove(mField.getLastError() + " (last try)");
-							moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-							moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-							mMoveResults.add(moveResult);
+							recordMove(response, player);
 							mGameOverByPlayerErrorPlayerId = player.getId();
 						}
 					}
@@ -127,6 +79,18 @@ public class Processor implements GameHandler {
 		}
 	}
 	
+	private void recordMove(String r, Player player) {
+		Move move = new Move(player);
+		MoveResult moveResult = new MoveResult(player, mField, player.getId());					
+		move.setColumn(mField.getLastX());
+		move.setIllegalMove(mField.getLastError());
+		mMoves.add(move);
+		moveResult.setIllegalMove(mField.getLastError());
+		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
+		mMoveResults.add(moveResult);
+	}
+	
 	/**
 	 * Parses player response and inserts disc in field
 	 * @param args : command line arguments passed on running of application
@@ -134,7 +98,6 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
-		System.out.println("r " + r);
         if (parts[0].equals("place_move")) {
         	int column = Integer.parseInt(parts[1]);
         	int row = Integer.parseInt(parts[2]);

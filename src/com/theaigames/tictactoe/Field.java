@@ -87,15 +87,15 @@ public class Field {
 					return true;
 				} else {
 					mLastError = "Position is full.";
-					System.out.println("Position is full.");
+					System.out.println(mLastError);
 				}
 			} else {
 				mLastError = "Not in active macroboard.";
-				System.out.println("Not in active macroboard.");
+				System.out.println(mLastError);
 			}
 		} else {
 			mLastError = "Move out of bounds.";
-			System.out.println("Move out of bounds.");
+			System.out.println(mLastError);
 		}
 		return false;
 	}
@@ -253,8 +253,6 @@ public class Field {
 	public int checkMicroboardWinner(int macroX, int macroY) {
 		int startX = macroX*3;
 		int startY = macroY*3;
-		int remainderX = macroX%3;
-		int remainderY = macroY%3;
 		/* Check horizontal wins */
 		for (int y = startY; y < startY+3; y++) {
 			if (mBoard[startX+0][y] == mBoard[startX+1][y] && mBoard[startX+1][y] == mBoard[startX+2][y] && mBoard[startX+0][y] > 0) {
