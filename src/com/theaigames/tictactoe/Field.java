@@ -6,9 +6,20 @@ import com.theaigames.engine.io.IOPlayer;
 import com.theaigames.game.player.AbstractPlayer;
 
 public class Field {
+	/* For visuals only */
+	private final int WINTYPE_NONE = 0;
+	private final int WINTYPE_HORIZONTAL1 = 1;
+	private final int WINTYPE_HORIZONTAL2 = 2;
+	private final int WINTYPE_HORIZONTAL3 = 3;
+	private final int WINTYPE_VERTICAL1 = 4;
+	private final int WINTYPE_VERTICAL2 = 5;
+	private final int WINTYPE_VERTICAL3 = 6;
+	private final int WINTYPE_DIAGONAL = 7;
+	private final int WINTYPE_ANTIDIAGONAL = 8;
 	
 	private int[][] mBoard;
 	private int[][] mMacroboard;
+	private int[][] mMacroboardWinTypes;
 
 	private int mCols = 0, mRows = 0;
 	private String mLastError = "";
@@ -20,6 +31,7 @@ public class Field {
 		mRows = 9;
 		mBoard = new int[mCols][mRows];
 		mMacroboard = new int[mCols / 3][mRows / 3];
+		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
 	}
 	
@@ -166,7 +178,7 @@ public class Field {
 	/**
 	 * Creates comma separated String with player ids for the macroboard.
 	 * @param args : 
-	 * @return : String with player names for every cell, or 'empty' when cell is empty.
+	 * @return : String with player ids for every cell, or 0 when cell is empty, or -1 when cell is ready for a move.
 	 */
 	public String macroboardToString() {
 		String r = "";
@@ -177,6 +189,27 @@ public class Field {
 					r += ",";
 				}
 				r += mMacroboard[x][y];
+				counter++;
+			}
+		}
+		return r;
+	}
+	
+	/**
+	 * Creates comma separated String with win types for all cells (visualisation purposes only)
+	 * @param args : 
+	 * @return : String with win types for every cell
+	 */
+	public String macroboardWinTypesToString() {
+		updateMacroboardWinTypes();
+		String r = "";
+		int counter = 0;
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				if (counter > 0) {
+					r += ",";
+				}
+				r += mMacroboardWinTypes[x][y];
 				counter++;
 			}
 		}
@@ -232,13 +265,32 @@ public class Field {
 	public void updateMacroboards() {
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
-				int winner = checkMicroboardWinner(x, y);
+				int winner = getMicroboardWinner(x, y);
 				mMacroboard[x][y] = winner;
 				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
 					if (mMacroboard[x][y] == 0) {
 						mMacroboard[x][y] = -1;
 					} else {
 						mAllMicroboardsActive = true;
+					}
+				}
+			}
+		}
+	}	
+	
+	/**
+	 * Update internal representation of wintypes per cell.
+	 * @param args : 
+	 * @return : 
+	 */
+	public void updateMacroboardWinTypes() {
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				int wintype = getMicroboardWinType(x, y);
+				mMacroboardWinTypes[x][y] = wintype;
+				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
+					if (mMacroboardWinTypes[x][y] == 0) {
+						mMacroboardWinTypes[x][y] = -1;
 					}
 				}
 			}
@@ -250,7 +302,7 @@ public class Field {
 	 * @param args : int x (0-2), int y (0-2)
 	 * @return : player id of winner or 0
 	 */
-	public int checkMicroboardWinner(int macroX, int macroY) {
+	public int getMicroboardWinner(int macroX, int macroY) {
 		int startX = macroX*3;
 		int startY = macroY*3;
 		/* Check horizontal wins */
@@ -275,6 +327,38 @@ public class Field {
 		if (mBoard[startX+2][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX][startY+2] && mBoard[startX+2][startY+0] > 0) {
 			System.out.println("FOUND A ANTIDIAGONAL WIN AT " + startX);
 			return mBoard[startX+2][startY];
+		}
+		return 0;
+	}
+	
+	/**
+	 * Checks the microboard for a winner
+	 * @param args : int x (0-2), int y (0-2)
+	 * @return : player id of winner or 0
+	 */
+	public int getMicroboardWinType(int macroX, int macroY) {
+		int startX = macroX*3;
+		int startY = macroY*3;
+		/* Check horizontal wins */
+		for (int y = startY; y < startY+3; y++) {
+			if (mBoard[startX+0][y] == mBoard[startX+1][y] && mBoard[startX+1][y] == mBoard[startX+2][y] && mBoard[startX+0][y] > 0) {
+				int tWin = y-macroY*3;
+				return WINTYPE_HORIZONTAL1 + tWin;
+			}
+		}
+		/* Check vertical wins */
+		for (int x = startX; x < startX+3; x++) {
+			if (mBoard[x][startY+0] == mBoard[x][startY+1] && mBoard[x][startY+1] == mBoard[x][startY+2] && mBoard[x][startY+0] > 0) {
+				int tWin = x-macroX*3;
+				return WINTYPE_VERTICAL1 + tWin;
+			}
+		}
+		/* Check diagonal wins */
+		if (mBoard[startX][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX+2][startY+2] && mBoard[startX+0][startY+0] > 0) {
+			return WINTYPE_DIAGONAL;
+		}
+		if (mBoard[startX+2][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX][startY+2] && mBoard[startX+2][startY+0] > 0) {
+			return WINTYPE_ANTIDIAGONAL;
 		}
 		return 0;
 	}

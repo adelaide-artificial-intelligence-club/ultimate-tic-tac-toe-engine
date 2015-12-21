@@ -11,7 +11,7 @@ public class MoveResult extends Move {
 	public MoveResult(AbstractPlayer player, Field field, int playerId) {
 		super(player);
 		mBoard = field.toString();
-		mMacroboard = field.macroboardToString();
+		mMacroboard = field.macroboardWinTypesToString();
 		mPlayerId = playerId;
 	}
 	
@@ -43,3 +43,4 @@ public class MoveResult extends Move {
 		return mPlayer2Fields;
 	}
 }
+
