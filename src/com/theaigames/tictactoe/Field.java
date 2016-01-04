@@ -176,6 +176,55 @@ public class Field {
 	}
 	
 	/**
+	 * Creates a string with comma separated ints for every cell.
+	 * @param args : 
+	 * @return : String with comma separated ints for every cell.
+	 * Format:		 LSB
+	 * 0 0 0 0 0 0 0 0
+	 * | | | | | | | |_ Player 1
+	 * | | | | | | |___ Player 2
+	 * | | | | | |_____ Active Player 1
+	 * | | | | |_______ Active Player 2
+	 * | | | |_________ Taken Player 1
+	 * | | |___________ Taken Player 2
+	 * | |_____________ Reserved
+	 * |_______________ Reserved
+	 */
+	public String toPresentationString(int currentPlayer) {
+		String r = "";
+		int counter = 0;
+		for (int y = 0; y < mRows; y++) {
+			for (int x = 0; x < mCols; x++) {
+				int b = 0;
+				if (mBoard[x][y] == 1) {
+					b = b | (1 << 0);
+				}
+				if (mBoard[x][y] == 2) {
+					b = b | (1 << 1);
+				}
+				if (isInActiveMicroboard(x, y) && currentPlayer == 1) {
+					b = b | (1 << 2);
+				}
+				if (isInActiveMicroboard(x, y) && currentPlayer == 2) {
+					b = b | (1 << 3);
+				}
+				if (mMacroboard[x/3][y/3] == 1) {
+					b = b | (1 << 4);
+				}
+				if (mMacroboard[x/3][y/3] == 2) {
+					b = b | (1 << 5);
+				}
+				if (counter > 0) {
+					r += ",";
+				}
+				r += b;
+				counter++;
+			}
+		}
+		return r;
+	}
+	
+	/**
 	 * Creates comma separated String with player ids for the macroboard.
 	 * @param args : 
 	 * @return : String with player ids for every cell, or 0 when cell is empty, or -1 when cell is ready for a move.

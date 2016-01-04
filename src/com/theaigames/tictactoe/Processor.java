@@ -168,8 +168,7 @@ public class Processor implements GameHandler {
 					winnerstring = winner.getName();
 				}
 				state = new JSONObject();
-				state.put("field", move.toString());
-				state.put("macroboard", move.macroboardToString());
+				state.put("field", move.getPresentationString());
 				state.put("round", counter);
 				state.put("column", move.getColumn());
 				state.put("winner", winnerstring);

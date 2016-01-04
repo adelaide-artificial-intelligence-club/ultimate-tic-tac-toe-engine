@@ -4,14 +4,14 @@ import com.theaigames.game.moves.AbstractMove;
 import com.theaigames.game.player.AbstractPlayer;
 
 public class MoveResult extends Move {
-	private String mBoard, mMacroboard;
+	private String mBoard, mPresentationString;
 	private int mPlayerId;
 	private int mPlayer1Fields, mPlayer2Fields;
 
 	public MoveResult(AbstractPlayer player, Field field, int playerId) {
 		super(player);
 		mBoard = field.toString();
-		mMacroboard = field.macroboardToString();
+		mPresentationString = field.toPresentationString(playerId);
 		mPlayerId = playerId;
 	}
 	
@@ -19,8 +19,8 @@ public class MoveResult extends Move {
 		return mBoard;
 	}
 	
-	public String macroboardToString() {
-		return mMacroboard;
+	public String getPresentationString() {
+		return mPresentationString;
 	}
 
 	public int getPlayerId() {
