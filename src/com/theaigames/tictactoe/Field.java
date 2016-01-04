@@ -202,10 +202,10 @@ public class Field {
 				if (mBoard[x][y] == 2) {
 					b = b | (1 << 1);
 				}
-				if (isInActiveMicroboard(x, y) && currentPlayer == 1) {
+				if (isInActiveMicroboard(x, y) && currentPlayer == 1 && mBoard[x][y] == 0) {
 					b = b | (1 << 2);
 				}
-				if (isInActiveMicroboard(x, y) && currentPlayer == 2) {
+				if (isInActiveMicroboard(x, y) && currentPlayer == 2 && mBoard[x][y] == 0) {
 					b = b | (1 << 3);
 				}
 				if (mMacroboard[x/3][y/3] == 1) {
