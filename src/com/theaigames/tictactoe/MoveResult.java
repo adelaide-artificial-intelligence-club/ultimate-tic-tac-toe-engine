@@ -11,7 +11,7 @@ public class MoveResult extends Move {
 	public MoveResult(AbstractPlayer player, Field field, int playerId) {
 		super(player);
 		mBoard = field.toString();
-		mMacroboard = field.macroboardWinTypesToString();
+		mMacroboard = field.macroboardToString();
 		mPlayerId = playerId;
 	}
 	
