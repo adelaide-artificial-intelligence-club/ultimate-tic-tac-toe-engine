@@ -96,8 +96,8 @@ public abstract class AbstractGame implements Logic {
 //		for(int i=0; i<botIds.size(); i++) {
 //			this.engine.addPlayer("/opt/aigames/scripts/run_bot.sh aiplayer1 " + botDirs.get(i), botIds.get(i));
 //		}
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "player1");
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "player2");
+		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "tttbot1");
+		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot2/bin/ bot.BotStarter", "player2");
 	}
 	
 	/**

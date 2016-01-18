@@ -5,7 +5,7 @@ import com.theaigames.game.player.AbstractPlayer;
 
 public class Move extends AbstractMove {
 
-	private int mColumn = 0;
+	private int mColumn = 0, mRow = 0;
 	
 	public Move(AbstractPlayer player) {
 		super(player);
@@ -14,8 +14,9 @@ public class Move extends AbstractMove {
 	/**
 	 * @param column : Sets the column of a move
 	 */
-	public void setColumn(int column) {
+	public void setMove(int column, int row) {
 		this.mColumn = column;
+		this.mRow = row;
 	}
 	
 	/**

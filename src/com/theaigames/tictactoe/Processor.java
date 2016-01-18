@@ -35,7 +35,6 @@ public class Processor implements GameHandler {
 	private int mRoundNumber = 0;
 	private List<Player> mPlayers;
 	private List<Move> mMoves;
-	private List<Disc> mWinningDiscs;
 	private List<MoveResult> mMoveResults;
 	private Field mField;
 	private int mGameOverByPlayerErrorPlayerId = 0;
@@ -54,20 +53,14 @@ public class Processor implements GameHandler {
 				player.sendUpdate("round", mRoundNumber);
 				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
-				if (parseResponse(response, player)) {
-					recordMove(response, player);					
-				} else {
-					recordMove(response, player);					
-					if (parseResponse(response, player)) {
-						recordMove(response, player);						
-					} else {
-						recordMove(response, player);
-						player.sendUpdate("field", mField.toString());
+				recordMove(player);
+				if (!parseResponse(response, player)) {
+					response = player.requestMove("move");
+					recordMove(player);
+					if (!parseResponse(response, player)) {
 						response = player.requestMove("move");
-						if (parseResponse(response, player)) {
-							recordMove(response, player);
-						} else { /* Too many errors, other player wins */
-							recordMove(response, player);
+						recordMove(player);
+						if (!parseResponse(response, player)) { /* Too many errors, other player wins */
 							mGameOverByPlayerErrorPlayerId = player.getId();
 						}
 					}
@@ -79,12 +72,13 @@ public class Processor implements GameHandler {
 		}
 	}
 	
-	private void recordMove(String r, Player player) {
+	private void recordMove(Player player) {
 		Move move = new Move(player);
-		MoveResult moveResult = new MoveResult(player, mField, player.getId());					
-		move.setColumn(mField.getLastX());
+		MoveResult moveResult = new MoveResult(player, mField, player.getId());
+		move.setMove(mField.getLastX(), mField.getLastY());
 		move.setIllegalMove(mField.getLastError());
 		mMoves.add(move);
+		moveResult.setMove(mField.getLastX(), mField.getLastY());
 		moveResult.setIllegalMove(mField.getLastError());
 		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
 		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
@@ -98,15 +92,14 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
-        if (parts[0].equals("place_move")) {
-        	int column = Integer.parseInt(parts[1]);
-        	int row = Integer.parseInt(parts[2]);
-
-        	if (mField.addMove(column, row, player.getId())) {
-        		return true;
-        	}
-        }
-        return false;
+		if (parts[0].equals("place_move")) {
+			int column = Integer.parseInt(parts[1]);
+			int row = Integer.parseInt(parts[2]);
+			if (mField.addMove(column, row, player.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -138,26 +131,22 @@ public class Processor implements GameHandler {
 	public String getPlayedGame() {
 		JSONObject output = new JSONObject();
 		AbstractPlayer winner = getWinner();
-		
-		/* Create array of winning discs */
 		try {
-			
 			JSONArray playerNames = new JSONArray();
 			for(Player player : this.mPlayers) {
 				playerNames.put(player.getName());
 			}
-			
+
 			output.put("settings", new JSONObject()
 			.put("field", new JSONObject()
 					.put("width", String.valueOf(getField().getNrColumns()))
 					.put("height", String.valueOf(getField().getNrRows())))
 			.put("players", new JSONObject()
-					.put("count", this.mPlayers.size()) // could maybe be removed
+					.put("count", this.mPlayers.size())
 					.put("names", playerNames))
 					.put("winnerplayer", winner.getName())
-			);		
-			//output.put("windiscs", winDiscsJSON);
-			
+			);
+
 			JSONArray states = new JSONArray();
 			JSONObject state = new JSONObject();
 			int counter = 0;
@@ -185,7 +174,7 @@ public class Processor implements GameHandler {
 		}
 		return output.toString();
 	}
-	
+
 
 	/**
 	 * Returns a List of Moves played in this game
@@ -195,7 +184,7 @@ public class Processor implements GameHandler {
 	public List<Move> getMoves() {
 		return mMoves;
 	}
-	
+
 	public Field getField() {
 		return mField;
 	}
