@@ -44,7 +44,16 @@ public class Processor implements GameHandler {
 		mField = field;
 		mMoves = new ArrayList<Move>();
 		mMoveResults = new ArrayList<MoveResult>();
+		addFirstRound();
 	}
+	
+	public void addFirstRound() {
+		Move move = new Move(mPlayers.get(1));
+		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
+		mMoves.add(move);
+		mMoveResults.add(moveResult);
+	}
+
 
 	@Override
 	public void playRound(int roundNumber) {
