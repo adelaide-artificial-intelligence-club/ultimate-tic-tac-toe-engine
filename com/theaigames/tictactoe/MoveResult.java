@@ -7,6 +7,7 @@ public class MoveResult extends Move {
 	private String mBoard, mPresentationString;
 	private int mPlayerId;
 	private int mPlayer1Fields, mPlayer2Fields;
+	private int mRoundNumber = 0;
 
 	public MoveResult(AbstractPlayer player, Field field, int playerId) {
 		super(player);
@@ -42,5 +43,12 @@ public class MoveResult extends Move {
 	public int getPlayer2Fields() {
 		return mPlayer2Fields;
 	}
+	
+	public void setRoundNumber(int roundNumber) {
+		mRoundNumber = roundNumber;
+	}
+	
+	public int getRoundNumber() {
+		return mRoundNumber;
+	}
 }
-

@@ -98,6 +98,7 @@ public class Processor implements GameHandler {
 		moveResult.setIllegalMove(mField.getLastError());
 		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
 		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
+		moveResult.setRoundNumber(mRoundNumber);
 		mMoveResults.add(moveResult);
 	}
 	
@@ -157,8 +158,9 @@ public class Processor implements GameHandler {
 				}
 				state = new JSONObject();
 				state.put("field", move.getPresentationString());
-				state.put("round", counter);
+				state.put("round", move.getRoundNumber());
 				state.put("column", move.getColumn());
+				state.put("row", move.getRow());
 				state.put("winner", winnerstring);
 				state.put("player", move.getPlayerId());
 				state.put("illegalMove", move.getIllegalMove());
