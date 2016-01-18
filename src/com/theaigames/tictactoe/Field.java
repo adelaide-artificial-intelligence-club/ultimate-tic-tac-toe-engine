@@ -113,7 +113,9 @@ public class Field {
 	}
 	
 	public Boolean isInActiveMicroboard(int x, int y) {
-		if (mAllMicroboardsActive) { return true; }
+		if (mAllMicroboardsActive) {
+			return (mMacroboard[x/3][y/3] == 0);
+		}
 		return (Math.floor(x/3) == getActiveMicroboardX() && Math.floor(y/3) == getActiveMicroboardY()); 
 	}
 	

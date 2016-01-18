@@ -69,19 +69,6 @@ public class Processor implements GameHandler {
 		}
 	}
 	
-	private void recordMove(Player player) {
-		Move move = new Move(player);
-		MoveResult moveResult = new MoveResult(player, mField, player.getId());
-		move.setMove(mField.getLastX(), mField.getLastY());
-		move.setIllegalMove(mField.getLastError());
-		mMoves.add(move);
-		moveResult.setMove(mField.getLastX(), mField.getLastY());
-		moveResult.setIllegalMove(mField.getLastError());
-		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-		mMoveResults.add(moveResult);
-	}
-	
 	/**
 	 * Parses player response and inserts disc in field
 	 * @param args : command line arguments passed on running of application
@@ -100,7 +87,20 @@ public class Processor implements GameHandler {
 		recordMove(player);
 		return false;
 	}
-
+	
+	private void recordMove(Player player) {
+		Move move = new Move(player);
+		MoveResult moveResult = new MoveResult(player, mField, player.getId());
+		move.setMove(mField.getLastX(), mField.getLastY());
+		move.setIllegalMove(mField.getLastError());
+		mMoves.add(move);
+		moveResult.setMove(mField.getLastX(), mField.getLastY());
+		moveResult.setIllegalMove(mField.getLastError());
+		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
+		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
+		mMoveResults.add(moveResult);
+	}
+	
 	@Override
 	public int getRoundNumber() {
 		return this.mRoundNumber;
