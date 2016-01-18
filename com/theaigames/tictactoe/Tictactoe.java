@@ -32,7 +32,7 @@ public class Tictactoe extends AbstractGame {
 		
 		for(int i=0; i<ioPlayers.size(); i++) {
 			// create the player
-			String playerName = ""+(i+1);
+			String playerName = ioPlayers.get(i).getIdString();
 			Player player = new Player(playerName, ioPlayers.get(i), TIMEBANK_MAX, TIME_PER_MOVE, i+1);
 			this.players.add(player);
 
@@ -48,7 +48,8 @@ public class Tictactoe extends AbstractGame {
 	public void sendSettings(Player player) {
 		player.sendSetting("timebank", TIMEBANK_MAX);
 		player.sendSetting("time_per_move", TIME_PER_MOVE);
-		player.sendSetting("bot_id", player.getId());
+		player.sendSetting("your_bot_id", player.getId());
+		player.sendSetting("your_player_name", player.getName());
 	}
 
 	@Override
