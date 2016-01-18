@@ -25,4 +25,11 @@ public class Move extends AbstractMove {
 	public int getColumn() {
 		return mColumn;
 	}
+
+	/**
+	 * @return : Row of move
+	 */
+	public int getRow() {
+		return mRow;
+	}
 }
