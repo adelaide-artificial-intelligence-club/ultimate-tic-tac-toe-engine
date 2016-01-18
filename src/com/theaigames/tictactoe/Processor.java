@@ -53,13 +53,10 @@ public class Processor implements GameHandler {
 				player.sendUpdate("round", mRoundNumber);
 				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
-				recordMove(player);
 				if (!parseResponse(response, player)) {
 					response = player.requestMove("move");
-					recordMove(player);
 					if (!parseResponse(response, player)) {
 						response = player.requestMove("move");
-						recordMove(player);
 						if (!parseResponse(response, player)) { /* Too many errors, other player wins */
 							mGameOverByPlayerErrorPlayerId = player.getId();
 						}
@@ -96,9 +93,11 @@ public class Processor implements GameHandler {
 			int column = Integer.parseInt(parts[1]);
 			int row = Integer.parseInt(parts[2]);
 			if (mField.addMove(column, row, player.getId())) {
+				recordMove(player);
 				return true;
 			}
 		}
+		recordMove(player);
 		return false;
 	}
 
