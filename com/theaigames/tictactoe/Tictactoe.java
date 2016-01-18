@@ -46,8 +46,10 @@ public class Tictactoe extends AbstractGame {
 	}
 
 	public void sendSettings(Player player) {
+		String playerString = this.players.get(0).getName() + "," + this.players.get(1).getName();
 		player.sendSetting("timebank", TIMEBANK_MAX);
 		player.sendSetting("time_per_move", TIME_PER_MOVE);
+		player.sendSetting("player_names", playerString);
 		player.sendSetting("your_bot_id", player.getId());
 		player.sendSetting("your_player_name", player.getName());
 	}

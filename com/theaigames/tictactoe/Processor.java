@@ -60,6 +60,7 @@ public class Processor implements GameHandler {
 		for (Player player : mPlayers) {
 			if (getWinner() == null) {
 				player.sendUpdate("round", mRoundNumber);
+				player.sendUpdate("field", mField.toString());
 				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
 				if (!parseResponse(response, player)) {
@@ -72,8 +73,7 @@ public class Processor implements GameHandler {
 					}
 				}
 				mRoundNumber++;
-				player.sendUpdate("field", mField.toString());
-				mField.dumpBoard();
+				//mField.dumpBoard();
 			}
 		}
 	}
