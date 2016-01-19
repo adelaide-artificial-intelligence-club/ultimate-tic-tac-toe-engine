@@ -1,10 +1,5 @@
 package com.theaigames.tictactoe.field;
 
-import java.io.IOException;
-
-import com.theaigames.engine.io.IOPlayer;
-import com.theaigames.game.player.AbstractPlayer;
-
 public class Field {
 	/* For visuals only */
 	private final int WINTYPE_NONE = 0;
