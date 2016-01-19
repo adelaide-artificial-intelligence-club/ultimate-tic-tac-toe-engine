@@ -1,4 +1,4 @@
-package com.theaigames.tictactoe;
+package com.theaigames.tictactoe.field;
 
 import com.theaigames.game.moves.AbstractMove;
 import com.theaigames.game.player.AbstractPlayer;

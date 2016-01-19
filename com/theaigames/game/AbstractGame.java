@@ -52,7 +52,7 @@ public abstract class AbstractGame implements Logic {
 	
 	public int maxRounds;
 	
-	public boolean DEV_MODE = !false; // turn this on for local testing
+	public boolean DEV_MODE = false; // turn this on for local testing
 	public String TEST_BOT; // command for the test bot in DEV_MODE
 	public int NUM_TEST_BOTS; // number of bots for this game
 	
@@ -74,30 +74,30 @@ public abstract class AbstractGame implements Logic {
 		this.gameIdString = args[0];
 		
 		// get the bot id's and location of bot program
-//		for(int i=1; i<args.length; i++) {
-//			switch(i % 2) {
-//			case 0:
-//				botIds.add(args[i]);
-//				break;
-//			case 1:
-//				botDirs.add(args[i]);
-//				break;
-//			}
-//		}
+		for(int i=1; i<args.length; i++) {
+			switch(i % 2) {
+			case 0:
+				botIds.add(args[i]);
+				break;
+			case 1:
+				botDirs.add(args[i]);
+				break;
+			}
+		}
 		
 		// check is the starting arguments are passed correctly
-//		if(botIds.isEmpty() || botDirs.isEmpty() || botIds.size() != botDirs.size())
-//			throw new RuntimeException("Missing some arguments");
+		if(botIds.isEmpty() || botDirs.isEmpty() || botIds.size() != botDirs.size())
+			throw new RuntimeException("Missing some arguments");
 		
 		// create engine
 		this.engine = new Engine();
 		
 		// add the players
-//		for(int i=0; i<botIds.size(); i++) {
-//			this.engine.addPlayer("/opt/aigames/scripts/run_bot.sh aiplayer1 " + botDirs.get(i), botIds.get(i));
-//		}
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "tttbot1");
-		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot2/bin/ bot.BotStarter", "player2");
+		for(int i=0; i<botIds.size(); i++) {
+			this.engine.addPlayer("/opt/aigames/scripts/run_bot.sh aiplayer1 " + botDirs.get(i), botIds.get(i));
+		}
+//		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "tttbot1");
+//		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot2/bin/ bot.BotStarter", "player2");
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public abstract class AbstractGame implements Logic {
 		if(DEV_MODE) { // print the game file when in DEV_MODE
 			String playedGame = this.processor.getPlayedGame();
 			System.out.println(playedGame);
-			int score = this.processor.getRoundNumber() - 1;
+//			int score = this.processor.getRoundNumber() - 1;
 		} else { // save the game to database
 			try {
 				this.saveGame();

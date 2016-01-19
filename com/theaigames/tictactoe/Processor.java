@@ -28,6 +28,10 @@ import org.json.JSONObject;
 import com.theaigames.engine.io.IOPlayer;
 import com.theaigames.game.moves.AbstractMove;
 import com.theaigames.game.player.AbstractPlayer;
+import com.theaigames.tictactoe.field.Field;
+import com.theaigames.tictactoe.moves.Move;
+import com.theaigames.tictactoe.moves.MoveResult;
+import com.theaigames.tictactoe.player.Player;
 import com.theaigames.game.GameHandler;
 
 public class Processor implements GameHandler {

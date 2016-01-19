@@ -1,7 +1,8 @@
-package com.theaigames.tictactoe;
+package com.theaigames.tictactoe.moves;
 
 import com.theaigames.game.moves.AbstractMove;
 import com.theaigames.game.player.AbstractPlayer;
+import com.theaigames.tictactoe.field.Field;
 
 public class MoveResult extends Move {
 	private String mBoard, mPresentationString;

@@ -1,4 +1,4 @@
-package com.theaigames.tictactoe;
+package com.theaigames.tictactoe.field;
 
 import java.io.IOException;
 

@@ -1,24 +1,18 @@
 package com.theaigames.tictactoe;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.theaigames.engine.io.IOPlayer;
 import com.theaigames.game.AbstractGame;
 import com.theaigames.game.player.AbstractPlayer;
-import com.theaigames.tictactoe.Field;
+import com.theaigames.tictactoe.field.Field;
+import com.theaigames.tictactoe.player.Player;
 
 public class Tictactoe extends AbstractGame {
 	
 	private final int TIMEBANK_MAX = 10000;
 	private final int TIME_PER_MOVE = 500;
-	private final int FIELD_COLUMNS = 7;
-	private final int FIELD_ROWS = 6;	
 	private List<Player> players;
 	private Field mField;
 

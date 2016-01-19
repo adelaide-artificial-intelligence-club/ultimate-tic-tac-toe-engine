@@ -63,7 +63,6 @@ public class InputStreamGobbler extends Thread {
                     if (this.type.equals("output"))
                 	   this.player.response = lastLine;
                     buffer.append(lastLine + "\n");
-                    System.out.println(lastLine);
                 }
             }
             try {

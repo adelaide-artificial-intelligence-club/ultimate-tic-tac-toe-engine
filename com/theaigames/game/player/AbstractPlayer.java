@@ -169,7 +169,6 @@ public abstract class AbstractPlayer {
 	 */
 	private void sendLine(String content) {
 		try {
-			System.out.println(content);
 			this.bot.writeToBot(content);
 		} catch (IOException e) {
 			e.printStackTrace();

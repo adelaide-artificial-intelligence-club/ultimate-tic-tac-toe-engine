@@ -1,9 +1,5 @@
 package com.theaigames.boardgame;
 
-import java.io.IOException;
-
-
-
 /**
  * abstract class AbstractBoard
  * 
