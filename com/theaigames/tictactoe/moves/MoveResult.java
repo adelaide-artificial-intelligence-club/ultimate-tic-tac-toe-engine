@@ -5,15 +5,16 @@ import com.theaigames.tictactoe.field.Field;
 
 public class MoveResult extends Move {
 	private String mBoard, mPresentationString;
-	private int mPlayerId;
+	private int mPlayerId, mNextMovePlayerId;
 	private int mPlayer1Fields, mPlayer2Fields;
 	private int mRoundNumber = 0;
 
-	public MoveResult(AbstractPlayer player, Field field, int playerId) {
+	public MoveResult(AbstractPlayer player, Field field, int playerId, int nextMovePlayerId) {
 		super(player);
 		mBoard = field.toString();
-		mPresentationString = field.toPresentationString(playerId);
 		mPlayerId = playerId;
+		mNextMovePlayerId = nextMovePlayerId;
+		mPresentationString = field.toPresentationString(nextMovePlayerId);
 	}
 	
 	public String toString() {
@@ -26,6 +27,10 @@ public class MoveResult extends Move {
 
 	public int getPlayerId() {
 		return mPlayerId;
+	}
+
+	public int getNextPlayerId() {
+		return mNextMovePlayerId;
 	}
 	
 	public void setPlayer1Fields(int fields) {

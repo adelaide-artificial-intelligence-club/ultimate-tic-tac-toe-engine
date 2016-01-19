@@ -48,8 +48,9 @@ public class Processor implements GameHandler {
 	}
 	
 	public void addFirstRound() {
-		Move move = new Move(mPlayers.get(1));
-		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
+		Move move = new Move(mPlayers.get(0));
+		MoveResult moveResult = new MoveResult(mPlayers.get(0), mField, mPlayers.get(0).getId(), mPlayers.get(0).getId());
+		
 		mMoves.add(move);
 		mMoveResults.add(moveResult);
 	}
@@ -84,21 +85,25 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
+		/* Dirty way of finding the opposite player */
+		Player nextPlayer = mPlayers.get(0);
+		if (nextPlayer.getId() == player.getId()) nextPlayer = mPlayers.get(1);
+		
 		if (parts[0].equals("place_move")) {
 			int column = Integer.parseInt(parts[1]);
 			int row = Integer.parseInt(parts[2]);
 			if (mField.addMove(column, row, player.getId())) {
-				recordMove(player);
+				recordMove(player, nextPlayer);
 				return true;
 			}
 		}
-		recordMove(player);
+		recordMove(player, player);
 		return false;
 	}
 	
-	private void recordMove(Player player) {
+	private void recordMove(Player player, Player nextPlayer) {
 		Move move = new Move(player);
-		MoveResult moveResult = new MoveResult(player, mField, player.getId());
+		MoveResult moveResult = new MoveResult(player, mField, player.getId(), nextPlayer.getId());
 		move.setMove(mField.getLastX(), mField.getLastY());
 		move.setIllegalMove(mField.getLastError());
 		mMoves.add(move);
@@ -171,6 +176,8 @@ public class Processor implements GameHandler {
 				state.put("row", move.getRow());
 				state.put("winner", winnerstring);
 				state.put("player", move.getPlayerId());
+				state.put("nextplayer", move.getNextPlayerId());
+
 				state.put("illegalMove", move.getIllegalMove());
 				state.put("player1fields", move.getPlayer1Fields());
 				state.put("player2fields", move.getPlayer2Fields());
