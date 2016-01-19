@@ -54,7 +54,6 @@ public class Processor implements GameHandler {
 		mMoveResults.add(moveResult);
 	}
 
-
 	@Override
 	public void playRound(int roundNumber) {
 		for (Player player : mPlayers) {
@@ -167,7 +166,7 @@ public class Processor implements GameHandler {
 				}
 				state = new JSONObject();
 				state.put("field", move.getPresentationString());
-				state.put("round", move.getRoundNumber() + 1);
+				state.put("round", move.getRoundNumber());
 				state.put("column", move.getColumn());
 				state.put("row", move.getRow());
 				state.put("winner", winnerstring);
