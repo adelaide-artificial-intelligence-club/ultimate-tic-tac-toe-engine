@@ -68,36 +68,51 @@ public abstract class AbstractGame implements Logic {
 	 */
 	public void setupEngine(String args[]) throws IOException, RuntimeException {
 		
-		List<String> botDirs = new ArrayList<String>();
-		List<String> botIds = new ArrayList<String>();
-		
-		this.gameIdString = args[0];
-		
-		// get the bot id's and location of bot program
-		for(int i=1; i<args.length; i++) {
-			switch(i % 2) {
-			case 0:
-				botIds.add(args[i]);
-				break;
-			case 1:
-				botDirs.add(args[i]);
-				break;
-			}
-		}
-		
-		// check is the starting arguments are passed correctly
-		if(botIds.isEmpty() || botDirs.isEmpty() || botIds.size() != botDirs.size())
-			throw new RuntimeException("Missing some arguments");
-		
-		// create engine
-		this.engine = new Engine();
-		
-		// add the players
-		for(int i=0; i<botIds.size(); i++) {
-			this.engine.addPlayer("/opt/aigames/scripts/run_bot.sh aiplayer1 " + botDirs.get(i), botIds.get(i));
-		}
-//		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot1/bin/ bot.BotStarter", "tttbot1");
-//		this.engine.addPlayer("java -cp /home/joost/workspace/TTTBot2/bin/ bot.BotStarter", "player2");
+        // create engine
+        this.engine = new Engine();
+        
+        // add the test bots if in DEV_MODE
+        if(DEV_MODE) {
+            if(TEST_BOT.isEmpty()) {
+                throw new RuntimeException("DEV_MODE: Please provide a command to start the test bot by setting 'TEST_BOT' in your main class.");
+            }
+            if(NUM_TEST_BOTS <= 0) {
+                throw new RuntimeException("DEV_MODE: Please provide the number of bots in this game by setting 'NUM_TEST_BOTS' in your main class.");
+            }
+            
+            for(int i = 0; i < NUM_TEST_BOTS; i++) {
+                this.engine.addPlayer(TEST_BOT, "ID_" + i);
+            }
+            
+            return;
+        }
+        
+        // add the bots from the arguments if not in DEV_MODE
+        List<String> botDirs = new ArrayList<String>();
+        List<String> botIds = new ArrayList<String>();
+        
+        try {
+            this.gameIdString = args[0];
+        } catch(Exception e) {
+            throw new RuntimeException("No arguments provided.");
+        }
+        
+        // get the bot id's and location of bot program
+        for(int i=1; i <= (args.length - 1) / 2; i++) { // first arguments are the bot ids
+            botIds.add(args[i]);
+        }
+        for(int i=((args.length - 1) / 2) + 1; i < args.length; i++) { // last arguments are the bot dirs
+            botDirs.add(args[i]);
+        }
+        
+        // check is the starting arguments are passed correctly
+        if(botIds.isEmpty() || botDirs.isEmpty() || botIds.size() != botDirs.size())
+            throw new RuntimeException("Missing some arguments.");
+        
+        // add the players
+        for(int i=0; i < botIds.size(); i++) {
+            this.engine.addPlayer(String.format("/opt/aigames/scripts/run_bot.sh aiplayer%d %s", i + 1, botDirs.get(i)), botIds.get(i));
+        }
 	}
 	
 	/**
