@@ -18,15 +18,11 @@
 package com.theaigames.tictactoe;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.theaigames.engine.io.IOPlayer;
-import com.theaigames.game.moves.AbstractMove;
 import com.theaigames.game.player.AbstractPlayer;
 import com.theaigames.tictactoe.field.Field;
 import com.theaigames.tictactoe.moves.Move;
@@ -52,12 +48,13 @@ public class Processor implements GameHandler {
 	}
 	
 	public void addFirstRound() {
-		Move move = new Move(mPlayers.get(1));
-		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
-		mMoves.add(move);
-		mMoveResults.add(moveResult);
+	    for (Player player : mPlayers) {
+	        Move move = new Move(player);
+	        MoveResult moveResult = new MoveResult(player, mField, player.getId());
+	        mMoves.add(move);
+	        mMoveResults.add(moveResult);
+	    }
 	}
-
 
 	@Override
 	public void playRound(int roundNumber) {
@@ -171,7 +168,7 @@ public class Processor implements GameHandler {
 				}
 				state = new JSONObject();
 				state.put("field", move.getPresentationString());
-				state.put("round", move.getRoundNumber());
+				state.put("round", move.getRoundNumber() + 1);
 				state.put("column", move.getColumn());
 				state.put("row", move.getRow());
 				state.put("winner", winnerstring);
