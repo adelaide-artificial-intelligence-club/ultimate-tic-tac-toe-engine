@@ -108,7 +108,7 @@ public class Processor implements GameHandler {
 	}
 	
 	private void createParseError(Player player, String input) {
-	    mField.setLastError("Failed to parse input");
+	    mField.setLastError("Error: failed to parse input");
         player.getBot().outputEngineWarning(String.format("Failed to parse input '%s'", input));
 	}
 	

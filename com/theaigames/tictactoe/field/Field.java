@@ -93,15 +93,15 @@ public class Field {
 					updateMacroboards();
 					return true;
 				} else {
-					mLastError = "Position is full.";
+					mLastError = "Error: chosen position is already filled";
 					//System.out.println(mLastError);
 				}
 			} else {
-				mLastError = "Not in active macroboard.";
+				mLastError = "Error: move not in active macroboard";
 				//System.out.println(mLastError);
 			}
 		} else {
-			mLastError = "Move out of bounds.";
+			mLastError = "Error: move out of bounds";
 			//System.out.println(mLastError);
 		}
 		return false;
