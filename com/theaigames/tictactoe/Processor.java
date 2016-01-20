@@ -170,32 +170,41 @@ public class Processor implements GameHandler {
 
 			JSONArray states = new JSONArray();
 			int counter = 0;
-			String winnerstring = "";
+			
 			for (MoveResult move : mMoveResults) {
-				if (counter == mMoveResults.size()-1) {
-				    if (winner == null) {
-				        winnerstring = "draw";
-				    } else {
-				        winnerstring = winner.getName();
-				    }
-				}
+
 				JSONObject state1 = new JSONObject();
 				state1.put("field", move.getOldFieldPresentationString());
 				state1.put("move", move.getMoveNumber());
-				state1.put("winner", winnerstring);
+				state1.put("winner", "");
 				state1.put("player", move.getPlayer().getId());
 				state1.put("illegalMove", "");
 				states.put(state1);
 				
-				if (winnerstring.equals("")) {
-    				JSONObject state2 = new JSONObject();
-    				state2.put("field", move.getNewFieldPresentationString());
-    				state2.put("move", move.getMoveNumber());
-    				state2.put("winner", "");
-    				state2.put("player", move.getPlayer().getId());
-    				state2.put("illegalMove", move.getMove().getIllegalMove());
-    				states.put(state2);
-				}
+				JSONObject state2 = new JSONObject();
+				state2.put("field", move.getNewFieldPresentationString());
+				state2.put("move", move.getMoveNumber());
+				state2.put("winner", "");
+				state2.put("player", move.getPlayer().getId());
+				state2.put("illegalMove", move.getMove().getIllegalMove());
+				states.put(state2);
+				
+				if (counter == mMoveResults.size()-1) { // final overlay state with winner
+				    String winnerstring = "";
+                    if (winner == null) {
+                        winnerstring = "draw";
+                    } else {
+                        winnerstring = winner.getName();
+                    }
+                    JSONObject state3 = new JSONObject();
+                    state3.put("field", move.getNewFieldPresentationString());
+                    state3.put("move", move.getMoveNumber());
+                    state3.put("winner", winnerstring);
+                    state3.put("player", move.getPlayer().getId());
+                    state3.put("illegalMove", move.getMove().getIllegalMove());
+                    states.put(state3);
+                }
+				
 				counter++;
 			}
 			output.put("states", states);
