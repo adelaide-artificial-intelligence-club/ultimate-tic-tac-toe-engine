@@ -209,7 +209,7 @@ public class Field {
 	 * | |_____________ Reserved
 	 * |_______________ Reserved
 	 */
-	public String toPresentationString(int currentPlayer) {
+	public String toPresentationString(int nextPlayer) {
 		String r = "";
 		int counter = 0;
 		for (int y = 0; y < mRows; y++) {
@@ -221,10 +221,10 @@ public class Field {
 				if (mBoard[x][y] == 2) {
 					b = b | (1 << 1);
 				}
-				if (isInActiveMicroboard(x, y) && currentPlayer == 1 && mBoard[x][y] == 0) {
+				if (isInActiveMicroboard(x, y) && nextPlayer == 1 && mBoard[x][y] == 0) {
 					b = b | (1 << 2);
 				}
-				if (isInActiveMicroboard(x, y) && currentPlayer == 2 && mBoard[x][y] == 0) {
+				if (isInActiveMicroboard(x, y) && nextPlayer == 2 && mBoard[x][y] == 0) {
 					b = b | (1 << 3);
 				}
 				if (mMacroboard[x/3][y/3] == 1) {
