@@ -1,54 +1,42 @@
 package com.theaigames.tictactoe.moves;
 
-import com.theaigames.game.player.AbstractPlayer;
 import com.theaigames.tictactoe.field.Field;
+import com.theaigames.tictactoe.player.Player;
 
-public class MoveResult extends Move {
-	private String mBoard, mPresentationString;
-	private int mPlayerId;
-	private int mPlayer1Fields, mPlayer2Fields;
-	private int mRoundNumber = 0;
+public class MoveResult {
+	private Field mOldField, mNewField;
+	private int mMoveNumber = 0;
+	private Player mPlayer;
+	private Move mMove;
 
-	public MoveResult(AbstractPlayer player, Field field, int playerId) {
-		super(player);
-		mBoard = field.toString();
-		mPresentationString = field.toPresentationString(playerId);
-		mPlayerId = playerId;
+	public MoveResult(Player player, Move move, Field oldField, Field newField) {
+	    mPlayer = player;
+	    mMove = move;
+		mOldField = oldField;
+		mNewField = newField;
 	}
 	
-	public String toString() {
-		return mBoard;
+	public String getOldFieldPresentationString() {
+	    return mOldField.toPresentationString(mPlayer.getId());
 	}
 	
-	public String getPresentationString() {
-		return mPresentationString;
-	}
+	public String getNewFieldPresentationString() {
+        return mNewField.toPresentationString(mPlayer.getId());
+    }
 
-	public int getPlayerId() {
-		return mPlayerId;
+	public Player getPlayer() {
+		return mPlayer;
 	}
 	
-	public void setPlayer1Fields(int fields) {
-		mPlayer1Fields = fields;
+	public Move getMove() {
+	    return mMove;
 	}
 	
-	public int getPlayer1Fields() {
-		return mPlayer1Fields;
-	}
-
-	public void setPlayer2Fields(int fields) {
-		mPlayer2Fields = fields;
+	public void setMoveNumber(int moveNumber) {
+		mMoveNumber = moveNumber;
 	}
 	
-	public int getPlayer2Fields() {
-		return mPlayer2Fields;
-	}
-	
-	public void setRoundNumber(int roundNumber) {
-		mRoundNumber = roundNumber;
-	}
-	
-	public int getRoundNumber() {
-		return mRoundNumber;
+	public int getMoveNumber() {
+		return mMoveNumber;
 	}
 }

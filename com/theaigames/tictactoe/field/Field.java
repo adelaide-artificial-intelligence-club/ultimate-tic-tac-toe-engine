@@ -30,6 +30,24 @@ public class Field {
 		clearBoard();
 	}
 	
+	public Field(int[][] mBoard, int[][] mMacroboard, int[][] mMacroboardWinTypes, 
+	        int mCols, int mRows, String mLastError, int mLastX, int mLastY, Boolean mAllMicroboardsActive) {
+	    this.mBoard = mBoard;
+	    this.mMacroboard = mMacroboard;
+	    this.mMacroboardWinTypes = mMacroboardWinTypes;
+	    this.mCols = mCols;
+	    this.mRows = mRows;
+	    this.mLastError = mLastError;
+	    this.mLastX = mLastX;
+	    this.mLastY = mLastY;
+	    this.mAllMicroboardsActive = mAllMicroboardsActive;
+	}
+	
+	public Field copy() {
+	    return new Field(mBoard, mMacroboard, mMacroboardWinTypes, mCols, mRows, 
+	            mLastError, mLastX, mLastY, mAllMicroboardsActive);
+	}
+	
 	public void clearBoard() {
 		for (int x = 0; x < mCols; x++) {
 			for (int y = 0; y < mRows; y++) {
@@ -131,6 +149,10 @@ public class Field {
 	 */
 	public String getLastError() {
 		return mLastError;
+	}
+	
+	public void setLastError(String error) {
+	    mLastError = error;
 	}
 	
 	/**
@@ -262,22 +284,22 @@ public class Field {
 		return r;
 	}
 	
-	/**
-	 * Returns the number of fields a player has in the macroboard
-	 * @param args int player id: 
-	 * @return : Int with the number of fields a player has in the macroboard
-	 */
-	public int getPlayerFields(int playerid) {
-		int counter = 0;
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				if (mMacroboard[x][y] == playerid) {
-					counter++;
-				}
-			}
-		}
-		return counter;
-	}
+//	/**
+//	 * Returns the number of fields a player has in the macroboard
+//	 * @param args int player id: 
+//	 * @return : Int with the number of fields a player has in the macroboard
+//	 */
+//	public int getPlayerFields(int playerid) {
+//		int counter = 0;
+//		for (int y = 0; y < 3; y++) {
+//			for (int x = 0; x < 3; x++) {
+//				if (mMacroboard[x][y] == playerid) {
+//					counter++;
+//				}
+//			}
+//		}
+//		return counter;
+//	}
 	
 	/**
 	 * Checks whether the field is full

@@ -32,7 +32,8 @@ import com.theaigames.game.GameHandler;
 
 public class Processor implements GameHandler {
 	
-	private int mRoundNumber = 0;
+	private int mMoveNumber = 1;
+	private int mRoundNumber = -1;
 	private List<Player> mPlayers;
 	private List<Move> mMoves;
 	private List<MoveResult> mMoveResults;
@@ -44,21 +45,23 @@ public class Processor implements GameHandler {
 		mField = field;
 		mMoves = new ArrayList<Move>();
 		mMoveResults = new ArrayList<MoveResult>();
-		addFirstRound();
+//		addFirstRound();
 	}
 	
-	public void addFirstRound() {
-		Move move = new Move(mPlayers.get(1));
-		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
-		mMoves.add(move);
-		mMoveResults.add(moveResult);
-	}
+//	public void addFirstRound() {
+//		Move move = new Move(mPlayers.get(1));
+//		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
+//		mMoves.add(move);
+//		mMoveResults.add(moveResult);
+//	}
 
 	@Override
 	public void playRound(int roundNumber) {
+	    mRoundNumber = roundNumber;
 		for (Player player : mPlayers) {
 			if (getWinner() == null) {
-				player.sendUpdate("round", mRoundNumber);
+				player.sendUpdate("round", roundNumber);
+				player.sendUpdate("move", mMoveNumber);
 				player.sendUpdate("field", mField.toString());
 				player.sendUpdate("macroboard", mField.macroboardToString());
 				String response = player.requestMove("move");
@@ -71,7 +74,7 @@ public class Processor implements GameHandler {
 						}
 					}
 				}
-				mRoundNumber++;
+				mMoveNumber++;
 				//mField.dumpBoard();
 			}
 		}
@@ -84,29 +87,39 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
+		Field oldField = mField.copy();
 		if (parts[0].equals("place_move")) {
-			int column = Integer.parseInt(parts[1]);
-			int row = Integer.parseInt(parts[2]);
-			if (mField.addMove(column, row, player.getId())) {
-				recordMove(player);
-				return true;
-			}
+		    try {
+    			int column = (int) Double.parseDouble(parts[1]);
+    			int row = (int) Double.parseDouble(parts[2]);
+    			
+    			if (mField.addMove(column, row, player.getId())) {
+                    recordMove(player, oldField);
+                    return true;
+                }
+		    } catch (Exception e) {
+		        createParseError(player, r);
+		    }
+		} else {
+		    createParseError(player, r);
 		}
-		recordMove(player);
+		recordMove(player, oldField);
 		return false;
 	}
 	
-	private void recordMove(Player player) {
+	private void createParseError(Player player, String input) {
+	    mField.setLastError("Failed to parse input");
+        player.getBot().outputEngineWarning(String.format("Failed to parse input '%s'", input));
+	}
+	
+	private void recordMove(Player player, Field oldField) {
 		Move move = new Move(player);
-		MoveResult moveResult = new MoveResult(player, mField, player.getId());
 		move.setMove(mField.getLastX(), mField.getLastY());
 		move.setIllegalMove(mField.getLastError());
 		mMoves.add(move);
-		moveResult.setMove(mField.getLastX(), mField.getLastY());
-		moveResult.setIllegalMove(mField.getLastError());
-		moveResult.setPlayer1Fields(mField.getPlayerFields(1));
-		moveResult.setPlayer2Fields(mField.getPlayerFields(2));
-		moveResult.setRoundNumber(mRoundNumber);
+		
+		MoveResult moveResult = new MoveResult(player, move, oldField, mField);
+		moveResult.setMoveNumber(mMoveNumber);
 		mMoveResults.add(moveResult);
 	}
 	
@@ -156,25 +169,33 @@ public class Processor implements GameHandler {
 			);
 
 			JSONArray states = new JSONArray();
-			JSONObject state = new JSONObject();
 			int counter = 0;
 			String winnerstring = "";
 			for (MoveResult move : mMoveResults) {
-				/* TODO: fix this, for example when a game is a draw */
 				if (counter == mMoveResults.size()-1) {
-					winnerstring = winner.getName();
+				    if (winner == null) {
+				        winnerstring = "draw";
+				    } else {
+				        winnerstring = winner.getName();
+				    }
 				}
-				state = new JSONObject();
-				state.put("field", move.getPresentationString());
-				state.put("round", move.getRoundNumber());
-				state.put("column", move.getColumn());
-				state.put("row", move.getRow());
-				state.put("winner", winnerstring);
-				state.put("player", move.getPlayerId());
-				state.put("illegalMove", move.getIllegalMove());
-				state.put("player1fields", move.getPlayer1Fields());
-				state.put("player2fields", move.getPlayer2Fields());
-				states.put(state);
+				JSONObject state1 = new JSONObject();
+				state1.put("field", move.getOldFieldPresentationString());
+				state1.put("move", move.getMoveNumber());
+				state1.put("winner", winnerstring);
+				state1.put("player", move.getPlayer().getId());
+				state1.put("illegalMove", "");
+				states.put(state1);
+				
+				if (winnerstring.equals("")) {
+    				JSONObject state2 = new JSONObject();
+    				state2.put("field", move.getNewFieldPresentationString());
+    				state2.put("move", move.getMoveNumber());
+    				state2.put("winner", "");
+    				state2.put("player", move.getPlayer().getId());
+    				state2.put("illegalMove", move.getMove().getIllegalMove());
+    				states.put(state2);
+				}
 				counter++;
 			}
 			output.put("states", states);
