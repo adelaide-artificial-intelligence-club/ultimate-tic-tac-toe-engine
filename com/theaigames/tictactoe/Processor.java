@@ -87,14 +87,14 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
-		Field oldField = mField.copy();
+		String oldFieldPresentationString = mField.toPresentationString(player.getId());
 		if (parts[0].equals("place_move")) {
 		    try {
     			int column = (int) Double.parseDouble(parts[1]);
     			int row = (int) Double.parseDouble(parts[2]);
     			
     			if (mField.addMove(column, row, player.getId())) {
-                    recordMove(player, oldField);
+                    recordMove(player, oldFieldPresentationString);
                     return true;
                 }
 		    } catch (Exception e) {
@@ -103,7 +103,7 @@ public class Processor implements GameHandler {
 		} else {
 		    createParseError(player, r);
 		}
-		recordMove(player, oldField);
+		recordMove(player, oldFieldPresentationString);
 		return false;
 	}
 	
@@ -112,13 +112,13 @@ public class Processor implements GameHandler {
         player.getBot().outputEngineWarning(String.format("Failed to parse input '%s'", input));
 	}
 	
-	private void recordMove(Player player, Field oldField) {
+	private void recordMove(Player player, String oldFieldPresentationString) {
 		Move move = new Move(player);
 		move.setMove(mField.getLastX(), mField.getLastY());
 		move.setIllegalMove(mField.getLastError());
 		mMoves.add(move);
 		
-		MoveResult moveResult = new MoveResult(player, move, oldField, mField);
+		MoveResult moveResult = new MoveResult(player, move, oldFieldPresentationString, mField);
 		moveResult.setMoveNumber(mMoveNumber);
 		mMoveResults.add(moveResult);
 	}

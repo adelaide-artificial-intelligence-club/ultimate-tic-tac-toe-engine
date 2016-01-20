@@ -4,24 +4,24 @@ import com.theaigames.tictactoe.field.Field;
 import com.theaigames.tictactoe.player.Player;
 
 public class MoveResult {
-	private Field mOldField, mNewField;
+	private String mOldFieldPresentationString, mNewFieldPresentationString;
 	private int mMoveNumber = 0;
 	private Player mPlayer;
 	private Move mMove;
 
-	public MoveResult(Player player, Move move, Field oldField, Field newField) {
+	public MoveResult(Player player, Move move, String oldFieldPresentationString, Field newField) {
 	    mPlayer = player;
 	    mMove = move;
-		mOldField = oldField;
-		mNewField = newField;
+	    mOldFieldPresentationString = oldFieldPresentationString;
+	    mNewFieldPresentationString = newField.toPresentationString(mPlayer.getId());
 	}
 	
 	public String getOldFieldPresentationString() {
-	    return mOldField.toPresentationString(mPlayer.getId());
+	    return mOldFieldPresentationString;
 	}
 	
 	public String getNewFieldPresentationString() {
-        return mNewField.toPresentationString(mPlayer.getId());
+        return mNewFieldPresentationString;
     }
 
 	public Player getPlayer() {
