@@ -13,7 +13,7 @@ public class MoveResult {
 	    mPlayer = player;
 	    mMove = move;
 	    mOldFieldPresentationString = oldFieldPresentationString;
-	    mNewFieldPresentationString = newField.toPresentationString(mPlayer.getId());
+	    mNewFieldPresentationString = newField.toPresentationString(mPlayer.getId(), false);
 	}
 	
 	public String getOldFieldPresentationString() {

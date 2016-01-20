@@ -87,7 +87,7 @@ public class Processor implements GameHandler {
 	 */
 	private Boolean parseResponse(String r, Player player) {
 		String[] parts = r.split(" ");
-		String oldFieldPresentationString = mField.toPresentationString(player.getId());
+		String oldFieldPresentationString = mField.toPresentationString(player.getId(), true);
 		if (parts[0].equals("place_move")) {
 		    try {
     			int column = (int) Double.parseDouble(parts[1]);
