@@ -29,6 +29,7 @@ public class Field {
 		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
 		
+		/*
 		mBoard[0][3] = 2;
 		mBoard[0][4] = 2;
 		mBoard[0][5] = 1;
@@ -40,6 +41,7 @@ public class Field {
 		mBoard[2][3] = 2;
 		mBoard[2][4] = 1;
 		mBoard[2][5] = 1;
+		*/
 	}
 	
 	public void clearBoard() {
@@ -126,7 +128,7 @@ public class Field {
 	 * @return : Boolean
 	 */
 	public Boolean microboardFull(int x, int y) {
-	    if (mMacroboard[x][y] != 0) { /* microboard is taken */
+	    if (mMacroboard[x][y] == 1 || mMacroboard[x][y] == 2) { /* microboard is taken */
 	    	return true;
 	    }
 		for (int my = y*3; my < y*3+3; my++) {
