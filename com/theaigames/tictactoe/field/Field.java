@@ -28,6 +28,19 @@ public class Field {
 		mMacroboard = new int[mCols / 3][mRows / 3];
 		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
+		/*
+		mBoard[0][3] = 2;
+		mBoard[0][4] = 2;
+		mBoard[0][5] = 1;
+		
+		mBoard[1][3] = 1;
+		mBoard[1][4] = 1;
+		mBoard[1][5] = 2;
+
+		mBoard[2][3] = 2;
+		mBoard[2][4] = 1;
+		mBoard[2][5] = 1;
+		*/
 	}
 	
 	public void clearBoard() {
@@ -89,10 +102,9 @@ public class Field {
 					mBoard[x][y] = move;
 					mLastX = x;
 					mLastY = y;
-					if (!microboardFull(x/3, y/3)) {
-						mAllMicroboardsActive = false;
-					}
-					updateMacroboards();
+					updateMacroboard();
+					//System.out.println( "x" + x + " y " + y);
+					//dumpBoard();
 					return true;
 				} else {
 					mLastError = "Error: chosen position is already filled";
@@ -109,20 +121,26 @@ public class Field {
 		return false;
 	}
 	
+	/**
+	 * Returns whether microboard is full OR taken
+	 * @param args : int x, int y
+	 * @return : Boolean
+	 */
 	public Boolean microboardFull(int x, int y) {
-	    for (int my = y; my < y+3; my++) {
-	        for (int mx = x; mx < x+3; mx++) {
+	    if (mMacroboard[x][y] != 0) { /* microboard is taken */
+	    	return true;
+	    }
+		for (int my = y*3; my < y*3+3; my++) {
+	        for (int mx = x*3; mx < x*3+3; mx++) {
 	        	if (mBoard[mx][my] == 0)
 	        		return false;
 	        }
 	    }
-	    return true;
+	    return true; /* microboard is full */
 	}
+	
 	public Boolean isInActiveMicroboard(int x, int y) {
-		if (mAllMicroboardsActive) {
-			return (mMacroboard[x/3][y/3] == 0);
-		}
-		return (Math.floor(x/3) == getActiveMicroboardX() && Math.floor(y/3) == getActiveMicroboardY()); 
+		return mMacroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)] == -1;
 	}
 	
 	public int getActiveMicroboardX() {
@@ -316,7 +334,7 @@ public class Field {
 	 * @return : Returns player id if there is a winner, otherwise returns 0.
 	 */
 	public int getWinner() {
-		updateMacroboards();
+		updateMacroboard();
 		return checkMacroboardWinner();
 	}
 	
@@ -325,16 +343,21 @@ public class Field {
 	 * @param args : 
 	 * @return : 
 	 */
-	public void updateMacroboards() {
+	public void updateMacroboard() {
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				int winner = getMicroboardWinner(x, y);
 				mMacroboard[x][y] = winner;
-				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
-					if (mMacroboard[x][y] == 0 && !microboardFull(x,y)) {
+			}
+		}
+		if (!microboardFull(mLastX%3, mLastY%3)) {
+			mMacroboard[mLastX%3][mLastY%3] = -1;
+			//System.out.println( mLastX%3 + " " +mLastY%3);
+		} else {
+			for (int x = 0; x < 3; x++) {
+				for (int y = 0; y < 3; y++) {
+					if (!microboardFull(x, y)) {
 						mMacroboard[x][y] = -1;
-					} else {
-						mAllMicroboardsActive = true;
 					}
 				}
 			}
