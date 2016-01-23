@@ -75,6 +75,7 @@ public class Processor implements GameHandler {
 					}
 				}
 				mMoveNumber++;
+				//mField.dumpBoard();
 			}
 		}
 	}
@@ -236,6 +237,8 @@ public class Processor implements GameHandler {
 
 	@Override
 	public boolean isGameOver() {
-		return (getWinner() != null || !mField.isMoveAvailable());
+		//System.out.println("isMoveAvailable" + mField.isMoveAvailable());
+
+		return (!mField.isMoveAvailable() || getWinner() != null);
 	}
 }
