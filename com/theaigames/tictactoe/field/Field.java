@@ -89,9 +89,7 @@ public class Field {
 					mBoard[x][y] = move;
 					mLastX = x;
 					mLastY = y;
-					if (microboardFull(x/3, y/3)) {
-						
-					} else {
+					if (!microboardFull(x/3, y/3)) {
 						mAllMicroboardsActive = false;
 					}
 					updateMacroboards();
@@ -114,7 +112,7 @@ public class Field {
 	public Boolean microboardFull(int x, int y) {
 	    for (int my = y; my < y+3; my++) {
 	        for (int mx = x; mx < x+3; mx++) {
-	        	if (mBoard[mx+x*3][my+y*3] == 0)
+	        	if (mBoard[mx][my] == 0)
 	        		return false;
 	        }
 	    }
