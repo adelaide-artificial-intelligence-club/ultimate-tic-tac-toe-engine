@@ -230,6 +230,6 @@ public class Processor implements GameHandler {
 
 	@Override
 	public boolean isGameOver() {
-		return (getWinner() != null || !mField.isMoveAvailable());	
+		return (getWinner() != null || !mField.isMoveAvailable());
 	}
 }

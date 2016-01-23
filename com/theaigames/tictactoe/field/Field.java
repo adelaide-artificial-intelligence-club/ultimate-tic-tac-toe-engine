@@ -89,7 +89,11 @@ public class Field {
 					mBoard[x][y] = move;
 					mLastX = x;
 					mLastY = y;
-					mAllMicroboardsActive = false;
+					if (microboardFull(x/3, y/3)) {
+						
+					} else {
+						mAllMicroboardsActive = false;
+					}
 					updateMacroboards();
 					return true;
 				} else {
@@ -107,6 +111,15 @@ public class Field {
 		return false;
 	}
 	
+	public Boolean microboardFull(int x, int y) {
+	    for (int my = y; my < y+3; my++) {
+	        for (int mx = x; mx < x+3; mx++) {
+	        	if (mBoard[mx+x*3][my+y*3] == 0)
+	        		return false;
+	        }
+	    }
+	    return true;
+	}
 	public Boolean isInActiveMicroboard(int x, int y) {
 		if (mAllMicroboardsActive) {
 			return (mMacroboard[x/3][y/3] == 0);
@@ -320,7 +333,7 @@ public class Field {
 				int winner = getMicroboardWinner(x, y);
 				mMacroboard[x][y] = winner;
 				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
-					if (mMacroboard[x][y] == 0) {
+					if (mMacroboard[x][y] == 0 && !microboardFull(x,y)) {
 						mMacroboard[x][y] = -1;
 					} else {
 						mAllMicroboardsActive = true;
