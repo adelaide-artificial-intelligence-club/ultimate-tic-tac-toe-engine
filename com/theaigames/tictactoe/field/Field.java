@@ -449,4 +449,26 @@ public class Field {
 	public int getNrRows() {
 		return mRows;
 	}
+	
+	/**
+	 * Checks the board for available moves, takes conquered microboard in account
+	 * @param args : 
+	 * @return : Boolean
+	 */
+	public Boolean isMoveAvailable() {
+	    for (int y = 0; y < 3; y++) {
+	        for (int x = 0; x < 3; x++) {
+	        	if (getMicroboardWinType(x,y) == 0 ) {
+	        		/* Microboard isn't taken */
+	        	    for (int my = 0; my < 3; my++) {
+	        	        for (int mx = 0; mx < 3; mx++) {
+	        	        	if (mBoard[mx+x*3][my+y*3] == 0)
+	        	        		return true;
+	        	        }
+	        	    }
+	        	}
+	        }
+	    }
+	    return false;
+	}
 }
