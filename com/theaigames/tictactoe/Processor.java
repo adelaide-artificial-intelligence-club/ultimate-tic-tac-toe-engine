@@ -75,7 +75,6 @@ public class Processor implements GameHandler {
 					}
 				}
 				mMoveNumber++;
-				//mField.dumpBoard();
 			}
 		}
 	}
@@ -152,6 +151,13 @@ public class Processor implements GameHandler {
 	public String getPlayedGame() {
 		JSONObject output = new JSONObject();
 		AbstractPlayer winner = getWinner();
+		
+		String sWinner = "";
+		if (winner == null) {
+			sWinner = "draw";
+		} else {
+			sWinner = winner.getName();
+		}
 		try {
 			JSONArray playerNames = new JSONArray();
 			for(Player player : this.mPlayers) {
@@ -165,7 +171,7 @@ public class Processor implements GameHandler {
 			.put("players", new JSONObject()
 					.put("count", this.mPlayers.size())
 					.put("names", playerNames))
-					.put("winnerplayer", winner.getName())
+					.put("winnerplayer", sWinner)
 			);
 
 			JSONArray states = new JSONArray();
