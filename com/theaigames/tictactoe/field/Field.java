@@ -28,7 +28,7 @@ public class Field {
 		mMacroboard = new int[mCols / 3][mRows / 3];
 		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
-		/*
+		
 		mBoard[0][3] = 2;
 		mBoard[0][4] = 2;
 		mBoard[0][5] = 1;
@@ -40,7 +40,6 @@ public class Field {
 		mBoard[2][3] = 2;
 		mBoard[2][4] = 1;
 		mBoard[2][5] = 1;
-		*/
 	}
 	
 	public void clearBoard() {
@@ -492,15 +491,16 @@ public class Field {
 	public Boolean isMoveAvailable() {
 	    for (int y = 0; y < 3; y++) {
 	        for (int x = 0; x < 3; x++) {
-	        	if (getMicroboardWinType(x,y) == 0 ) {
-	        		/* Microboard isn't taken */
-	        	    for (int my = 0; my < 3; my++) {
-	        	        for (int mx = 0; mx < 3; mx++) {
-	        	        	if (mBoard[mx+x*3][my+y*3] == 0)
-	        	        		return true;
-	        	        }
-	        	    }
-	        	}
+//	        	if (getMicroboardWinType(x,y) == 0 ) {
+//	        		/* Microboard isn't taken */
+//	        	    for (int my = 0; my < 3; my++) {
+//	        	        for (int mx = 0; mx < 3; mx++) {
+//	        	        	if (mBoard[mx+x*3][my+y*3] == 0)
+//	        	        		return true;
+//	        	        }
+//	        	    }
+//	        	}
+	        	if (!this.microboardFull(x, y)) return true;
 	        }
 	    }
 	    return false;
