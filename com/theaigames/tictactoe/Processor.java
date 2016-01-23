@@ -154,7 +154,7 @@ public class Processor implements GameHandler {
 		
 		String sWinner = "";
 		if (winner == null) {
-			sWinner = "draw";
+			sWinner = "none";
 		} else {
 			sWinner = winner.getName();
 		}
