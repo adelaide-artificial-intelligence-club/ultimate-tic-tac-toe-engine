@@ -109,15 +109,12 @@ public class Field {
 					return true;
 				} else {
 					mLastError = "Error: chosen position is already filled";
-					//System.out.println(mLastError);
 				}
 			} else {
 				mLastError = "Error: move not in active macroboard";
-				//System.out.println(mLastError);
 			}
 		} else {
 			mLastError = "Error: move out of bounds";
-			//System.out.println(mLastError);
 		}
 		return false;
 	}

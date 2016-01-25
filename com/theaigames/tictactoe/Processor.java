@@ -45,21 +45,14 @@ public class Processor implements GameHandler {
 		mField = field;
 		mMoves = new ArrayList<Move>();
 		mMoveResults = new ArrayList<MoveResult>();
-//		addFirstRound();
 	}
-	
-//	public void addFirstRound() {
-//		Move move = new Move(mPlayers.get(1));
-//		MoveResult moveResult = new MoveResult(mPlayers.get(1), mField, mPlayers.get(1).getId());
-//		mMoves.add(move);
-//		mMoveResults.add(moveResult);
-//	}
 
 	@Override
 	public void playRound(int roundNumber) {
+	    System.out.println(String.format("playing round %d", roundNumber));
 	    mRoundNumber = roundNumber;
 		for (Player player : mPlayers) {
-			if (getWinner() == null) {
+			if (!isGameOver()) {
 				player.sendUpdate("round", roundNumber);
 				player.sendUpdate("move", mMoveNumber);
 				player.sendUpdate("field", mField.toString());
@@ -68,14 +61,10 @@ public class Processor implements GameHandler {
 				if (!parseResponse(response, player)) {
 					response = player.requestMove("move");
 					if (!parseResponse(response, player)) {
-						response = player.requestMove("move");
-						if (!parseResponse(response, player)) { /* Too many errors, other player wins */
-							mGameOverByPlayerErrorPlayerId = player.getId();
-						}
+					    mGameOverByPlayerErrorPlayerId = player.getId(); /* Too many errors, other player wins */
 					}
 				}
 				mMoveNumber++;
-				//mField.dumpBoard();
 			}
 		}
 	}
@@ -96,6 +85,8 @@ public class Processor implements GameHandler {
     			if (mField.addMove(column, row, player.getId())) {
                     recordMove(player, oldFieldPresentationString);
                     return true;
+                } else {
+                    player.getBot().outputEngineWarning(mField.getLastError());
                 }
 		    } catch (Exception e) {
 		        createParseError(player, r);
@@ -199,7 +190,7 @@ public class Processor implements GameHandler {
 				if (counter == mMoveResults.size()-1) { // final overlay state with winner
 				    String winnerstring = "";
                     if (winner == null) {
-                        winnerstring = "draw";
+                        winnerstring = "none";
                     } else {
                         winnerstring = winner.getName();
                     }
@@ -237,8 +228,6 @@ public class Processor implements GameHandler {
 
 	@Override
 	public boolean isGameOver() {
-		//System.out.println("isMoveAvailable" + mField.isMoveAvailable());
-
 		return (!mField.isMoveAvailable() || getWinner() != null);
 	}
 }

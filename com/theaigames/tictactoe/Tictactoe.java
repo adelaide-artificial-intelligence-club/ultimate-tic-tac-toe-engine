@@ -50,12 +50,18 @@ public class Tictactoe extends AbstractGame {
 
 	@Override
 	protected void runEngine() throws Exception {
+	    System.out.println("starting...");
+	    
 		super.engine.setLogic(this);
 		super.engine.start();
 	}
 	
 	public static void main(String args[]) throws Exception {
 		Tictactoe game = new Tictactoe();
+		
+		game.DEV_MODE = true;
+		game.TEST_BOT = "java -cp /home/jim/workspace/tictactoe-starterbot/bin/ bot.BotStarter";
+		game.NUM_TEST_BOTS = 2;
 		
 		game.setupEngine(args);
 		game.runEngine();
