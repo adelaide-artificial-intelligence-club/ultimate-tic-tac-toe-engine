@@ -59,7 +59,7 @@ public class Tictactoe extends AbstractGame {
 	public static void main(String args[]) throws Exception {
 		Tictactoe game = new Tictactoe();
 		
-		game.DEV_MODE = true;
+		game.DEV_MODE = false;
 		game.TEST_BOT = "java -cp /home/jim/workspace/tictactoe-starterbot/bin/ bot.BotStarter";
 		game.NUM_TEST_BOTS = 2;
 		
