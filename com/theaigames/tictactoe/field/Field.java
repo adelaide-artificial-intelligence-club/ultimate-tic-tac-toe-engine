@@ -18,7 +18,7 @@ public class Field {
 
 	private int mCols = 0, mRows = 0;
 	private String mLastError = "";
-	private int mLastX = 0, mLastY = 0;
+	private int mLastX = -1, mLastY = -1;
 	private Boolean mAllMicroboardsActive = true;
 	
 	public Field() {
@@ -28,20 +28,6 @@ public class Field {
 		mMacroboard = new int[mCols / 3][mRows / 3];
 		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
-		
-		/*
-		mBoard[0][3] = 2;
-		mBoard[0][4] = 2;
-		mBoard[0][5] = 1;
-		
-		mBoard[1][3] = 1;
-		mBoard[1][4] = 1;
-		mBoard[1][5] = 2;
-
-		mBoard[2][3] = 2;
-		mBoard[2][4] = 1;
-		mBoard[2][5] = 1;
-		*/
 	}
 	
 	public void clearBoard() {
@@ -104,8 +90,6 @@ public class Field {
 					mLastX = x;
 					mLastY = y;
 					updateMacroboard();
-					//System.out.println( "x" + x + " y " + y);
-					//dumpBoard();
 					return true;
 				} else {
 					mLastError = "Error: chosen position is already filled";
@@ -125,6 +109,8 @@ public class Field {
 	 * @return : Boolean
 	 */
 	public Boolean microboardFull(int x, int y) {
+	    if (x < 0 || y < 0) return true; /* empty board */
+	    
 	    if (mMacroboard[x][y] == 1 || mMacroboard[x][y] == 2) { /* microboard is taken */
 	    	return true;
 	    }
@@ -350,7 +336,6 @@ public class Field {
 		}
 		if (!microboardFull(mLastX%3, mLastY%3)) {
 			mMacroboard[mLastX%3][mLastY%3] = -1;
-			//System.out.println( mLastX%3 + " " +mLastY%3);
 		} else {
 			for (int x = 0; x < 3; x++) {
 				for (int y = 0; y < 3; y++) {
@@ -490,15 +475,6 @@ public class Field {
 	public Boolean isMoveAvailable() {
 	    for (int y = 0; y < 3; y++) {
 	        for (int x = 0; x < 3; x++) {
-//	        	if (getMicroboardWinType(x,y) == 0 ) {
-//	        		/* Microboard isn't taken */
-//	        	    for (int my = 0; my < 3; my++) {
-//	        	        for (int mx = 0; mx < 3; mx++) {
-//	        	        	if (mBoard[mx+x*3][my+y*3] == 0)
-//	        	        		return true;
-//	        	        }
-//	        	    }
-//	        	}
 	        	if (!this.microboardFull(x, y)) return true;
 	        }
 	    }
