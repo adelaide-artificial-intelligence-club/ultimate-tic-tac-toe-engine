@@ -1,8 +1,5 @@
 package com.theaigames.tictactoe.field;
 
-import com.theaigames.game.moves.AbstractMove;
-import com.theaigames.game.player.AbstractPlayer;
-
 public class Disc {
 
 	private int mColumn = 0, mRow = 0;

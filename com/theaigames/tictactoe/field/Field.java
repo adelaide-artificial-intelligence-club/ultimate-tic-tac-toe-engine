@@ -1,20 +1,10 @@
 package com.theaigames.tictactoe.field;
 
+import com.theaigames.util.Util;
+
 public class Field {
-	/* For visuals only */
-	private final int WINTYPE_NONE = 0;
-	private final int WINTYPE_HORIZONTAL1 = 1;
-	private final int WINTYPE_HORIZONTAL2 = 2;
-	private final int WINTYPE_HORIZONTAL3 = 3;
-	private final int WINTYPE_VERTICAL1 = 4;
-	private final int WINTYPE_VERTICAL2 = 5;
-	private final int WINTYPE_VERTICAL3 = 6;
-	private final int WINTYPE_DIAGONAL = 7;
-	private final int WINTYPE_ANTIDIAGONAL = 8;
-	
 	private int[][] mBoard;
 	private int[][] mMacroboard;
-	private int[][] mMacroboardWinTypes;
 
 	private int mCols = 0, mRows = 0;
 	private String mLastError = "";
@@ -26,7 +16,6 @@ public class Field {
 		mRows = 9;
 		mBoard = new int[mCols][mRows];
 		mMacroboard = new int[mCols / 3][mRows / 3];
-		mMacroboardWinTypes = new int[mCols / 3][mRows / 3];
 		clearBoard();
 	}
 	
@@ -38,6 +27,11 @@ public class Field {
 		}
 	}
 	
+	/**
+	 * Dumps the board to stdout
+	 * @param args : 
+	 * @return : 
+	 */
 	public void dumpBoard() {
 		System.out.print("\n\n");
 		for (int y = 0; y < mRows; y++) {
@@ -66,16 +60,12 @@ public class Field {
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
 
-				System.out.print(padRight(mMacroboard[x][y] + "",3));
+				System.out.print(Util.padRight(mMacroboard[x][y] + "",3));
 			}
 			System.out.print("\n");
 		}
 	}
-	
-	public static String padRight(String s, int n) {
-	     return String.format("%1$-" + n + "s", s);  
-	}
-	
+
 	/**
 	 * Adds a move to the board
 	 * @param args : int x, int y, int move
@@ -109,29 +99,44 @@ public class Field {
 	 * @return : Boolean
 	 */
 	public Boolean microboardFull(int x, int y) {
-	    if (x < 0 || y < 0) return true; /* empty board */
-	    
-	    if (mMacroboard[x][y] == 1 || mMacroboard[x][y] == 2) { /* microboard is taken */
-	    	return true;
-	    }
+		if (x < 0 || y < 0) return true; /* empty board */
+		
+		if (mMacroboard[x][y] == 1 || mMacroboard[x][y] == 2) { /* microboard is taken */
+			return true;
+		}
 		for (int my = y*3; my < y*3+3; my++) {
-	        for (int mx = x*3; mx < x*3+3; mx++) {
-	        	if (mBoard[mx][my] == 0)
-	        		return false;
-	        }
-	    }
-	    return true; /* microboard is full */
+			for (int mx = x*3; mx < x*3+3; mx++) {
+				if (mBoard[mx][my] == 0)
+					return false;
+			}
+		}
+		return true; /* microboard is full */
 	}
 	
+	/**
+	 * Returns whether field is in active microboard
+	 * @param args : int x, int y
+	 * @return : Boolean
+	 */
 	public Boolean isInActiveMicroboard(int x, int y) {
 		return mMacroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)] == -1;
 	}
 	
+	/**
+	 * Returns active microboard column
+	 * @param args : 
+	 * @return : active microboard column, or -1 if multiple microboards are active
+	 */
 	public int getActiveMicroboardX() {
 		if (mAllMicroboardsActive) return -1;
 		return mLastX%3;
 	}
 	
+	/**
+	 * Returns active microboard row
+	 * @param args : 
+	 * @return : active microboard row, or -1 if multiple microboards are active
+	 */
 	public int getActiveMicroboardY() {
 		if (mAllMicroboardsActive) return -1;
 		return mLastY%3;
@@ -261,53 +266,15 @@ public class Field {
 	}
 	
 	/**
-	 * Creates comma separated String with win types for all cells (visualisation purposes only)
-	 * @param args : 
-	 * @return : String with win types for every cell
-	 */
-	public String macroboardWinTypesToString() {
-		updateMacroboardWinTypes();
-		String r = "";
-		int counter = 0;
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				if (counter > 0) {
-					r += ",";
-				}
-				r += mMacroboardWinTypes[x][y];
-				counter++;
-			}
-		}
-		return r;
-	}
-	
-//	/**
-//	 * Returns the number of fields a player has in the macroboard
-//	 * @param args int player id: 
-//	 * @return : Int with the number of fields a player has in the macroboard
-//	 */
-//	public int getPlayerFields(int playerid) {
-//		int counter = 0;
-//		for (int y = 0; y < 3; y++) {
-//			for (int x = 0; x < 3; x++) {
-//				if (mMacroboard[x][y] == playerid) {
-//					counter++;
-//				}
-//			}
-//		}
-//		return counter;
-//	}
-	
-	/**
 	 * Checks whether the field is full
 	 * @param args : 
 	 * @return : Returns true when field is full, otherwise returns false.
 	 */
-	public boolean isFull() {
+	public boolean boardIsFull() {
 		for (int x = 0; x < mCols; x++)
-		  for (int y = 0; y < mRows; y++)
-		    if (mBoard[x][y] == 0)
-		      return false; // At least one cell is not filled
+			for (int y = 0; y < mRows; y++)
+				if (mBoard[x][y] == 0)
+					return false; // At least one cell is not filled
 		// All cells are filled
 		return true;
 	}
@@ -348,25 +315,6 @@ public class Field {
 	}	
 	
 	/**
-	 * Update internal representation of wintypes per cell.
-	 * @param args : 
-	 * @return : 
-	 */
-	public void updateMacroboardWinTypes() {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				int wintype = getMicroboardWinType(x, y);
-				mMacroboardWinTypes[x][y] = wintype;
-				if (x == getActiveMicroboardX() && y == getActiveMicroboardY()) {
-					if (mMacroboardWinTypes[x][y] == 0) {
-						mMacroboardWinTypes[x][y] = -1;
-					}
-				}
-			}
-		}
-	}
-	
-	/**
 	 * Checks the microboard for a winner
 	 * @param args : int x (0-2), int y (0-2)
 	 * @return : player id of winner or 0
@@ -377,83 +325,48 @@ public class Field {
 		/* Check horizontal wins */
 		for (int y = startY; y < startY+3; y++) {
 			if (mBoard[startX+0][y] == mBoard[startX+1][y] && mBoard[startX+1][y] == mBoard[startX+2][y] && mBoard[startX+0][y] > 0) {
-				//System.out.println("FOUND A HORIZONTAL WIN AT " + y);
 				return mBoard[startX+0][y];
 			}
 		}
 		/* Check vertical wins */
 		for (int x = startX; x < startX+3; x++) {
 			if (mBoard[x][startY+0] == mBoard[x][startY+1] && mBoard[x][startY+1] == mBoard[x][startY+2] && mBoard[x][startY+0] > 0) {
-				//System.out.println("FOUND A VERTICAL WIN AT " + x);
 				return mBoard[x][startY+0];
 			}
 		}
 		/* Check diagonal wins */
 		if (mBoard[startX][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX+2][startY+2] && mBoard[startX+0][startY+0] > 0) {
-			//System.out.println("FOUND A DIAGONAL WIN AT " + startX);
 			return mBoard[startX][startY];
 		}
 		if (mBoard[startX+2][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX][startY+2] && mBoard[startX+2][startY+0] > 0) {
-			//System.out.println("FOUND A ANTIDIAGONAL WIN AT " + startX);
 			return mBoard[startX+2][startY];
 		}
 		return 0;
 	}
 	
 	/**
-	 * Checks the microboard for a winner
-	 * @param args : int x (0-2), int y (0-2)
+	 * Checks the macroboard for a winner
+	 * @param args :
 	 * @return : player id of winner or 0
 	 */
-	public int getMicroboardWinType(int macroX, int macroY) {
-		int startX = macroX*3;
-		int startY = macroY*3;
-		/* Check horizontal wins */
-		for (int y = startY; y < startY+3; y++) {
-			if (mBoard[startX+0][y] == mBoard[startX+1][y] && mBoard[startX+1][y] == mBoard[startX+2][y] && mBoard[startX+0][y] > 0) {
-				int tWin = y-macroY*3;
-				return WINTYPE_HORIZONTAL1 + tWin;
-			}
-		}
-		/* Check vertical wins */
-		for (int x = startX; x < startX+3; x++) {
-			if (mBoard[x][startY+0] == mBoard[x][startY+1] && mBoard[x][startY+1] == mBoard[x][startY+2] && mBoard[x][startY+0] > 0) {
-				int tWin = x-macroX*3;
-				return WINTYPE_VERTICAL1 + tWin;
-			}
-		}
-		/* Check diagonal wins */
-		if (mBoard[startX][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX+2][startY+2] && mBoard[startX+0][startY+0] > 0) {
-			return WINTYPE_DIAGONAL;
-		}
-		if (mBoard[startX+2][startY] == mBoard[startX+1][startY+1] && mBoard[startX+1][startY+1] == mBoard[startX][startY+2] && mBoard[startX+2][startY+0] > 0) {
-			return WINTYPE_ANTIDIAGONAL;
-		}
-		return 0;
-	}
-	
 	public int checkMacroboardWinner() {
 		/* Check horizontal wins */
 		for (int y = 0; y < 3; y++) {
 			if (mMacroboard[0][y] == mMacroboard[1][y] && mMacroboard[1][y] == mMacroboard[2][y] && mMacroboard[0][y] > 0) {
-				//System.out.println("FOUND A HORIZONTAL MACROWIN AT " + y);
 				return mMacroboard[0][y];
 			}
 		}
 		/* Check vertical wins */
 		for (int x = 0; x < 3; x++) {
 			if (mMacroboard[x][0] == mMacroboard[x][1] && mMacroboard[x][1] == mMacroboard[x][2] && mMacroboard[x][0] > 0) {
-				//System.out.println("FOUND A VERTICAL MACROWIN AT " + x);
 				return mMacroboard[x][0];
 			}
 		}
 		/* Check diagonal wins */
 		if (mMacroboard[0][0] == mMacroboard[1][1] && mMacroboard[1][1] == mMacroboard[2][2] && mMacroboard[0][0] > 0) {
-			//System.out.println("FOUND A DIAGONAL MACROWIN");
 			return mMacroboard[0][0];
 		}
 		if (mMacroboard[2][0] == mMacroboard[1][1] && mMacroboard[1][1] == mMacroboard[0][2] && mMacroboard[2][0] > 0) {
-			//System.out.println("FOUND A ANTIDIAGONAL MACROWIN");
 			return mMacroboard[2][0];
 		}
 		return 0;
