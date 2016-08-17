@@ -17,13 +17,13 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game;
+package io.riddles.tictactoe.game;
 
 import io.riddles.javainterface.game.player.AbstractPlayer;
-import io.riddles.tictactoenew.game.player.TicTacToePlayer;
-import io.riddles.tictactoenew.game.processor.TicTacToeProcessor;
-import io.riddles.tictactoenew.game.state.TicTacToeState;
-import io.riddles.tictactoenew.game.state.TicTacToeStateSerializer;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
+import io.riddles.tictactoe.game.state.TicTacToeState;
+import io.riddles.tictactoe.game.state.TicTacToeStateSerializer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

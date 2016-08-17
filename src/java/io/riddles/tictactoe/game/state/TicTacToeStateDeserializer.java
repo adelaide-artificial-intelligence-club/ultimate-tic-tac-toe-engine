@@ -17,9 +17,9 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.state;
+package io.riddles.tictactoe.game.state;
 
-import io.riddles.tictactoenew.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

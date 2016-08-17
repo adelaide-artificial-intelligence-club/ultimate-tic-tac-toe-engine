@@ -17,11 +17,11 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.state;
+package io.riddles.tictactoe.game.state;
 
 import io.riddles.javainterface.game.state.AbstractState;
-import io.riddles.tictactoenew.game.data.TicTacToeBoard;
-import io.riddles.tictactoenew.game.move.TicTacToeMove;
+import io.riddles.tictactoe.game.data.TicTacToeBoard;
+import io.riddles.tictactoe.game.move.TicTacToeMove;
 
 import java.util.ArrayList;
 

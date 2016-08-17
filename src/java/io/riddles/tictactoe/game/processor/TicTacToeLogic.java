@@ -1,14 +1,13 @@
-package io.riddles.tictactoenew.game.processor;
+package io.riddles.tictactoe.game.processor;
 
 import io.riddles.javainterface.exception.InvalidInputException;
-import io.riddles.tictactoenew.game.data.Coordinate;
-import io.riddles.tictactoenew.game.data.TicTacToeBoard;
-import io.riddles.tictactoenew.game.move.TicTacToeMove;
-import io.riddles.tictactoenew.game.player.TicTacToePlayer;
-import io.riddles.tictactoenew.game.state.TicTacToeState;
+import io.riddles.tictactoe.game.data.Coordinate;
+import io.riddles.tictactoe.game.data.TicTacToeBoard;
+import io.riddles.tictactoe.game.move.TicTacToeMove;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.state.TicTacToeState;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by joost on 3-7-16.

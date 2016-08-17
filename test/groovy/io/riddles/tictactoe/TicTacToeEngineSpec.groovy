@@ -17,11 +17,11 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew
+package io.riddles.tictactoe
 
-import io.riddles.tictactoenew.engine.TicTacToeEngine
+import io.riddles.tictactoe.engine.TicTacToeEngine
 import io.riddles.javainterface.io.IOHandler
-import io.riddles.tictactoenew.game.state.TicTacToeState
+import io.riddles.tictactoe.game.state.TicTacToeState
 import spock.lang.Specification
 
 /**

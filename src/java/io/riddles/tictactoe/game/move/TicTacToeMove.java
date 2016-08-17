@@ -17,9 +17,13 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.player;
+package io.riddles.tictactoe.game.move;
 
-import io.riddles.javainterface.game.player.AbstractPlayer;
+import io.riddles.tictactoe.game.data.Coordinate;
+import io.riddles.tictactoe.game.data.MoveType;
+import io.riddles.javainterface.exception.InvalidInputException;
+import io.riddles.javainterface.game.move.AbstractMove;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
 
 /**
  * ${PACKAGE_NAME}
@@ -33,19 +37,27 @@ import io.riddles.javainterface.game.player.AbstractPlayer;
  */
 
 
-public class TicTacToePlayer extends AbstractPlayer {
+public class TicTacToeMove extends AbstractMove<TicTacToePlayer> {
 
+    private MoveType type;
+    private Coordinate coordinate;
 
-    private String email;
-    public TicTacToePlayer(int id) {
-        super(id);
+    public TicTacToeMove(TicTacToePlayer player, Coordinate c) {
+        super(player);
+        coordinate = c;
+
     }
 
-    public String toString() {
-        return "TicTacToePlayer " + this.getId();
+    public TicTacToeMove(TicTacToePlayer player, InvalidInputException exception) {
+        super(player, exception);
     }
 
-    public void setEmail(String e) { this.email = e; }
-    public String getEmail() { return this.email; }
+    public MoveType getMoveType() {
+        return this.type;
+    }
+
+    public Coordinate getCoordinate() { return this.coordinate; }
+
+
 
 }
