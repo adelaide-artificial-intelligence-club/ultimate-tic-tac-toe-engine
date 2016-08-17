@@ -1,10 +1,10 @@
-package io.riddles.tictactoenew.engine;
+package io.riddles.tictactoe.engine;
 
-import io.riddles.tictactoenew.game.TicTacToeSerializer;
-import io.riddles.tictactoenew.game.data.TicTacToeBoard;
-import io.riddles.tictactoenew.game.player.TicTacToePlayer;
-import io.riddles.tictactoenew.game.processor.TicTacToeProcessor;
-import io.riddles.tictactoenew.game.state.TicTacToeState;
+import io.riddles.tictactoe.game.TicTacToeSerializer;
+import io.riddles.tictactoe.game.data.TicTacToeBoard;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
+import io.riddles.tictactoe.game.state.TicTacToeState;
 import io.riddles.javainterface.engine.AbstractEngine;
 
 /**

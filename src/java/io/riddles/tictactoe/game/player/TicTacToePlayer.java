@@ -17,7 +17,9 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.move;
+package io.riddles.tictactoe.game.player;
+
+import io.riddles.javainterface.game.player.AbstractPlayer;
 
 /**
  * ${PACKAGE_NAME}
@@ -30,11 +32,20 @@ package io.riddles.tictactoenew.game.move;
  * @author Niko
  */
 
-public enum ActionType {
-    MOVE;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
+public class TicTacToePlayer extends AbstractPlayer {
+
+
+    private String email;
+    public TicTacToePlayer(int id) {
+        super(id);
     }
+
+    public String toString() {
+        return "TicTacToePlayer " + this.getId();
+    }
+
+    public void setEmail(String e) { this.email = e; }
+    public String getEmail() { return this.email; }
+
 }

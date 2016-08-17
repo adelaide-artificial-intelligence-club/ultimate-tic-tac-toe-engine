@@ -1,4 +1,4 @@
-package io.riddles.tictactoenew.game.data;
+package io.riddles.tictactoe.game.data;
 
 /**
  * ${PACKAGE_NAME}

@@ -17,10 +17,10 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.move;
+package io.riddles.tictactoe.game.move;
 
-import io.riddles.tictactoenew.game.data.Coordinate;
-import io.riddles.tictactoenew.game.data.MoveType;
+import io.riddles.tictactoe.game.data.Coordinate;
+import io.riddles.tictactoe.game.data.MoveType;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.serialize.Deserializer;
 
@@ -37,9 +37,9 @@ import io.riddles.javainterface.serialize.Deserializer;
 
 public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
 
-    private io.riddles.tictactoenew.game.player.TicTacToePlayer player;
+    private io.riddles.tictactoe.game.player.TicTacToePlayer player;
 
-    public TicTacToeMoveDeserializer(io.riddles.tictactoenew.game.player.TicTacToePlayer player) {
+    public TicTacToeMoveDeserializer(io.riddles.tictactoe.game.player.TicTacToePlayer player) {
         this.player = player;
     }
 

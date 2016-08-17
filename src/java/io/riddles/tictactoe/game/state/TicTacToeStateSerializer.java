@@ -17,9 +17,9 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.state;
+package io.riddles.tictactoe.game.state;
 
-import io.riddles.tictactoenew.game.move.TicTacToeMove;
+import io.riddles.tictactoe.game.move.TicTacToeMove;
 import org.json.JSONObject;
 import io.riddles.javainterface.game.state.AbstractStateSerializer;
 

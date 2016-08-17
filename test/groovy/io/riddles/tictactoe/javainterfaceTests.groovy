@@ -1,4 +1,4 @@
-package io.riddles.tictactoenew
+package io.riddles.tictactoe
 
 import spock.lang.Specification
 

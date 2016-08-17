@@ -17,14 +17,14 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoenew.game.processor;
+package io.riddles.tictactoe.game.processor;
 
 import java.util.ArrayList;
 
 import io.riddles.javainterface.game.processor.AbstractProcessor;
-import io.riddles.tictactoenew.game.move.*;
-import io.riddles.tictactoenew.game.player.TicTacToePlayer;
-import io.riddles.tictactoenew.game.state.TicTacToeState;
+import io.riddles.tictactoe.game.move.*;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.state.TicTacToeState;
 
 /**
  * This file is a part of TicTacToe
