@@ -14,7 +14,7 @@ accessible:
 Execute the following commands:
 
 ```
-git clone git@bitbucket.org:riddlesio/tic-tac-toe-game-new-engine.git tictactoe
+git clone git@github.com:riddlesio/ultimate-tic-tac-toe-engine.git
 cd tictactoe
 rm -Rf .git
 ```
