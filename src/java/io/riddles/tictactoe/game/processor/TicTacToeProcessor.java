@@ -41,6 +41,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
     private int roundNumber;
     private boolean gameOver;
     private TicTacToePlayer winner;
+    private TicTacToeLogic logic;
 
 
     /* Constructor */
@@ -56,68 +57,62 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
 
     }
 
-    /* playRound is called every cycle of SimpleGameLoop. It should:
-    *   - Take a State
-    *   - Ask players for response
-    *   - Parse response into a move
-    *   - Handle move logic
-    *   - Create a new State and return it.
-    *   returns: TicTacToeState
-    * */
+    /**
+     * Play one round of the game. It takes a TicTacToeState,
+     * asks all living players for a response and delivers a new TicTacToeState.
+     *
+     * Return
+     * the TicTacToeState that will be the state for the next round.
+     * @param roundNumber The current round number
+     * @param ConnectfourState The current state
+     * @return The TicTacToeState that will be the start of the next round
+     */
     @Override
     public TicTacToeState playRound(int roundNumber, TicTacToeState state) {
+        LOGGER.info(String.format("Playing round %d", roundNumber));
         this.roundNumber = roundNumber;
-
-        ArrayList<TicTacToeMove> moves = new ArrayList();
-
-        int moveNumber = (roundNumber-1)*this.players.size()+1;
 
         TicTacToeState nextState = state;
 
+        int playerCounter = 0;
         for (TicTacToePlayer player : this.players) {
             if (!hasGameEnded(nextState)) {
-                nextState = new TicTacToeState(nextState, moves, roundNumber);
+                nextState = new TicTacToeState(nextState, new ArrayList<>(), roundNumber);
+                nextState.setMoveNumber(roundNumber*2 + playerCounter - 1);
+                Board nextBoard = nextState.getBoard();
 
-                LOGGER.info(String.format("Playing round %d, move %d", roundNumber, moveNumber));
-
+                player.sendUpdate("field", player, nextBoard.toString());
                 String response = player.requestMove(ActionType.MOVE.toString());
 
                 // parse the response
                 TicTacToeMoveDeserializer deserializer = new TicTacToeMoveDeserializer(player);
                 TicTacToeMove move = deserializer.traverse(response);
 
-                TicTacToeLogic l = new TicTacToeLogic();
-
                 try {
-                    nextState = l.transformBoard(nextState, move, this.players);
+                    logic.transform(nextState, move);
                 } catch (Exception e) {
-                    LOGGER.info(e.toString());
+                    LOGGER.info(String.format("Unknown response: %s", response));
                 }
 
-                //if (move.getException() != null) System.out.println(move.getException());
-
-                // create the next state
-                moves.add(move);
+                // add the next move
+                nextState.getMoves().add(move);
 
                 // stop game if bot returns nothing
                 if (response == null) {
                     this.gameOver = true;
                 }
 
-                nextState.setMoveNumber(moveNumber);
                 int nextPlayer = getNextPlayerId(player);
                 nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(nextPlayer, false));
                 nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
 
-                //nextState.getBoard().dump();
-                //nextState.getBoard().dumpMacroboard();
+                nextState.getBoard().dump();
+                nextState.getBoard().dumpMacroboard();
                 checkWinner(nextState);
-                moveNumber++;
+                playerCounter++;
             }
 
         }
-
-
         return nextState;
     }
 

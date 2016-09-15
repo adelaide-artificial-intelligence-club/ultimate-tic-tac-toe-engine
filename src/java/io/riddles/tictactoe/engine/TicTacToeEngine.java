@@ -71,29 +71,4 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         s.setBoard(new TicTacToeBoard(9,9));
         return s;
     }
-
-
-    /* parseSetupInput parses setup input received from the server.
-     * returns:
-     */
-    @Override
-    protected void parseSetupInput(String input) {
-        String[] split = input.split(" ");
-        String command = split[0];
-        if (command.equals("bot_ids")) {
-            String[] ids = split[1].split(",");
-            for (int i = 0; i < ids.length; i++) {
-                TicTacToePlayer player = createPlayer(Integer.parseInt(ids[i]));
-
-                if (this.botInputFiles != null)
-                    player.setInputFile(this.botInputFiles[i]);
-                this.players.add(player);
-            }
-        } else if (command.equals("bot_emails")) {
-            String[] emails = split[1].split(",");
-            for (int i = 0; i < emails.length; i++) {
-                this.players.get(i).setEmail(emails[i]);
-            }
-        }
-    }
 }

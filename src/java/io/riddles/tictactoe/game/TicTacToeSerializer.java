@@ -113,7 +113,6 @@ public class TicTacToeSerializer extends
             JSONObject p = new JSONObject();
 
             p.put("name", player.getName());
-            p.put("emailHash", player.getEmail());
             playerData.put(p);
         }
 

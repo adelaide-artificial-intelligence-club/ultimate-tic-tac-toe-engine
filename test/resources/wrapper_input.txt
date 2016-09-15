@@ -1,7 +1,6 @@
 initialize
 max_rounds 20
 bot_ids 1,2
-bot_emails pietje@puk.nl,handige@harry.nl
 start
 details
 game
