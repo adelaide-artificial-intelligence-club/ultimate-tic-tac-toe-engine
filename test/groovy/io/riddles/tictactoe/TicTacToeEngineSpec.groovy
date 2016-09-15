@@ -22,7 +22,7 @@ package io.riddles.tictactoe
 import io.riddles.tictactoe.engine.TicTacToeEngine
 import io.riddles.javainterface.io.IOHandler
 import io.riddles.tictactoe.game.state.TicTacToeState
-import org.junit.Ignore
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -65,7 +65,7 @@ class TicTacToeEngineSpec extends Specification {
         }
     }
 
-    @Ignore
+    //@Ignore
     def "test if TicTacToeEngine is created"() {
 
         setup:
@@ -82,15 +82,48 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-
+    //@Ignore
     def "test illegal moves"() {
 
         setup:
         String[] botInputs = new String[2]
 
         def wrapperInput = "./test/resources/wrapper_input.txt"
-        botInputs[0] = "./test/resources/bot1_input_illegal.txt"
+        botInputs[0] = "./test/resources/bot_input_illegal.txt"
         botInputs[1] = "./test/resources/bot2_input.txt"
+
+        def engine = new TestEngine(wrapperInput, botInputs)
+        engine.run()
+
+        expect:
+        engine.finalState instanceof TicTacToeState;
+    }
+
+    //@Ignore
+    def "test out of bounds"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./test/resources/wrapper_input.txt"
+        botInputs[0] = "./test/resources/bot_input_outofbounds.txt"
+        botInputs[1] = "./test/resources/bot2_input.txt"
+
+        def engine = new TestEngine(wrapperInput, botInputs)
+        engine.run()
+
+        expect:
+        engine.finalState instanceof TicTacToeState;
+    }
+
+    def "test garbage input"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./test/resources/wrapper_input.txt"
+        botInputs[0] = "./test/resources/bot_input_garbage.txt"
+        botInputs[1] = "./test/resources/bot_input_garbage.txt"
 
         def engine = new TestEngine(wrapperInput, botInputs)
         engine.run()

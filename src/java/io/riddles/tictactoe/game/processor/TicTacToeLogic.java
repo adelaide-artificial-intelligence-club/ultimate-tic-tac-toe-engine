@@ -18,16 +18,32 @@ public class TicTacToeLogic {
     public TicTacToeLogic() {
     }
 
-    public TicTacToeState transformBoard(TicTacToeState state, TicTacToeMove move, ArrayList<TicTacToePlayer> players) throws InvalidInputException {
-
+    /**
+     * Takes a TicTacToeState and transforms it with a TicTacToeMove.
+     *
+     * Return
+     * Returns nothing, but transforms the given TicTacToeState.
+     * @param TicTacToeState The initial state
+     * @param TicTacToeMove The move of the player
+     * @return
+     */
+    public void transform(TicTacToeState state, TicTacToeMove move) throws InvalidInputException {
         if (move.getException() == null) {
-            transformMoveLocation(state, move, players);
+            transformMove(state, move);
         } else {
         }
-        return state;
     }
 
-    private void transformMoveLocation(TicTacToeState state, TicTacToeMove move, ArrayList<TicTacToePlayer> players) {
+    /**
+     * Takes a TicTacToeState and applies the move.
+     *
+     * Return
+     * Returns nothing, but transforms the given TicTacToeState.
+     * @param TicTacToeState The initial state
+     * @param TicTacToeMove The move of the player
+     * @return
+     */
+    private void transformMove(TicTacToeState state, TicTacToeMove move) {
         TicTacToePlayer p = move.getPlayer();
         TicTacToeBoard board = state.getBoard();
 

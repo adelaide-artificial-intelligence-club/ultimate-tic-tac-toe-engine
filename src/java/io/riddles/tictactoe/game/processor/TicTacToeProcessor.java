@@ -25,6 +25,7 @@ import io.riddles.javainterface.game.processor.AbstractProcessor;
 import io.riddles.tictactoe.game.move.*;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
 import io.riddles.tictactoe.game.state.TicTacToeState;
+import io.riddles.tictactoe.game.data.TicTacToeBoard;
 
 /**
  * This file is a part of TicTacToe
@@ -48,6 +49,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
     public TicTacToeProcessor(ArrayList<TicTacToePlayer> players) {
         super(players);
         this.gameOver = false;
+        this.logic = new TicTacToeLogic();
     }
 
     /* preGamePhase may be used to set up the Processor before starting the game loop.
@@ -79,7 +81,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
             if (!hasGameEnded(nextState)) {
                 nextState = new TicTacToeState(nextState, new ArrayList<>(), roundNumber);
                 nextState.setMoveNumber(roundNumber*2 + playerCounter - 1);
-                Board nextBoard = nextState.getBoard();
+                TicTacToeBoard nextBoard = nextState.getBoard();
 
                 player.sendUpdate("field", player, nextBoard.toString());
                 String response = player.requestMove(ActionType.MOVE.toString());
