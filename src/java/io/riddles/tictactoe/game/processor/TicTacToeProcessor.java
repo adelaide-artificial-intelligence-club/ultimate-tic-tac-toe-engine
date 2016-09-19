@@ -121,8 +121,20 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
         return nextState;
     }
 
+    /**
+     * When this.players's size = 2, it will find the other player than 'p'.
+     * If this.player's size != 2, it's outcome is -1.
+     *
+     * @param TicTacToePlayer The player to find the opponent for.
+     * @return The id of the opponent player.
+     */
     private int getNextPlayerId(TicTacToePlayer p) {
-        return (p.getId() == 1) ? 2 : 1;
+        if (this.players.size() == 2) {
+            for (TicTacToePlayer player : this.players) {
+                if (player.getId() != p.getId()) return player.getId();
+            }
+        }
+        return -1;
     }
 
     /* hasGameEnded should check all conditions on which a game should end
@@ -149,7 +161,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
         this.winner = null;
         s.getBoard().updateMacroboard();
         int winner = s.getBoard().getMacroboardWinner();
-        if (winner != 0) {
+        if (winner > -1) {
             for (TicTacToePlayer player : this.players) {
                 if (player.getId() == winner) {
                     this.winner = player;
