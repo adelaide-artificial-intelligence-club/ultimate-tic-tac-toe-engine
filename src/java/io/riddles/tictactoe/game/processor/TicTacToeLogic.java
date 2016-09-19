@@ -54,7 +54,7 @@ public class TicTacToeLogic {
 
         if (c.getX() < b.getWidth() && c.getY() < b.getHeight() && c.getX() >= 0 && c.getY() >= 0) { /* Move within range */
             if (b.isInActiveMicroboard(c.getX(), c.getY())) { /* Move in active microboard */
-                if (b.getFieldAt(c) == 0) { /*Field is available */
+                if (b.getFieldAt(c) == b.EMPTY_FIELD) { /*Field is available */
                     b.setFieldAt(c, pId);
                     b.setLastMove(c);
                     b.updateMacroboard();

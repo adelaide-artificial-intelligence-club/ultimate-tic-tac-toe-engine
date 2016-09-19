@@ -82,7 +82,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    //@Ignore
+    @Ignore
     def "test illegal moves"() {
 
         setup:
@@ -99,7 +99,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    //@Ignore
+    @Ignore
     def "test out of bounds"() {
 
         setup:
@@ -116,6 +116,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
+    @Ignore
     def "test garbage input"() {
 
         setup:

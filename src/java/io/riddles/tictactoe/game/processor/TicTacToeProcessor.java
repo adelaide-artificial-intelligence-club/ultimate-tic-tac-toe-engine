@@ -22,6 +22,7 @@ package io.riddles.tictactoe.game.processor;
 import java.util.ArrayList;
 
 import io.riddles.javainterface.game.processor.AbstractProcessor;
+import io.riddles.tictactoe.engine.TicTacToeEngine;
 import io.riddles.tictactoe.game.move.*;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
 import io.riddles.tictactoe.game.state.TicTacToeState;
@@ -66,7 +67,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
      * Return
      * the TicTacToeState that will be the state for the next round.
      * @param roundNumber The current round number
-     * @param ConnectfourState The current state
+     * @param TicTacToeState The current state
      * @return The TicTacToeState that will be the start of the next round
      */
     @Override
@@ -110,8 +111,8 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
                 nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(nextPlayer, false));
                 nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
 
-                //nextState.getBoard().dump();
-                //nextState.getBoard().dumpMacroboard();
+                nextState.getBoard().dump();
+                nextState.getBoard().dumpMacroboard();
                 checkWinner(nextState);
                 playerCounter++;
             }
@@ -130,7 +131,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
     @Override
     public boolean hasGameEnded(TicTacToeState state) {
         boolean returnVal = false;
-        if (roundNumber > 30) returnVal = true;
+        if (this.roundNumber >= TicTacToeEngine.configuration.getInt("maxRounds")) returnVal = true;
         checkWinner(state);
         if (this.winner != null) returnVal = true;
         return returnVal;

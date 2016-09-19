@@ -18,7 +18,9 @@ public class TicTacToeBoard {
     protected int width = 9;
     protected int height = 9;
     private Coordinate lastMove = null;
-    private Boolean mAllMicroboardsActive = true;
+
+    public static final int EMPTY_FIELD = -1;
+    public static final int AVAILABLE_FIELD = -2;
 
 
 
@@ -33,7 +35,12 @@ public class TicTacToeBoard {
     public void clearBoard() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                board[x][y] = 0;
+                board[x][y] = EMPTY_FIELD;
+            }
+        }
+        for (int x = 0; x < width / 3; x++) {
+            for (int y = 0; y < height / 3; y++) {
+                macroboard[x][y] = AVAILABLE_FIELD;
             }
         }
     }
@@ -88,10 +95,10 @@ public class TicTacToeBoard {
                     b = b | (1 << 1);
                 }
                 if (showPossibleMoves) {
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && board[x][y] == 0) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && board[x][y] == EMPTY_FIELD) {
                         b = b | (1 << 2);
                     }
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 2 && board[x][y] == 0) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 2 && board[x][y] == EMPTY_FIELD) {
                         b = b | (1 << 3);
                     }
                 }
@@ -153,7 +160,7 @@ public class TicTacToeBoard {
     public boolean boardIsFull() {
         for (int y = 0; y < this.height; y++)
             for (int x = 0; x < this.width; x++)
-                if (board[x][y] == 0)
+                if (board[x][y] == EMPTY_FIELD)
                     return false; // At least one cell is not filled
         // All cells are filled
         return true;
@@ -171,13 +178,16 @@ public class TicTacToeBoard {
                 macroboard[x][y] = winner;
             }
         }
-        if (lastMove != null && !microboardFull(lastMove.getX()%3, lastMove.getY()%3)) {
-            macroboard[lastMove.getX()%3][lastMove.getY()%3] = -1;
+        if (lastMove != null && !microboardFullOrTaken(lastMove.getX()%3, lastMove.getY()%3)) {
+            if (lastMove.toString().equals("6,2")) {
+                System.out.println("INLASTMOVE " + lastMove);
+            }
+            macroboard[lastMove.getX()%3][lastMove.getY()%3] = AVAILABLE_FIELD;
         } else {
             for (int x = 0; x < 3; x++) {
                 for (int y = 0; y < 3; y++) {
-                    if (!microboardFull(x, y)) {
-                        macroboard[x][y] = -1;
+                    if (!microboardFullOrTaken(x, y)) {
+                        macroboard[x][y] = AVAILABLE_FIELD;
                     }
                 }
             }
@@ -194,31 +204,31 @@ public class TicTacToeBoard {
     /**
      * Checks the microboard for a winner
      * @param : int x (0-2), int y (0-2)
-     * @return : player id of winner or 0
+     * @return : player id of winner or EMPTY_FIELD if no winner
      */
     public int getMicroboardWinner(int macroX, int macroY) {
         int startX = macroX*3;
         int startY = macroY*3;
 		/* Check horizontal wins */
         for (int y = startY; y < startY+3; y++) {
-            if (board[startX+0][y] == board[startX+1][y] && board[startX+1][y] == board[startX+2][y] && board[startX+0][y] > 0) {
+            if (board[startX+0][y] == board[startX+1][y] && board[startX+1][y] == board[startX+2][y] && board[startX+0][y] != EMPTY_FIELD) {
                 return board[startX+0][y];
             }
         }
 		/* Check vertical wins */
         for (int x = startX; x < startX+3; x++) {
-            if (board[x][startY+0] == board[x][startY+1] && board[x][startY+1] == board[x][startY+2] && board[x][startY+0] > 0) {
+            if (board[x][startY+0] == board[x][startY+1] && board[x][startY+1] == board[x][startY+2] && board[x][startY+0] != EMPTY_FIELD) {
                 return board[x][startY+0];
             }
         }
 		/* Check diagonal wins */
-        if (board[startX][startY] == board[startX+1][startY+1] && board[startX+1][startY+1] == board[startX+2][startY+2] && board[startX+0][startY+0] > 0) {
+        if (board[startX][startY] == board[startX+1][startY+1] && board[startX+1][startY+1] == board[startX+2][startY+2] && board[startX+0][startY+0] != EMPTY_FIELD) {
             return board[startX][startY];
         }
-        if (board[startX+2][startY] == board[startX+1][startY+1] && board[startX+1][startY+1] == board[startX][startY+2] && board[startX+2][startY+0] > 0) {
+        if (board[startX+2][startY] == board[startX+1][startY+1] && board[startX+1][startY+1] == board[startX][startY+2] && board[startX+2][startY+0] != EMPTY_FIELD) {
             return board[startX+2][startY];
         }
-        return 0;
+        return EMPTY_FIELD;
     }
 
 
@@ -258,15 +268,16 @@ public class TicTacToeBoard {
      * @param : int x, int y
      * @return : Boolean
      */
-    public Boolean microboardFull(int x, int y) {
+    public Boolean microboardFullOrTaken(int x, int y) {
         if (x < 0 || y < 0) return true; /* empty board */
 
-        if (macroboard[x][y] == 1 || macroboard[x][y] == 2) { /* microboard is taken */
+        /* TODO: Check should be implemented, probably > -1 */
+        if (macroboard[x][y] > -1) { /* microboard is taken */
             return true;
         }
         for (int my = y*3; my < y*3+3; my++) {
             for (int mx = x*3; mx < x*3+3; mx++) {
-                if (board[mx][my] == 0)
+                if (board[mx][my] == EMPTY_FIELD)
                     return false;
             }
         }
@@ -279,35 +290,35 @@ public class TicTacToeBoard {
      * @return : Boolean
      */
     public Boolean isInActiveMicroboard(int x, int y) {
-        return macroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)] == -1;
+        return macroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)] == AVAILABLE_FIELD;
     }
 
     /**
      * Checks the macroboard for a winner
      * @param :
-     * @return : player id of winner or 0
+     * @return : player id of winner or EMPTY_FIELD if no winner
      */
     public int getMacroboardWinner() {
 		/* Check horizontal wins */
         for (int y = 0; y < 3; y++) {
-            if (macroboard[0][y] == macroboard[1][y] && macroboard[1][y] == macroboard[2][y] && macroboard[0][y] > 0) {
+            if (macroboard[0][y] == macroboard[1][y] && macroboard[1][y] == macroboard[2][y] && macroboard[0][y] != EMPTY_FIELD) {
                 return macroboard[0][y];
             }
         }
 		/* Check vertical wins */
         for (int x = 0; x < 3; x++) {
-            if (macroboard[x][0] == macroboard[x][1] && macroboard[x][1] == macroboard[x][2] && macroboard[x][0] > 0) {
+            if (macroboard[x][0] == macroboard[x][1] && macroboard[x][1] == macroboard[x][2] && macroboard[x][0] != EMPTY_FIELD) {
                 return macroboard[x][0];
             }
         }
 		/* Check diagonal wins */
-        if (macroboard[0][0] == macroboard[1][1] && macroboard[1][1] == macroboard[2][2] && macroboard[0][0] > 0) {
+        if (macroboard[0][0] == macroboard[1][1] && macroboard[1][1] == macroboard[2][2] && macroboard[0][0] != EMPTY_FIELD) {
             return macroboard[0][0];
         }
-        if (macroboard[2][0] == macroboard[1][1] && macroboard[1][1] == macroboard[0][2] && macroboard[2][0] > 0) {
+        if (macroboard[2][0] == macroboard[1][1] && macroboard[1][1] == macroboard[0][2] && macroboard[2][0] != EMPTY_FIELD) {
             return macroboard[2][0];
         }
-        return 0;
+        return EMPTY_FIELD;
     }
 }
 

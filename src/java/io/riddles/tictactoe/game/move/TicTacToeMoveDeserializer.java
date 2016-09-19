@@ -56,9 +56,10 @@ public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
     }
 
     private TicTacToeMove visitMove(String input) throws InvalidInputException {
+
         String[] split = input.split(" ");
         if (split.length != 3) {
-            throw new InvalidInputException("Syntax error.");
+            throw new InvalidInputException("Number of parameters is incorrect.");
         }
         MoveType type = visitAssessment(split[0]);
         int column = Integer.parseInt(split[1]);

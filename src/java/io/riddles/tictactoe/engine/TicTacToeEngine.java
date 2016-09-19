@@ -22,12 +22,21 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
     public TicTacToeEngine() {
 
         super();
+        setDefaults();
     }
 
     public TicTacToeEngine(String wrapperFile, String[] botFiles) {
 
         super(wrapperFile, botFiles);
+        setDefaults();
     }
+
+    private void setDefaults() {
+        configuration.put("maxRounds", 20);
+        configuration.put("fieldWidth", 16);
+        configuration.put("fieldHeight", 16);
+    }
+
 
     /* createPlayer creates and initialises a Player for the game.
      * returns: a Player
