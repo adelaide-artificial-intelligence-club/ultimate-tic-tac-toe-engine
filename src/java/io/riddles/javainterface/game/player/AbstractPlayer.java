@@ -110,7 +110,7 @@ public abstract class AbstractPlayer {
      * @param value Value of the update
      */
     public void sendUpdate(String type, String value) {
-        this.ioHandler.sendMessage(String.format("update engine %s %s", type, value));
+        this.ioHandler.sendMessage(String.format("update game %s %s", type, value));
     }
 
     /**
@@ -119,7 +119,7 @@ public abstract class AbstractPlayer {
      * @param value Value of the update
      */
     public void sendUpdate(String type, int value) {
-        this.ioHandler.sendMessage(String.format("update engine %s %d", type, value));
+        this.ioHandler.sendMessage(String.format("update game %s %d", type, value));
     }
 
     /**

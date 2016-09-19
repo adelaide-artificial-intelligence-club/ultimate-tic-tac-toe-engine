@@ -83,7 +83,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
                 nextState.setMoveNumber(roundNumber*2 + playerCounter - 1);
                 TicTacToeBoard nextBoard = nextState.getBoard();
 
-                player.sendUpdate("field", player, nextBoard.toString());
+                player.sendUpdate("field", nextBoard.toString());
                 player.sendUpdate("macroboard", nextBoard.macroboardToString());
 
                 String response = player.requestMove(ActionType.MOVE.toString());

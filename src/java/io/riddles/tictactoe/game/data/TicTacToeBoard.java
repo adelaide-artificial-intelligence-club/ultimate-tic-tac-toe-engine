@@ -230,9 +230,7 @@ public class TicTacToeBoard {
         return board[c.getX()][c.getY()];
     }
     public void setFieldAt(Coordinate c, int v) {
-
         board[c.getX()][c.getY()] = v;
-        System.out.println("setFieldAt " + c);
     }
 
 
