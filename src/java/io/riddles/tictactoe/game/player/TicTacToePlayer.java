@@ -47,5 +47,4 @@ public class TicTacToePlayer extends AbstractPlayer {
 
     public void setEmail(String e) { this.email = e; }
     public String getEmail() { return this.email; }
-
 }

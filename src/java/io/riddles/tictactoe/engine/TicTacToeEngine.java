@@ -52,6 +52,9 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
      */
     @Override
     protected TicTacToeProcessor createProcessor() {
+        for (TicTacToePlayer player : this.players) {
+            player.setId(player.getId() + 1);
+        }
         return new TicTacToeProcessor(this.players);
     }
 

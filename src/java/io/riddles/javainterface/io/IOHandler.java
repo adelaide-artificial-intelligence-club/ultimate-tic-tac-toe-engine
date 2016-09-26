@@ -40,7 +40,8 @@ import java.util.logging.Logger;
  *
  * @author Jim van Eeden - jim@riddles.io
  */
-public class IOHandler {
+public class IOHandler implements IO {
+
     protected final static Logger LOGGER = Logger.getLogger(IOHandler.class.getName());
     private Scanner scanner;
     protected BufferedReader reader;
@@ -52,7 +53,7 @@ public class IOHandler {
     // used for debugging only
     public IOHandler(String inputFile) {
         try {
-            //System.out.println(inputFile);
+            System.out.println(inputFile);
             InputStream fis = new FileInputStream(inputFile);
             InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
             this.reader = new BufferedReader(isr);
@@ -64,8 +65,9 @@ public class IOHandler {
     /**
      * Get next line from one of the two input streams
      * @return The next line
-     * @throws IOException
+     * @throws IOException IOException
      */
+    @Override
     public String getNextMessage() throws IOException {
         if (this.reader != null)
             return getNextMessageFromFile();
@@ -79,6 +81,7 @@ public class IOHandler {
      * are ignored.
      * @param expected Message that is waited on
      */
+    @Override
     public void waitForMessage(String expected) {
         String message = null;
 
@@ -97,9 +100,9 @@ public class IOHandler {
      * Send a message to the game wrapper
      * @param message Message to send
      */
+    @Override
     public void sendMessage(String message) {
         System.out.println(message);
-        System.out.flush();
     }
 
     /**

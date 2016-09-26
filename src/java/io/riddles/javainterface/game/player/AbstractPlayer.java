@@ -20,6 +20,7 @@
 package io.riddles.javainterface.game.player;
 
 import io.riddles.javainterface.io.BotIOHandler;
+import io.riddles.javainterface.io.BotIO;
 
 /**
  * io.riddles.javainterface.engine.player.AbstractPlayer - Created on 2-6-16
@@ -36,7 +37,7 @@ public abstract class AbstractPlayer {
 
     private String name;
     private int id;
-    protected BotIOHandler ioHandler;
+    protected BotIO ioHandler;
 
     public AbstractPlayer(int id) {
         this.id = id;
@@ -44,12 +45,8 @@ public abstract class AbstractPlayer {
         this.ioHandler = new BotIOHandler(id);
     }
 
-    /**
-     * The ioHandler will read from given file instead of in stream
-     * @param inputFile File to read from
-     */
-    public void setInputFile(String inputFile) {
-        this.ioHandler = new BotIOHandler(this.id, inputFile);
+    public void setIoHandler(BotIO iohandler) {
+        this.ioHandler = iohandler;
     }
 
     /**
@@ -58,12 +55,21 @@ public abstract class AbstractPlayer {
     public int getId() {
         return this.id;
     }
+    
+    /**
+     * @param id The id of this player
+     */
+    public void setId(int id) { this.id = id; }
 
     /**
      * @return The String name of this Player
      */
     public String getName() {
         return this.name;
+    }
+
+    public BotIO getIoHandler() {
+        return this.ioHandler;
     }
 
     /**
@@ -105,7 +111,7 @@ public abstract class AbstractPlayer {
     }
 
     /**
-     * Sends one update to the player about the engine in general, like round number
+     * Sends one update to the player about the game in general, like round number
      * @param type Type of update
      * @param value Value of the update
      */
@@ -114,7 +120,7 @@ public abstract class AbstractPlayer {
     }
 
     /**
-     * Sends one update to the player about the engine in general, like round number
+     * Sends one update to the player about the game in general, like round number
      * @param type Type of update
      * @param value Value of the update
      */
