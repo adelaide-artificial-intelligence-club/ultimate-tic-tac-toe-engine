@@ -57,6 +57,10 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
      */
     @Override
     protected TicTacToeProcessor createProcessor() {
+
+        /* We're going for one-based indexes for playerId's so we can use 0's for empty fields.
+         * This makes sure existing bots will still work with TicTacToe, when used with the new wrapper.
+         */
         for (TicTacToePlayer player : this.players) {
             player.setId(player.getId() + 1);
         }

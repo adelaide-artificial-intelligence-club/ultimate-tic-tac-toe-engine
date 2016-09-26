@@ -19,8 +19,8 @@ public class TicTacToeBoard {
     protected int height = 9;
     private Coordinate lastMove = null;
 
-    public static final int EMPTY_FIELD = -1;
-    public static final int AVAILABLE_FIELD = -2;
+    public static final int EMPTY_FIELD = 0;
+    public static final int AVAILABLE_FIELD = -1;
 
 
 
@@ -179,9 +179,6 @@ public class TicTacToeBoard {
             }
         }
         if (lastMove != null && !microboardFullOrTaken(lastMove.getX()%3, lastMove.getY()%3)) {
-            if (lastMove.toString().equals("6,2")) {
-                System.out.println("INLASTMOVE " + lastMove);
-            }
             macroboard[lastMove.getX()%3][lastMove.getY()%3] = AVAILABLE_FIELD;
         } else {
             for (int x = 0; x < 3; x++) {
@@ -271,8 +268,7 @@ public class TicTacToeBoard {
     public Boolean microboardFullOrTaken(int x, int y) {
         if (x < 0 || y < 0) return true; /* empty board */
 
-        /* TODO: Check should be implemented, probably > -1 */
-        if (macroboard[x][y] > -1) { /* microboard is taken */
+        if (macroboard[x][y] != EMPTY_FIELD && macroboard[x][y] != AVAILABLE_FIELD) { /* microboard is taken */
             return true;
         }
         for (int my = y*3; my < y*3+3; my++) {
