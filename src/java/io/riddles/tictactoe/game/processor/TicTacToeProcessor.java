@@ -111,8 +111,8 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
                 nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(nextPlayer, false));
                 nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
 
-                nextState.getBoard().dump();
-                nextState.getBoard().dumpMacroboard();
+                //nextState.getBoard().dump();
+                //nextState.getBoard().dumpMacroboard();
                 checkWinner(nextState);
                 playerCounter++;
             }

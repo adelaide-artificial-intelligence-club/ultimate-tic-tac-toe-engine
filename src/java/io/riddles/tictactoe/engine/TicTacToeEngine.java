@@ -28,6 +28,7 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
 
     public TicTacToeEngine(String args[]) throws TerminalException {
         super(args);
+        setDefaults();
     }
 
     public TicTacToeEngine(String wrapperFile, String[] botFiles) throws TerminalException {
