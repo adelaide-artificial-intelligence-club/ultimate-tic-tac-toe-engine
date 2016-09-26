@@ -70,11 +70,10 @@ class TicTacToeEngineSpec extends Specification {
             LOGGER.info("Starting game loop...");
 
             TicTacToeState initialState = getInitialState();
-            this.gameLoop.run(initialState, this.processor);
+            this.finalState = this.gameLoop.run(initialState, this.processor);
 
             String playedGame = getPlayedGame(initialState);
             this.platformHandler.finish(playedGame);
-            this.finalState = initialState;
         }
     }
 
@@ -96,7 +95,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState.getBoard().toString() == "2,0,1,0,0,0,0,0,2,0,0,0,0,0,0,1,1,1,0,0,0,2,0,2,2,0,0,0,0,2,1,1,1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,2,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,2,1,0,0,0,2,1,0,0";
     }
 
-    @Ignore
+    //@Ignore
     def "test illegal moves"() {
 
         setup:
@@ -113,7 +112,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    @Ignore
+    //@Ignore
     def "test out of bounds"() {
 
         setup:
@@ -130,7 +129,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    @Ignore
+    //@Ignore
     def "test garbage input"() {
 
         setup:

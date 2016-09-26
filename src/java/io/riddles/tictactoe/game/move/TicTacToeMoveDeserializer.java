@@ -23,6 +23,7 @@ import io.riddles.tictactoe.game.data.Coordinate;
 import io.riddles.tictactoe.game.data.MoveType;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.serialize.Deserializer;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
 
 /**
  * ${PACKAGE_NAME}
@@ -39,7 +40,7 @@ public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
 
     private io.riddles.tictactoe.game.player.TicTacToePlayer player;
 
-    public TicTacToeMoveDeserializer(io.riddles.tictactoe.game.player.TicTacToePlayer player) {
+    public TicTacToeMoveDeserializer(TicTacToePlayer player) {
         this.player = player;
     }
 

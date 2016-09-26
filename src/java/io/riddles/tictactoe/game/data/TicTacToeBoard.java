@@ -32,6 +32,23 @@ public class TicTacToeBoard {
         clearBoard();
     }
 
+    public TicTacToeBoard(TicTacToeBoard b) {
+        this.width = b.getWidth();
+        this.height = b.getHeight();
+        this.board = new int[this.width][this.height];
+        this.macroboard = new int[this.width / 3][this.height / 3];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                this.board[x][y] = b.getFieldAt(new Coordinate(x,y));
+            }
+        }
+        for (int x = 0; x < width / 3; x++) {
+            for (int y = 0; y < height / 3; y++) {
+                this.macroboard[x][y] = b.getMacroboardFieldAt(new Coordinate(x,y));
+            }
+        }
+    }
+
     public void clearBoard() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -95,10 +112,10 @@ public class TicTacToeBoard {
                     b = b | (1 << 1);
                 }
                 if (showPossibleMoves) {
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && board[x][y] == EMPTY_FIELD) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 2 && board[x][y] == EMPTY_FIELD) {
                         b = b | (1 << 2);
                     }
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 2 && board[x][y] == EMPTY_FIELD) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && board[x][y] == EMPTY_FIELD) {
                         b = b | (1 << 3);
                     }
                 }
@@ -238,6 +255,10 @@ public class TicTacToeBoard {
     }
     public void setFieldAt(Coordinate c, int v) {
         board[c.getX()][c.getY()] = v;
+    }
+
+    public int getMacroboardFieldAt(Coordinate c) {
+        return macroboard[c.getX()][c.getY()];
     }
 
 

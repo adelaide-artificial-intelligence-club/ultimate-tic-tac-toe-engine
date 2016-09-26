@@ -1,5 +1,6 @@
 place_move 3 3
 place_move 2 0
+place_move 2 0
 place_move 7 1
 place_move 1 6
 place_move 6 7

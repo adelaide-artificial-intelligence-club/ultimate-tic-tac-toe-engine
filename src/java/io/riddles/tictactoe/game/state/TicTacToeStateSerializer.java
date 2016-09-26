@@ -51,13 +51,22 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
         TicTacToeMove move = state.getMoves().get(0);
 
         stateJson.put("movetype", move.getMoveType());
-        stateJson.put("winner", ""); /* TODO: find a winner */
+        int winner = state.getBoard().getMacroboardWinner();
+        String winnerString = "";
+        if (winner <= 0) {
+            winnerString = "";
+        } else {
+            winnerString = String.valueOf(winner);
+        }
 
         if (showPossibleMoves) {
             stateJson.put("field", state.getPossibleMovesPresentationString());
+            winnerString = "";
         } else {
             stateJson.put("field", state.getFieldPresentationString());
         }
+        stateJson.put("winner", winnerString);
+
         stateJson.put("move", state.getMoveNumber());
 
         if (move.getException() == null) {

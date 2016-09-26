@@ -38,10 +38,11 @@ import io.riddles.javainterface.game.AbstractGameSerializer;
 public class TicTacToeSerializer extends
         AbstractGameSerializer<TicTacToeProcessor, TicTacToeState> {
 
+    private final int SIZE = 9;
+
     @Override
     public String traverseToString(TicTacToeProcessor processor, TicTacToeState initialState) {
         JSONObject game = new JSONObject();
-
 
         // add all states
         JSONArray states = new JSONArray();
@@ -73,8 +74,8 @@ public class TicTacToeSerializer extends
 
 
         JSONObject field = new JSONObject();
-        field.put("width", 9); /* TODO: this is idiotic */
-        field.put("height", 9); /* TODO: this is idiotic */
+        field.put("width", SIZE);
+        field.put("height", SIZE);
         settings.put("field", field);
 
         settings.put("players", getPlayersJSON(processor));

@@ -49,12 +49,13 @@ public class TicTacToeState extends AbstractState<TicTacToeMove> {
         super(previousState, move, roundNumber);
         this.mPossibleMovesString = possibleMovesString;
         this.mFieldPresentationString = fieldPresentationString;
-        this.board = previousState.getBoard();
+        this.board = new TicTacToeBoard(previousState.getBoard());
+
     }
 
     public TicTacToeState(TicTacToeState previousState, ArrayList<TicTacToeMove> moves, int roundNumber) {
         super(previousState, moves, roundNumber);
-        this.board = previousState.getBoard();
+        this.board = new TicTacToeBoard(previousState.getBoard());
     }
 
     public TicTacToeBoard getBoard() {

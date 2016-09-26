@@ -84,6 +84,9 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
                 nextState.setMoveNumber(roundNumber*2 + playerCounter - 1);
                 TicTacToeBoard nextBoard = nextState.getBoard();
 
+                int nextPlayer = getNextPlayerId(player);
+                nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
+
                 player.sendUpdate("field", nextBoard.toString());
                 player.sendUpdate("macroboard", nextBoard.macroboardToString());
 
@@ -107,9 +110,7 @@ public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTa
                     this.gameOver = true;
                 }
 
-                int nextPlayer = getNextPlayerId(player);
                 nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(nextPlayer, false));
-                nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
 
                 //nextState.getBoard().dump();
                 //nextState.getBoard().dumpMacroboard();
