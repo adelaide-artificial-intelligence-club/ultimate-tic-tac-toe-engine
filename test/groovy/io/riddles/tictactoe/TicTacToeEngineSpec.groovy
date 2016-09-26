@@ -19,6 +19,7 @@
 
 package io.riddles.tictactoe
 
+import io.riddles.javainterface.exception.TerminalException
 import io.riddles.tictactoe.engine.TicTacToeEngine
 import io.riddles.javainterface.io.IOHandler
 import io.riddles.tictactoe.game.state.TicTacToeState
@@ -52,16 +53,28 @@ class TicTacToeEngineSpec extends Specification {
         }
 
         @Override
-        protected void finish(TicTacToeState finalState) {
-            this.finalState = finalState;
-            super.finish(finalState);
-        }
+        public void run() throws TerminalException, InterruptedException {
+            LOGGER.info("Starting...");
 
-        @Override
-        protected TicTacToeState getInitialState() {
-            return super.getInitialState();
-            //TicTacToeState s = new TicTacToeState();
-            //return s;
+            setup();
+
+            if (this.processor == null) {
+                throw new TerminalException("Processor has not been set");
+            }
+
+            LOGGER.info("Running pre-game phase...");
+
+            this.processor.preGamePhase();
+
+
+            LOGGER.info("Starting game loop...");
+
+            TicTacToeState initialState = getInitialState();
+            this.gameLoop.run(initialState, this.processor);
+
+            String playedGame = getPlayedGame(initialState);
+            this.platformHandler.finish(playedGame);
+            this.finalState = initialState;
         }
     }
 
@@ -82,7 +95,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    @Ignore
+    //@Ignore
     def "test illegal moves"() {
 
         setup:
@@ -99,7 +112,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    @Ignore
+    //@Ignore
     def "test out of bounds"() {
 
         setup:
@@ -116,7 +129,7 @@ class TicTacToeEngineSpec extends Specification {
         engine.finalState instanceof TicTacToeState;
     }
 
-    @Ignore
+    //@Ignore
     def "test garbage input"() {
 
         setup:

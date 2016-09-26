@@ -1,5 +1,6 @@
 package io.riddles.tictactoe.engine;
 
+import io.riddles.javainterface.exception.TerminalException;
 import io.riddles.tictactoe.game.TicTacToeSerializer;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
@@ -19,13 +20,17 @@ import io.riddles.javainterface.engine.AbstractEngine;
  */
 public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacToePlayer, TicTacToeState> {
 
-    public TicTacToeEngine() {
+    public TicTacToeEngine() throws TerminalException {
 
-        super();
+        super(new String[0]);
         setDefaults();
     }
 
-    public TicTacToeEngine(String wrapperFile, String[] botFiles) {
+    public TicTacToeEngine(String args[]) throws TerminalException {
+        super(args);
+    }
+
+    public TicTacToeEngine(String wrapperFile, String[] botFiles) throws TerminalException {
 
         super(wrapperFile, botFiles);
         setDefaults();

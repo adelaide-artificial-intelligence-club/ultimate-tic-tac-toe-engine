@@ -30,13 +30,13 @@ import io.riddles.javainterface.exception.TerminalException;
  */
 public class TicTacToe {
 
-    public static void main(String[] args) {
-        TicTacToeEngine engine = new TicTacToeEngine();
+    public static void main(String[] args) throws TerminalException {
+        TicTacToeEngine engine;
 
-        try {
-            engine.run();
-        } catch (TerminalException e) {
-            System.exit(e.getStatusCode());
+        if (args.length > 0) { // Create aigames engine
+            engine = new TicTacToeEngine(args);
+        } else {
+            engine = new TicTacToeEngine();
         }
     }
 }

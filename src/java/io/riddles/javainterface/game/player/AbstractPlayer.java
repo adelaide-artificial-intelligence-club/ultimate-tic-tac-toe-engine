@@ -52,9 +52,7 @@ public abstract class AbstractPlayer {
     /**
      * @return The id of this player
      */
-    public int getId() {
-        return this.id;
-    }
+    public int getId() { return this.id; }
     
     /**
      * @param id The id of this player
