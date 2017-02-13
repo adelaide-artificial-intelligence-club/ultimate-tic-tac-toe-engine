@@ -22,7 +22,7 @@ public class TicTacToeBoard {
     protected int height = 9;
 
     public static final String EMPTY_FIELD = ".";
-    public static final String AVAILABLE_FIELD = "+";
+    public static final String AVAILABLE_FIELD = "-1";
 
 
 
@@ -214,7 +214,7 @@ public class TicTacToeBoard {
                 if (winner != null)
                     macroboard[x][y] = String.valueOf(winner);
                 else
-                    macroboard[x][y] = ".";
+                    macroboard[x][y] = EMPTY_FIELD;
             }
         }
         if (lastMove != null && !microboardFullOrTaken(lastMove.getX()%3, lastMove.getY()%3)) {

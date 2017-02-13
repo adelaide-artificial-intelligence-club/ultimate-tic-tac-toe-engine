@@ -108,7 +108,6 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
 
         player.sendUpdate("field", state.getBoard().toString());
         if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
-            System.out.println("DIKKE COO " + ps.getMove().getCoordinate().getX() + " " + ps.getMove().getCoordinate().getY());
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(ps.getMove().getCoordinate()));
         } else {
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(null));
