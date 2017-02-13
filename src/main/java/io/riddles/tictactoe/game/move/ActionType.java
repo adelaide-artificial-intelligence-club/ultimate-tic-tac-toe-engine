@@ -20,16 +20,12 @@
 package io.riddles.tictactoe.game.move;
 
 /**
- * ${PACKAGE_NAME}
+ * io.riddles.catchfrauds.game.move.ActionTypes - Created on 6-6-16
  *
- * This file is a part of TicTacToe
+ * [description]
  *
- * Copyright 2016 - present Riddles.io
- * For license information see the LICENSE file in the project root
- *
- * @author Niko
+ * @author jim
  */
-
 public enum ActionType {
     MOVE;
 

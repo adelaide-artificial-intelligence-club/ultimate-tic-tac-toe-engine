@@ -21,12 +21,16 @@ package io.riddles.tictactoe.game.processor;
 
 import java.util.ArrayList;
 
-import io.riddles.javainterface.game.processor.AbstractProcessor;
-import io.riddles.tictactoe.engine.TicTacToeEngine;
-import io.riddles.tictactoe.game.move.*;
+import io.riddles.javainterface.exception.InvalidMoveException;
+import io.riddles.javainterface.game.player.PlayerBound;
+import io.riddles.javainterface.game.processor.PlayerResponseProcessor;
+import io.riddles.javainterface.io.PlayerResponse;
+import io.riddles.tictactoe.game.move.ActionType;
+import io.riddles.tictactoe.game.move.TicTacToeMove;
+import io.riddles.tictactoe.game.move.TicTacToeMoveDeserializer;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.state.TicTacToePlayerState;
 import io.riddles.tictactoe.game.state.TicTacToeState;
-import io.riddles.tictactoe.game.data.TicTacToeBoard;
 
 /**
  * This file is a part of TicTacToe
@@ -38,145 +42,123 @@ import io.riddles.tictactoe.game.data.TicTacToeBoard;
  *
  * @author joost
  */
-public class TicTacToeProcessor extends AbstractProcessor<TicTacToePlayer, TicTacToeState> {
+public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlayer, TicTacToeState> {
 
-    private int roundNumber;
-    private boolean gameOver;
-    private TicTacToePlayer winner;
-    private TicTacToeLogic logic;
-
-
-    /* Constructor */
-    public TicTacToeProcessor(ArrayList<TicTacToePlayer> players) {
-        super(players);
-        this.gameOver = false;
-        this.logic = new TicTacToeLogic();
-    }
-
-    /* preGamePhase may be used to set up the Processor before starting the game loop.
-    * */
-    @Override
-    public void preGamePhase() {
-
+    public TicTacToeProcessor() {
+        super();
     }
 
     /**
-     * Play one round of the game. It takes a TicTacToeState,
-     * asks all living players for a response and delivers a new TicTacToeState.
      *
      * Return
      * the TicTacToeState that will be the state for the next round.
-     * @param roundNumber The current round number
      * @param TicTacToeState The current state
-     * @return The TicTacToeState that will be the start of the next round
+     * @param roundNumber The current round number
+     * @param input The input to process.
      */
     @Override
-    public TicTacToeState playRound(int roundNumber, TicTacToeState state) {
-        LOGGER.info(String.format("Playing round %d", roundNumber));
-        this.roundNumber = roundNumber;
+    public TicTacToeState processInput(TicTacToeState state, int roundNumber, PlayerResponse input) {
 
-        TicTacToeState nextState = state;
+        /* Clone playerStates for next State */
+        ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(state.getPlayerStates());
 
-        int playerCounter = 0;
-        for (TicTacToePlayer player : this.players) {
-            if (!hasGameEnded(nextState)) {
-                nextState = new TicTacToeState(nextState, new ArrayList<>(), roundNumber);
-                nextState.setMoveNumber(roundNumber*2 + playerCounter - 1);
-                TicTacToeBoard nextBoard = nextState.getBoard();
+        TicTacToeLogic logic = new TicTacToeLogic();
+        TicTacToeState nextState = state.createNextState(roundNumber);
 
-                int nextPlayer = getNextPlayerId(player);
-                nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(nextPlayer, true));
+        nextState.setPlayerId(input.getPlayerId());
 
-                player.sendUpdate("field", nextBoard.toString());
-                player.sendUpdate("macroboard", nextBoard.macroboardToString());
+        TicTacToePlayerState playerState = getActivePlayerState(nextPlayerStates, input.getPlayerId());
 
-                String response = player.requestMove(ActionType.MOVE.toString());
+        // parse the response
+        TicTacToeMoveDeserializer deserializer = new TicTacToeMoveDeserializer();
+        TicTacToeMove move = deserializer.traverse(input.getValue());
 
-                // parse the response
-                TicTacToeMoveDeserializer deserializer = new TicTacToeMoveDeserializer(player);
-                TicTacToeMove move = deserializer.traverse(response);
-
-                try {
-                    logic.transform(nextState, move);
-                } catch (Exception e) {
-                    LOGGER.info(String.format("Unknown response: %s", response));
-                }
-
-                // add the next move
-                nextState.getMoves().add(move);
-
-                // stop game if bot returns nothing
-                if (response == null) {
-                    this.gameOver = true;
-                }
-
-                nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(nextPlayer, false));
-
-                //nextState.getBoard().dump();
-                //nextState.getBoard().dumpMacroboard();
-                checkWinner(nextState);
-                playerCounter++;
-            }
-
+        if (move.getException() != null) {
+            //System.out.println("EXCEPTION '" + input.getValue() + "' " + move.getException().toString());
         }
+        playerState.setMove(move);
+        try {
+            logic.transform(nextState, playerState);
+        } catch (Exception e) {
+            move.setException(new InvalidMoveException("Error transforming move."));
+        }
+        nextState.setPlayerstates((ArrayList)nextPlayerStates);
+        nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
+        nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
+
+
         return nextState;
     }
 
-    /**
-     * When this.players's size = 2, it will find the other player than 'p'.
-     * If this.player's size != 2, it's outcome is -1.
-     *
-     * @param TicTacToePlayer The player to find the opponent for.
-     * @return The id of the opponent player.
-     */
-    private int getNextPlayerId(TicTacToePlayer p) {
-        if (this.players.size() == 2) {
-            for (TicTacToePlayer player : this.players) {
-                if (player.getId() != p.getId()) return player.getId();
-            }
+    private ArrayList<TicTacToePlayerState> clonePlayerStates(ArrayList<TicTacToePlayerState> playerStates) {
+        ArrayList<TicTacToePlayerState> nextPlayerStates = new ArrayList<>();
+        for (TicTacToePlayerState playerState : playerStates) {
+            TicTacToePlayerState nextPlayerState = playerState.clone();
+            nextPlayerStates.add(nextPlayerState);
         }
-        return -1;
+        return nextPlayerStates;
     }
+
+
+    @Override
+    public void sendUpdates(TicTacToeState state, TicTacToePlayer player) {
+        if (state.hasPreviousState()) state = (TicTacToeState)state.getPreviousState();
+        player.sendUpdate("round", state.getRoundNumber());
+        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), player.getId());
+
+        player.sendUpdate("field", state.getBoard().toString());
+        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
+            System.out.println("DIKKE COO " + ps.getMove().getCoordinate().getX() + " " + ps.getMove().getCoordinate().getY());
+            player.sendUpdate("macroboard", state.getBoard().macroboardToString(ps.getMove().getCoordinate()));
+        } else {
+            player.sendUpdate("macroboard", state.getBoard().macroboardToString(null));
+        }
+
+    }
+
 
     /* hasGameEnded should check all conditions on which a game should end
     *  returns: boolean
     * */
     @Override
     public boolean hasGameEnded(TicTacToeState state) {
-        boolean returnVal = false;
-        if (this.roundNumber >= TicTacToeEngine.configuration.getInt("maxRounds")) returnVal = true;
-        checkWinner(state);
-        if (this.winner != null) returnVal = true;
-        return returnVal;
+        return getWinnerId(state) != null;
     }
 
-    /* getWinner should check if there is a winner.
-    *  returns: if there is a winner, the winning Player, otherwise return null.
-    *  */
+    /**
+     * Returns the winner of the game, if there is one.
+     * @return null if there is no winner, a player ID otherwise
+     */
+    /* Returns winner playerId, or null if there's no winner. */
     @Override
-    public TicTacToePlayer getWinner() {
-        return this.winner;
-    }
+    public Integer getWinnerId(TicTacToeState state) {
+        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
 
-    public void checkWinner(TicTacToeState s) {
-        this.winner = null;
-        s.getBoard().updateMacroboard();
-        int winner = s.getBoard().getMacroboardWinner();
-        if (winner > -1) {
-            for (TicTacToePlayer player : this.players) {
-                if (player.getId() == winner) {
-                    this.winner = player;
-                }
-            }
+        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
+            state.getBoard().updateMacroboard(ps.getMove().getCoordinate());
+        } else {
+            state.getBoard().updateMacroboard(null);
         }
+
+        return state.getBoard().getMacroboardWinner();
     }
 
-    /* getScore should return the game score if applicable.
-    *  returns: double Score
-    *  */
+
     @Override
-    public double getScore() {
-        return 0;
+    public double getScore(TicTacToeState state) {
+        return state.getRoundNumber();
+    }
+
+    @Override
+    public Enum getActionRequest(TicTacToeState intermediateState, PlayerBound playerState) {
+        return ActionType.MOVE;
+    }
+
+    private TicTacToePlayerState getActivePlayerState(ArrayList<TicTacToePlayerState> playerStates, int id) {
+        for (TicTacToePlayerState playerState : playerStates) {
+            if (playerState.getPlayerId() == id) { return playerState; }
+        }
+        return null;
     }
 
 }

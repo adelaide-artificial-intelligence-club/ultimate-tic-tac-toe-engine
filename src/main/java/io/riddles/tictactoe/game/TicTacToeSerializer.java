@@ -19,8 +19,7 @@
 
 package io.riddles.tictactoe.game;
 
-import io.riddles.javainterface.game.player.AbstractPlayer;
-import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
 import io.riddles.tictactoe.game.state.TicTacToeState;
 import io.riddles.tictactoe.game.state.TicTacToeStateSerializer;
@@ -35,8 +34,12 @@ import io.riddles.javainterface.game.AbstractGameSerializer;
  *
  * @author jim
  */
-public class TicTacToeSerializer extends
-        AbstractGameSerializer<TicTacToeProcessor, TicTacToeState> {
+public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcessor, TicTacToeState> {
+
+    public TicTacToeSerializer(PlayerProvider playerProvider) {
+        super(playerProvider);
+    }
+
 
     private final int SIZE = 9;
 
@@ -44,79 +47,29 @@ public class TicTacToeSerializer extends
     public String traverseToString(TicTacToeProcessor processor, TicTacToeState initialState) {
         JSONObject game = new JSONObject();
 
+        game = addDefaultJSON(initialState, game, processor);
+
+
         // add all states
         JSONArray states = new JSONArray();
         TicTacToeState state = initialState;
-        TicTacToeStateSerializer serializer = new TicTacToeStateSerializer();
+        TicTacToeStateSerializer stateSerializer = new TicTacToeStateSerializer();
+
+        int currentRoundNumber = state.getRoundNumber();
         while (state.hasNextState()) {
-            state = (TicTacToeState) state.getNextState();
-
-            states.put(serializer.traverseToJson(state, true));
-            states.put(serializer.traverseToJson(state, false));
+            int tries = 0;
+            while (state.getRoundNumber() == currentRoundNumber && tries < 4) { /* Max 4 players */
+                if (state.hasNextState()) state = (TicTacToeState) state.getNextState();
+                tries++;
+            }
+            states.put(stateSerializer.traverseToJson(state));
+            currentRoundNumber = state.getRoundNumber();
         }
+        game.put("states", states);
 
-        JSONObject matchdata = new JSONObject();
-        matchdata.put("states", states);
-        matchdata.put("settings", getSettingsJSON(game, processor));
-
-        game.put("playerData", getPlayerDataJSON(processor));
-
-        game.put("matchData", matchdata);
-
-        // add score
-        game.put("score", processor.getScore());
 
         return game.toString();
     }
 
-    protected JSONObject getSettingsJSON(JSONObject game, TicTacToeProcessor processor) {
-        JSONObject settings = new JSONObject();
 
-
-        JSONObject field = new JSONObject();
-        field.put("width", SIZE);
-        field.put("height", SIZE);
-        settings.put("field", field);
-
-        settings.put("players", getPlayersJSON(processor));
-
-        // add winner
-        String winner = "null";
-        if (processor.getWinner() != null) {
-            winner = processor.getWinner().getId() + "";
-        }
-        settings.put("winnerplayer", winner);
-
-        return settings;
-    }
-
-    protected JSONObject getPlayersJSON(TicTacToeProcessor processor) {
-
-        JSONArray playerNames = new JSONArray();
-        for (Object obj : processor.getPlayers()) {
-            AbstractPlayer player = (AbstractPlayer) obj;
-            playerNames.put(player.getName());
-        }
-
-        JSONObject players = new JSONObject();
-        players.put("count", processor.getPlayers().size());
-        players.put("names", playerNames);
-
-        return players;
-    }
-
-
-    protected JSONArray getPlayerDataJSON(TicTacToeProcessor processor) {
-
-        JSONArray playerData = new JSONArray();
-        for (TicTacToePlayer obj : processor.getPlayers()) {
-            TicTacToePlayer player = obj;
-            JSONObject p = new JSONObject();
-
-            p.put("name", player.getName());
-            playerData.put(p);
-        }
-
-        return playerData;
-    }
 }

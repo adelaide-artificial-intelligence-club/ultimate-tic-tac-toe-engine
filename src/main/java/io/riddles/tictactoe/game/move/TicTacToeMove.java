@@ -19,8 +19,7 @@
 
 package io.riddles.tictactoe.game.move;
 
-import io.riddles.tictactoe.game.data.Coordinate;
-import io.riddles.tictactoe.game.data.MoveType;
+import io.riddles.javainterface.game.data.Point;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.game.move.AbstractMove;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
@@ -37,27 +36,23 @@ import io.riddles.tictactoe.game.player.TicTacToePlayer;
  */
 
 
-public class TicTacToeMove extends AbstractMove<TicTacToePlayer> {
+public class TicTacToeMove extends AbstractMove {
 
-    private MoveType type;
-    private Coordinate coordinate;
+    private Point coordinate;
 
-    public TicTacToeMove(TicTacToePlayer player, Coordinate c) {
-        super(player);
+    public TicTacToeMove(Point c) {
+        super();
         coordinate = c;
 
     }
 
-    public TicTacToeMove(TicTacToePlayer player, InvalidInputException exception) {
-        super(player, exception);
+    public TicTacToeMove(InvalidInputException exception) {
+        super(exception);
     }
+    public Point getCoordinate() { return this.coordinate; }
 
-    public MoveType getMoveType() {
-        return this.type;
+    public String toString() {
+        return "TicTacToeMove " + this.coordinate;
     }
-
-    public Coordinate getCoordinate() { return this.coordinate; }
-
-
 
 }

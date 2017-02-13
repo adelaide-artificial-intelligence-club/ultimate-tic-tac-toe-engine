@@ -19,11 +19,10 @@
 
 package io.riddles.tictactoe.game.move;
 
-import io.riddles.tictactoe.game.data.Coordinate;
+import io.riddles.javainterface.game.data.Point;
 import io.riddles.tictactoe.game.data.MoveType;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.serialize.Deserializer;
-import io.riddles.tictactoe.game.player.TicTacToePlayer;
 
 /**
  * ${PACKAGE_NAME}
@@ -38,10 +37,8 @@ import io.riddles.tictactoe.game.player.TicTacToePlayer;
 
 public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
 
-    private io.riddles.tictactoe.game.player.TicTacToePlayer player;
+    public TicTacToeMoveDeserializer() {
 
-    public TicTacToeMoveDeserializer(TicTacToePlayer player) {
-        this.player = player;
     }
 
     @Override
@@ -49,10 +46,9 @@ public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
         try {
             return visitMove(string);
         } catch (InvalidInputException ex) {
-            return new TicTacToeMove(this.player, ex);
+            return new TicTacToeMove(ex);
         } catch (Exception ex) {
-            return new TicTacToeMove(
-                this.player, new InvalidInputException("Failed to parse move"));
+            return new TicTacToeMove(new InvalidInputException("Failed to parse move"));
         }
     }
 
@@ -65,8 +61,8 @@ public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
         MoveType type = visitAssessment(split[0]);
         int column = Integer.parseInt(split[1]);
         int row = Integer.parseInt(split[2]);
-        Coordinate c = new Coordinate(column, row);
-        return new TicTacToeMove(this.player, c);
+        Point c = new Point(column, row);
+        return new TicTacToeMove(c);
     }
 
     public MoveType visitAssessment(String input) throws InvalidInputException {

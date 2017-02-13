@@ -36,7 +36,6 @@ import io.riddles.javainterface.game.player.AbstractPlayer;
 public class TicTacToePlayer extends AbstractPlayer {
 
 
-    private String email;
     public TicTacToePlayer(int id) {
         super(id);
     }
@@ -44,7 +43,4 @@ public class TicTacToePlayer extends AbstractPlayer {
     public String toString() {
         return "TicTacToePlayer " + this.getId();
     }
-
-    public void setEmail(String e) { this.email = e; }
-    public String getEmail() { return this.email; }
 }

@@ -19,6 +19,7 @@
 
 package io.riddles.tictactoe.game.state;
 
+import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
 import org.json.JSONObject;
 import io.riddles.javainterface.game.state.AbstractStateSerializer;
@@ -46,14 +47,13 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
 
     private JSONObject visitState(TicTacToeState state, Boolean showPossibleMoves) throws NullPointerException {
         JSONObject stateJson = new JSONObject();
-        stateJson.put("move", state.getMoveNumber());
+        stateJson.put("round", state.getRoundNumber()-1);
 
-        TicTacToeMove move = state.getMoves().get(0);
-
-        stateJson.put("movetype", move.getMoveType());
-        int winner = state.getBoard().getMacroboardWinner();
+        TicTacToeMove move = state.getPlayerStates().get(0).getMove();
+        TicTacToeBoard board = state.getBoard();
+        Integer winner = board.getMacroboardWinner();
         String winnerString = "";
-        if (winner <= 0) {
+        if (winner == null) {
             winnerString = "";
         } else {
             winnerString = String.valueOf(winner);
@@ -67,14 +67,12 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
         }
         stateJson.put("winner", winnerString);
 
-        stateJson.put("move", state.getMoveNumber());
-
-        if (move.getException() == null) {
-            stateJson.put("exception", JSONObject.NULL);
-            stateJson.put("illegalMove", "");
-        } else {
-            stateJson.put("exception", move.getException().getMessage());
-            stateJson.put("illegalMove", move.getException().getMessage());
+        if (move != null) {
+            if (move.getException() == null) {
+                stateJson.put("error", "");
+            } else {
+                stateJson.put("error", move.getException().getMessage());
+            }
         }
         return stateJson;
     }

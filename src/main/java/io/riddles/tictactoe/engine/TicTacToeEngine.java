@@ -1,12 +1,22 @@
 package io.riddles.tictactoe.engine;
 
+import io.riddles.javainterface.configuration.CheckedConfiguration;
+import io.riddles.javainterface.configuration.Configuration;
+import io.riddles.javainterface.engine.GameLoop;
+import io.riddles.javainterface.engine.TurnBasedGameLoop;
 import io.riddles.javainterface.exception.TerminalException;
+import io.riddles.javainterface.game.player.PlayerProvider;
+import io.riddles.javainterface.io.BotIO;
+import io.riddles.javainterface.io.IO;
 import io.riddles.tictactoe.game.TicTacToeSerializer;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
 import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
+import io.riddles.tictactoe.game.state.TicTacToePlayerState;
 import io.riddles.tictactoe.game.state.TicTacToeState;
 import io.riddles.javainterface.engine.AbstractEngine;
+
+import java.util.ArrayList;
 
 /**
  * TicTacToeEngine:
@@ -20,77 +30,79 @@ import io.riddles.javainterface.engine.AbstractEngine;
  */
 public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacToePlayer, TicTacToeState> {
 
-    public TicTacToeEngine() throws TerminalException {
-
-        super(new String[0]);
-        setDefaults();
+    public TicTacToeEngine(PlayerProvider<TicTacToePlayer> playerProvider, IO ioHandler) throws TerminalException {
+        super(playerProvider, ioHandler);
     }
 
-    public TicTacToeEngine(String args[]) throws TerminalException {
-        super(args);
-        setDefaults();
-    }
-
-    public TicTacToeEngine(String wrapperFile, String[] botFiles) throws TerminalException {
-
-        super(wrapperFile, botFiles);
-        setDefaults();
-    }
-
-    private void setDefaults() {
-        configuration.put("maxRounds", 20);
-        configuration.put("fieldWidth", 16);
-        configuration.put("fieldHeight", 16);
-    }
-
-
-    /* createPlayer creates and initialises a Player for the game.
-     * returns: a Player
-     */
     @Override
-    protected TicTacToePlayer createPlayer(int id) {
-        TicTacToePlayer p = new TicTacToePlayer(id);
-        return p;
+    protected CheckedConfiguration getConfiguration() {
+        CheckedConfiguration cc = new CheckedConfiguration();
+        cc.addRequiredKey("maxRounds");
+        cc.addRequiredKey("fieldWidth");
+        cc.addRequiredKey("fieldHeight");
+
+        cc.put("maxRounds", 10);
+        cc.put("fieldWidth", 19);
+        cc.put("fieldHeight", 19);
+
+        return cc;
     }
 
-    /* createProcessor creates and initialises a Processor for the game.
-     * returns: a Processor
-     */
+    @Override
+    protected TicTacToePlayer createPlayer(int id, BotIO ioHandler) {
+        TicTacToePlayer player = new TicTacToePlayer(id);
+        player.setIoHandler(ioHandler);
+        return player;
+    }
+
     @Override
     protected TicTacToeProcessor createProcessor() {
 
-        /* We're going for one-based indexes for playerId's so we can use 0's for empty fields.
-         * This makes sure existing bots will still work with TicTacToe, when used with the new wrapper.
-         */
-        for (TicTacToePlayer player : this.players) {
-            player.setId(player.getId() + 1);
-        }
-        return new TicTacToeProcessor(this.players);
+        return new TicTacToeProcessor();
     }
 
-    /* sendGameSettings sends the game settings to a Player
-     * returns:
-     */
     @Override
-    protected void sendGameSettings(TicTacToePlayer player) {
+    protected GameLoop createGameLoop() {
+
+        return new TurnBasedGameLoop(this.playerProvider);
     }
 
-    /* getPlayedGame creates a serializer and serialises the game
-     * returns: String with the serialised game.
-     */
     @Override
-    protected String getPlayedGame(TicTacToeState state) {
-        TicTacToeSerializer serializer = new TicTacToeSerializer();
-        return serializer.traverseToString(this.processor, state);
+    protected void sendSettingsToPlayer(TicTacToePlayer player, Configuration configuration) {
+        player.sendSetting("your_botid", player.getId());
+        player.sendSetting("field_width", configuration.getInt("fieldWidth"));
+        player.sendSetting("field_height", configuration.getInt("fieldHeight"));
+        player.sendSetting("max_rounds", configuration.getInt("maxRounds"));
     }
 
-    /* getInitialState creates an initial state to start the game with.
-     * returns: TicTacToeState
-     */
     @Override
-    protected TicTacToeState getInitialState() {
+    protected String getPlayedGame(TicTacToeState initialState) {
+        TicTacToeSerializer serializer = new TicTacToeSerializer(this.playerProvider);
+        return serializer.traverseToString(this.processor, initialState);
+    }
+
+    @Override
+    protected TicTacToeState getInitialState(Configuration configuration) {
         TicTacToeState s = new TicTacToeState();
-        s.setBoard(new TicTacToeBoard(9,9));
+
+        int fieldWidth = configuration.getInt("fieldWidth");
+        int fieldHeight = configuration.getInt("fieldHeight");
+
+        TicTacToeBoard board = new TicTacToeBoard(fieldWidth, fieldHeight);
+
+        ArrayList<TicTacToePlayerState> playerStates = new ArrayList<>();
+        int counter = 0;
+
+        for (TicTacToePlayer player : this.playerProvider.getPlayers()) {
+            TicTacToePlayerState playerState = new TicTacToePlayerState();
+            playerState.setPlayerId(player.getId());
+
+            playerStates.add(playerState);
+            counter++;
+        }
+        s.setPlayerstates(playerStates);
+
+        s.setBoard(board);
         return s;
     }
 }

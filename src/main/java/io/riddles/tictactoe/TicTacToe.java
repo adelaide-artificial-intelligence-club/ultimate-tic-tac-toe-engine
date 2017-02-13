@@ -19,8 +19,11 @@
 
 package io.riddles.tictactoe;
 
+import io.riddles.javainterface.game.player.PlayerProvider;
+import io.riddles.javainterface.io.IOHandler;
 import io.riddles.tictactoe.engine.TicTacToeEngine;
-import io.riddles.javainterface.exception.TerminalException;
+import io.riddles.tictactoe.game.player.TicTacToePlayer;
+import io.riddles.tictactoe.game.state.TicTacToeState;
 
 /**
  * Entry point for TicTacToe. It creates an engine and runs it.
@@ -33,8 +36,11 @@ public class TicTacToe {
     public static void main(String[] args) throws Exception {
         TicTacToeEngine engine;
 
-        engine = new TicTacToeEngine(args);
+        engine = new TicTacToeEngine(new PlayerProvider<TicTacToePlayer>(), new IOHandler());
 
-        engine.run();
+        //new LifecycleRunner().run(engine);
+        TicTacToeState state = engine.willRun();
+        state = engine.run(state);
+        engine.didRun(state);
     }
 }
