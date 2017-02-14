@@ -208,6 +208,7 @@ public class TicTacToeBoard {
      * @return :
      */
     public void updateMacroboard(Point lastMove) {
+        if (lastMove != null) System.out.println("updateMacroboard "  + lastMove.getX() + " " + lastMove.getY());
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 String winner = getMicroboardWinner(x, y);
