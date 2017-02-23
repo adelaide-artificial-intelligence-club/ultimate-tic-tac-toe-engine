@@ -48,7 +48,7 @@ class TicTacToeEngineSpec extends Specification {
         }
     }
 
-    //@Ignore
+    @Ignore
     def "test engine setup 2 players"() {
 
         setup:
@@ -128,5 +128,69 @@ class TicTacToeEngineSpec extends Specification {
 
         expect:
         engine.finalState instanceof TicTacToeState;
+    }
+
+    //@Ignore
+    def "test bot 0 win"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot_input_win.txt"
+        botInputs[1] = "./src/test/resources/bot_input_loose.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState state = engine.willRun()
+        state = engine.run(state);
+        engine.didRun(state);
+
+        /* Fast forward to final state */
+        while (state.hasNextState()) state = state.getNextState();
+
+        //state.getBoard().dumpBoard();
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        state instanceof TicTacToeState;
+        state.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
+        processor.getWinnerId(state) == 0;
+    }
+
+    //Ignore
+    def "test bot 1 win"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot_input_loose.txt"
+        botInputs[1] = "./src/test/resources/bot_input_win.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState state = engine.willRun()
+        state = engine.run(state);
+        engine.didRun(state);
+
+        /* Fast forward to final state */
+        while (state.hasNextState()) state = state.getNextState();
+
+        //state.getBoard().dumpBoard();
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        state instanceof TicTacToeState;
+        state.getBoard().toString() == ".,.,0,.,.,.,.,.,0,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.";
+        processor.getWinnerId(state) == 1;
     }
 }

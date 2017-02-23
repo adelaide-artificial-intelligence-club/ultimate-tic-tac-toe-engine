@@ -208,7 +208,6 @@ public class TicTacToeBoard {
      * @return :
      */
     public void updateMacroboard(Point lastMove) {
-        if (lastMove != null) System.out.println("updateMacroboard "  + lastMove.getX() + " " + lastMove.getY());
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 String winner = getMicroboardWinner(x, y);
@@ -242,21 +241,21 @@ public class TicTacToeBoard {
         int startY = macroY*3;
 		/* Check horizontal wins */
         for (int y = startY; y < startY+3; y++) {
-            if (field[startX+0][y] == field[startX+1][y] && field[startX+1][y] == field[startX+2][y] && field[startX+0][y] != EMPTY_FIELD && field[startX+0][y] != AVAILABLE_FIELD) {
+            if (field[startX+0][y].equals(field[startX+1][y]) && field[startX+1][y].equals(field[startX+2][y]) && !field[startX+0][y].equals(EMPTY_FIELD) && !field[startX+0][y].equals(AVAILABLE_FIELD)) {
                 return field[startX+0][y];
             }
         }
 		/* Check vertical wins */
         for (int x = startX; x < startX+3; x++) {
-            if (field[x][startY+0] == field[x][startY+1] && field[x][startY+1] == field[x][startY+2] && field[x][startY+0] != EMPTY_FIELD) {
+            if (field[x][startY+0].equals(field[x][startY+1]) && field[x][startY+1].equals(field[x][startY+2]) && !field[x][startY+0].equals(EMPTY_FIELD) && !field[x][startY+0].equals(AVAILABLE_FIELD)) {
                 return field[x][startY+0];
             }
         }
 		/* Check diagonal wins */
-        if (field[startX][startY] == field[startX+1][startY+1] && field[startX+1][startY+1] == field[startX+2][startY+2] && field[startX+0][startY+0] != EMPTY_FIELD) {
+        if (field[startX][startY].equals(field[startX+1][startY+1]) && field[startX+1][startY+1].equals(field[startX+2][startY+2]) && !field[startX+0][startY+0].equals(EMPTY_FIELD)  && !field[startX+0][startY+0].equals(AVAILABLE_FIELD) ) {
             return field[startX][startY];
         }
-        if (field[startX+2][startY] == field[startX+1][startY+1] && field[startX+1][startY+1] == field[startX][startY+2] && field[startX+2][startY+0] != EMPTY_FIELD) {
+        if (field[startX+2][startY].equals(field[startX+1][startY+1]) && field[startX+1][startY+1].equals(field[startX][startY+2]) && !field[startX+2][startY+0].equals(EMPTY_FIELD) && !field[startX+2][startY+0].equals(AVAILABLE_FIELD)) {
             return field[startX+2][startY];
         }
         return null;
@@ -310,7 +309,7 @@ public class TicTacToeBoard {
     public Boolean microboardFullOrTaken(int x, int y) {
         if (x < 0 || y < 0) return true; /* empty board */
 
-        if (macroboard[x][y] != EMPTY_FIELD && macroboard[x][y] != AVAILABLE_FIELD) { /* microboard is taken */
+        if (!macroboard[x][y].equals(EMPTY_FIELD) && !macroboard[x][y].equals(AVAILABLE_FIELD)) { /* microboard is taken */
             return true;
         }
         for (int my = y*3; my < y*3+3; my++) {
@@ -339,21 +338,21 @@ public class TicTacToeBoard {
     public Integer getMacroboardWinner() {
 		/* Check horizontal wins */
         for (int y = 0; y < 3; y++) {
-            if (macroboard[0][y] == macroboard[1][y] && macroboard[1][y] == macroboard[2][y] && macroboard[0][y] != EMPTY_FIELD && macroboard[0][y] != AVAILABLE_FIELD) {
+            if (macroboard[0][y].equals(macroboard[1][y]) && macroboard[1][y].equals(macroboard[2][y]) && !macroboard[0][y].equals(EMPTY_FIELD) && !macroboard[0][y].equals(AVAILABLE_FIELD)) {
                 return Integer.parseInt(macroboard[0][y]);
             }
         }
 		/* Check vertical wins */
         for (int x = 0; x < 3; x++) {
-            if (macroboard[x][0] == macroboard[x][1] && macroboard[x][1] == macroboard[x][2] && macroboard[x][0] != EMPTY_FIELD && macroboard[x][0] != AVAILABLE_FIELD) {
+            if (macroboard[x][0] == macroboard[x][1] && macroboard[x][1] == macroboard[x][2] && !macroboard[x][0].equals(EMPTY_FIELD) && !macroboard[x][0].equals(AVAILABLE_FIELD)) {
                 return Integer.parseInt(macroboard[x][0]);
             }
         }
 		/* Check diagonal wins */
-        if (macroboard[0][0] == macroboard[1][1] && macroboard[1][1] == macroboard[2][2] && macroboard[0][0] != EMPTY_FIELD && macroboard[0][0] != AVAILABLE_FIELD) {
+        if (macroboard[0][0].equals(macroboard[1][1]) && macroboard[1][1].equals(macroboard[2][2]) && !macroboard[0][0].equals(EMPTY_FIELD) && !macroboard[0][0].equals(AVAILABLE_FIELD)) {
             return Integer.parseInt(macroboard[0][0]);
         }
-        if (macroboard[2][0] == macroboard[1][1] && macroboard[1][1] == macroboard[0][2] && macroboard[2][0] != EMPTY_FIELD && macroboard[2][0] != AVAILABLE_FIELD) {
+        if (macroboard[2][0].equals(macroboard[1][1]) && macroboard[1][1].equals(macroboard[0][2]) && !macroboard[2][0].equals(EMPTY_FIELD) && !macroboard[2][0].equals(AVAILABLE_FIELD)) {
             return Integer.parseInt(macroboard[2][0]);
         }
         return null;

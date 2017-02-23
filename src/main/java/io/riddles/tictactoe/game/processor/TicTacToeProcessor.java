@@ -92,6 +92,7 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         nextState.getBoard().dumpMacroboard();
 
 
+
         return nextState;
     }
 
@@ -138,12 +139,12 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
     public Integer getWinnerId(TicTacToeState state) {
         TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
 
+
         if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
             state.getBoard().updateMacroboard(ps.getMove().getCoordinate());
         } else {
             state.getBoard().updateMacroboard(null);
         }
-
         return state.getBoard().getMacroboardWinner();
     }
 
