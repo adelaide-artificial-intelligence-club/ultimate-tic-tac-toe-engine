@@ -117,16 +117,16 @@ public class TicTacToeBoard {
      * | |_____________ Reserved
      * |_______________ Reserved
      */
-    public String toPresentationString(int nextPlayer, Boolean showPossibleMoves) { /* TODO: this forces bot ids 1 and 2 */
+    public String toPresentationString(int nextPlayer, Boolean showPossibleMoves) { /* TODO: this forces bot ids 0 and 1*/
         String r = "";
         int counter = 0;
         for (int y = 0; y < this.height; y++) {
             for (int x = 0; x < this.width; x++) {
                 int b = 0;
-                if (field[x][y] == "1") {
+                if (field[x][y].equals("0")) {
                     b = b | (1 << 0);
                 }
-                if (field[x][y] == "2") {
+                if (field[x][y].equals("1")) {
                     b = b | (1 << 1);
                 }
                 if (showPossibleMoves) {
@@ -137,10 +137,10 @@ public class TicTacToeBoard {
                         b = b | (1 << 3);
                     }
                 }
-                if (macroboard[x/3][y/3] == "1") {
+                if (macroboard[x/3][y/3].equals("0")) {
                     b = b | (1 << 4);
                 }
-                if (macroboard[x/3][y/3] == "2") {
+                if (macroboard[x/3][y/3].equals("1")) {
                     b = b | (1 << 5);
                 }
                 if (counter > 0) {

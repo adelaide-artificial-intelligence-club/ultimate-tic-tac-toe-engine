@@ -88,6 +88,9 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
         nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
 
+        System.out.println(nextState.getFieldPresentationString());
+        System.out.println(nextState.getPossibleMovesPresentationString());
+
         nextState.getBoard().dump();
         nextState.getBoard().dumpMacroboard();
 

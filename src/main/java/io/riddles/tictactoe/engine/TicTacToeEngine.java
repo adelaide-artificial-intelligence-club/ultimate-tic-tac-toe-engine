@@ -103,6 +103,8 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         s.setPlayerstates(playerStates);
 
         s.setBoard(board);
+        s.setFieldPresentationString(s.getBoard().toPresentationString(0, false));
+        s.setPossibleMovesPresentationString(s.getBoard().toPresentationString(0, true));
         return s;
     }
 }
