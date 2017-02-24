@@ -43,8 +43,6 @@ public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcess
     }
 
 
-    private final int SIZE = 9;
-
     @Override
     public String traverseToString(TicTacToeProcessor processor, TicTacToeState initialState) {
         JSONObject game = new JSONObject();
@@ -59,9 +57,14 @@ public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcess
 
         while (state.hasNextState()) {
             state = (TicTacToeState)state.getNextState();
-            states.put(stateSerializer.traverseToJson(state, false));
-            states.put(stateSerializer.traverseToJson(state, true));
-            System.out.println("state " + state.getRoundNumber());
+            System.out.println(state.getRoundNumber());
+            if (state.getRoundNumber() == 1) {
+                state.setFieldPresentationString("8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8");
+                states.put(stateSerializer.traverseToJson(state, false));
+            } else {
+                states.put(stateSerializer.traverseToJson(state, false));
+                states.put(stateSerializer.traverseToJson(state, true));
+            }
         }
         game.put("states", states);
 

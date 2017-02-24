@@ -91,20 +91,26 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         TicTacToeBoard board = new TicTacToeBoard(fieldWidth, fieldHeight);
 
         ArrayList<TicTacToePlayerState> playerStates = new ArrayList<>();
-        int counter = 0;
 
         for (TicTacToePlayer player : this.playerProvider.getPlayers()) {
             TicTacToePlayerState playerState = new TicTacToePlayerState();
             playerState.setPlayerId(player.getId());
 
             playerStates.add(playerState);
-            counter++;
         }
         s.setPlayerstates(playerStates);
 
         s.setBoard(board);
         s.setFieldPresentationString(s.getBoard().toPresentationString(0, false));
         s.setPossibleMovesPresentationString(s.getBoard().toPresentationString(0, true));
-        return s;
+        s.setRoundNumber(-1);
+
+        TicTacToeState s2 = s.createNextState(0);
+        s2.setBoard(board.clone());
+        s2.setPlayerstates(playerStates);
+
+
+
+        return s2;
     }
 }
