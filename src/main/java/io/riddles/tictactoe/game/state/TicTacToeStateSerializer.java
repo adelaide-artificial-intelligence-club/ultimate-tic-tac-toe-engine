@@ -48,6 +48,13 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
     private JSONObject visitState(TicTacToeState state, Boolean showPossibleMoves) throws NullPointerException {
         JSONObject stateJson = new JSONObject();
         stateJson.put("round", state.getRoundNumber()-1);
+        int moveNr = (state.getRoundNumber()-1)*2+1;
+        if (state.getPlayerId() == 1) moveNr++;
+        if (showPossibleMoves) moveNr++;
+        stateJson.put("move", moveNr);
+
+
+        //System.out.println(stateJson.get("round") + " " + stateJson.get("move"));
 
         TicTacToeMove move = state.getPlayerStates().get(0).getMove();
         TicTacToeBoard board = state.getBoard();
@@ -66,6 +73,7 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
             stateJson.put("field", state.getFieldPresentationString());
         }
         stateJson.put("winner", winnerString);
+
 
         if (move != null) {
             if (move.getException() == null) {

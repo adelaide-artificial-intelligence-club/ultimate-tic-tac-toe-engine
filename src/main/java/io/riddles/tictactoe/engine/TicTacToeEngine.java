@@ -42,8 +42,8 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         cc.addRequiredKey("fieldHeight");
 
         cc.put("maxRounds", 10);
-        cc.put("fieldWidth", 19);
-        cc.put("fieldHeight", 19);
+        cc.put("fieldWidth", 9);
+        cc.put("fieldHeight", 9);
 
         return cc;
     }
@@ -101,8 +101,6 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         s.setPlayerstates(playerStates);
 
         s.setBoard(board);
-        s.setFieldPresentationString(s.getBoard().toPresentationString(0, false));
-        s.setPossibleMovesPresentationString(s.getBoard().toPresentationString(0, true));
         s.setRoundNumber(-1);
 
         TicTacToeState s2 = s.createNextState(0);

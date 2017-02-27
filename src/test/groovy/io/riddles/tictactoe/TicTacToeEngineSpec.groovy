@@ -143,7 +143,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(state) == null;
     }
 
-    @Ignore
+    //@Ignore
     def "test garbage input"() {
 
         setup:
@@ -175,7 +175,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(state) == null;
     }
 
-    //@Ignore
+    @Ignore
     def "test bot 0 win"() {
 
         setup:

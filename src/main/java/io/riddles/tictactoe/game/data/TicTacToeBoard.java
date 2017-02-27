@@ -130,10 +130,10 @@ public class TicTacToeBoard {
                     b = b | (1 << 1);
                 }
                 if (showPossibleMoves) {
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && field[x][y] == EMPTY_FIELD) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 1 && field[x][y].equals(EMPTY_FIELD)) {
                         b = b | (1 << 2);
                     }
-                    if (isInActiveMicroboard(x, y) && nextPlayer == 0 && field[x][y] == EMPTY_FIELD) {
+                    if (isInActiveMicroboard(x, y) && nextPlayer == 0 && field[x][y].equals(EMPTY_FIELD)) {
                         b = b | (1 << 3);
                     }
                 }

@@ -74,25 +74,25 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         TicTacToeMove move = deserializer.traverse(input.getValue());
 
         if (move.getException() != null) {
-            System.out.println("EXCEPTION '" + input.getValue() + "' " + move.getException().toString());
+            //System.out.println("EXCEPTION '" + input.getValue() + "' " + move.getException().toString());
         }
         playerState.setMove(move);
         try {
             logic.transform(nextState, playerState);
         } catch (Exception e) {
             move.setException(new InvalidMoveException("Error transforming move."));
-            System.out.println("EXCEPTION " + e.toString());
-            e.printStackTrace();
+            //System.out.println("EXCEPTION " + e.toString());
+            //e.printStackTrace();
         }
         nextState.setPlayerstates((ArrayList)nextPlayerStates);
         nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
         nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
 
-        System.out.println(nextState.getFieldPresentationString());
-        System.out.println(nextState.getPossibleMovesPresentationString());
+        //System.out.println(nextState.getFieldPresentationString());
+        //System.out.println(nextState.getPossibleMovesPresentationString());
 
-        nextState.getBoard().dump();
-        nextState.getBoard().dumpMacroboard();
+        //nextState.getBoard().dump();
+        //nextState.getBoard().dumpMacroboard();
 
 
 
