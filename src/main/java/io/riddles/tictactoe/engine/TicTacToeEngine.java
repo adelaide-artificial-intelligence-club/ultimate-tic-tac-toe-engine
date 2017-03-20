@@ -70,8 +70,6 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
     @Override
     protected void sendSettingsToPlayer(TicTacToePlayer player, Configuration configuration) {
         player.sendSetting("your_botid", player.getId());
-        player.sendSetting("field_width", configuration.getInt("fieldWidth"));
-        player.sendSetting("field_height", configuration.getInt("fieldHeight"));
         player.sendSetting("max_rounds", configuration.getInt("maxRounds"));
     }
 
