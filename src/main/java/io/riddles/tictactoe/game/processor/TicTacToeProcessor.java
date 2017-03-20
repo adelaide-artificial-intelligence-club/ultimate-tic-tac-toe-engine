@@ -22,8 +22,9 @@ package io.riddles.tictactoe.game.processor;
 import java.util.ArrayList;
 
 import io.riddles.javainterface.exception.InvalidMoveException;
-import io.riddles.javainterface.game.player.PlayerBound;
+import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.javainterface.game.processor.PlayerResponseProcessor;
+import io.riddles.javainterface.game.state.AbstractPlayerState;
 import io.riddles.javainterface.io.PlayerResponse;
 import io.riddles.tictactoe.game.move.ActionType;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
@@ -42,28 +43,26 @@ import io.riddles.tictactoe.game.state.TicTacToeState;
  *
  * @author joost
  */
-public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlayer, TicTacToeState> {
+public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, TicTacToePlayer> {
 
-    public TicTacToeProcessor() {
-        super();
+    public TicTacToeProcessor(PlayerProvider<TicTacToePlayer> playerProvider) {
+        super(playerProvider);
     }
 
     /**
-     *
-     * Return
-     * the TicTacToeState that will be the state for the next round.
-     * @param TicTacToeState The current state
+     * Return the TicTacToeState that will be the state for the next round.
+     * @param currentState The current state
      * @param roundNumber The current round number
      * @param input The input to process.
      */
     @Override
-    public TicTacToeState processInput(TicTacToeState state, int roundNumber, PlayerResponse input) {
+    public TicTacToeState createNextStateFromResponse(TicTacToeState currentState, PlayerResponse input, int roundNumber) {
 
         /* Clone playerStates for next State */
-        ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(state.getPlayerStates());
+        ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(currentState.getPlayerStates());
 
         TicTacToeLogic logic = new TicTacToeLogic();
-        TicTacToeState nextState = state.createNextState(roundNumber);
+        TicTacToeState nextState = currentState.createNextState(roundNumber);
 
         nextState.setPlayerId(input.getPlayerId());
 
@@ -73,28 +72,15 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         TicTacToeMoveDeserializer deserializer = new TicTacToeMoveDeserializer();
         TicTacToeMove move = deserializer.traverse(input.getValue());
 
-        if (move.getException() != null) {
-            //System.out.println("EXCEPTION '" + input.getValue() + "' " + move.getException().toString());
-        }
         playerState.setMove(move);
         try {
             logic.transform(nextState, playerState);
         } catch (Exception e) {
             move.setException(new InvalidMoveException("Error transforming move."));
-            //System.out.println("EXCEPTION " + e.toString());
-            //e.printStackTrace();
         }
         nextState.setPlayerstates((ArrayList)nextPlayerStates);
         nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
         nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
-
-        //System.out.println(nextState.getFieldPresentationString());
-        //System.out.println(nextState.getPossibleMovesPresentationString());
-
-        //nextState.getBoard().dump();
-        //nextState.getBoard().dumpMacroboard();
-
-
 
         return nextState;
     }
@@ -107,7 +93,6 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         }
         return nextPlayerStates;
     }
-
 
     @Override
     public void sendUpdates(TicTacToeState state, TicTacToePlayer player) {
@@ -124,6 +109,10 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
 
     }
 
+    @Override
+    public Enum getActionType(TicTacToeState currentState, AbstractPlayerState playerState) {
+        return ActionType.MOVE;
+    }
 
     /* hasGameEnded should check all conditions on which a game should end
     *  returns: boolean
@@ -142,7 +131,6 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
     public Integer getWinnerId(TicTacToeState state) {
         TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
 
-
         if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
             state.getBoard().updateMacroboard(ps.getMove().getCoordinate());
         } else {
@@ -157,16 +145,10 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         return state.getRoundNumber();
     }
 
-    @Override
-    public Enum getActionRequest(TicTacToeState intermediateState, PlayerBound playerState) {
-        return ActionType.MOVE;
-    }
-
     private TicTacToePlayerState getActivePlayerState(ArrayList<TicTacToePlayerState> playerStates, int id) {
         for (TicTacToePlayerState playerState : playerStates) {
             if (playerState.getPlayerId() == id) { return playerState; }
         }
         return null;
     }
-
 }

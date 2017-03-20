@@ -36,11 +36,11 @@ public class TicTacToe {
     public static void main(String[] args) throws Exception {
         TicTacToeEngine engine;
 
-        engine = new TicTacToeEngine(new PlayerProvider<TicTacToePlayer>(), new IOHandler());
+        engine = new TicTacToeEngine(new PlayerProvider<>(), new IOHandler());
 
         //new LifecycleRunner().run(engine);
-        TicTacToeState state = engine.willRun();
-        state = engine.run(state);
-        engine.didRun(state);
+        TicTacToeState firstState = engine.willRun();
+        TicTacToeState finalstate = engine.run(firstState);
+        engine.didRun(firstState, finalstate);
     }
 }

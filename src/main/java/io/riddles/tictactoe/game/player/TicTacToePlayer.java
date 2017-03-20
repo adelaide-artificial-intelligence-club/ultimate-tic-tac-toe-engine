@@ -35,7 +35,6 @@ import io.riddles.javainterface.game.player.AbstractPlayer;
 
 public class TicTacToePlayer extends AbstractPlayer {
 
-
     public TicTacToePlayer(int id) {
         super(id);
     }

@@ -15,7 +15,7 @@ apply plugin: "com.jfrog.artifactory"
 
 
 mainClassName = 'io.riddles.tictactoe.TicTacToe'
-version '1.0.3'
+version '1.0.4'
 sourceCompatibility = 1.8
 
 artifactory {
@@ -58,7 +58,6 @@ repositories {
 }
 
 dependencies {
-    compile(group: 'io.riddles', name: 'javainterface', version: '1.0.5')
     compile group: 'org.json', name: 'json', version: '20160212'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.1'
     testCompile "org.spockframework:spock-core:1.0-groovy-2.4"

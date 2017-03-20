@@ -17,41 +17,31 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoe.game.move;
+package io.riddles.javainterface.io;
 
-import java.awt.*;
-
-import io.riddles.javainterface.exception.InvalidInputException;
-import io.riddles.javainterface.game.move.AbstractMove;
+import io.riddles.javainterface.game.player.PlayerBound;
 
 /**
- * ${PACKAGE_NAME}
+ * io.riddles.javainterface.io.PlayerResponse - Created on 12-12-16
  *
- * This file is a part of TicTacToe
+ * Wrap a player response and playerId together in one Object for the Processor to eat.
  *
- * Copyright 2016 - present Riddles.io
- * For license information see the LICENSE file in the project root
- *
- * @author Niko
+ * @author Joost de Meij - joost@riddles.io, Jim van Eeden - jim@riddles.io
  */
+public class PlayerResponse implements PlayerBound {
+    private String value;
+    private int playerId;
 
-
-public class TicTacToeMove extends AbstractMove {
-
-    private Point coordinate;
-
-    public TicTacToeMove(Point coordinate) {
-        super();
-        this.coordinate = coordinate;
+    public PlayerResponse(String value, int playerId) {
+        this.value = value;
+        this.playerId = playerId;
     }
 
-    public TicTacToeMove(InvalidInputException exception) {
-        super(exception);
+    public String getValue() {
+        return this.value;
     }
 
-    public Point getCoordinate() { return this.coordinate; }
-
-    public String toString() {
-        return "TicTacToeMove " + this.coordinate;
+    public int getPlayerId() {
+        return this.playerId;
     }
 }

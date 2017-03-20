@@ -20,9 +20,6 @@
 package io.riddles.tictactoe.game;
 
 import io.riddles.javainterface.game.player.AbstractPlayer;
-import io.riddles.javainterface.game.player.PlayerProvider;
-import io.riddles.javainterface.game.state.AbstractState;
-import io.riddles.tictactoe.TicTacToe;
 import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
 import io.riddles.tictactoe.game.state.TicTacToeState;
 import io.riddles.tictactoe.game.state.TicTacToeStateSerializer;
@@ -39,17 +36,11 @@ import io.riddles.javainterface.game.AbstractGameSerializer;
  */
 public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcessor, TicTacToeState> {
 
-    public TicTacToeSerializer(PlayerProvider playerProvider) {
-        super(playerProvider);
-    }
-
-
     @Override
     public String traverseToString(TicTacToeProcessor processor, TicTacToeState initialState) {
         JSONObject game = new JSONObject();
 
         game = addDefaultJSON(initialState, game, processor);
-
 
         JSONArray states = new JSONArray();
         TicTacToeState state = initialState;
@@ -71,59 +62,7 @@ public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcess
         }
         game.put("states", states);
 
-
         return game.toString();
     }
-
-    /**
-     * Method that can be used for (almost) every game type. Will put everything
-     * to the output file that every visualizer needs
-     * @param game JSONObject that stores the full game output
-     * @param processor Processor that is used this game
-     * @return Updated JSONObject with added stuff
-     */
-    protected JSONObject addDefaultJSON(TicTacToeState state, JSONObject game, TicTacToeProcessor processor) {
-
-        // put default settings (player settings)
-        JSONArray playerNames = new JSONArray();
-        for (Object obj : playerProvider.getPlayers()) {
-            AbstractPlayer player = (AbstractPlayer) obj;
-            playerNames.put(player.getName());
-        }
-
-        JSONObject players = new JSONObject();
-        players.put("count", playerProvider.getPlayers().size());
-        players.put("names", playerNames);
-
-        JSONObject settings = new JSONObject();
-        settings.put("players", players);
-
-
-        JSONObject field = new JSONObject();
-        field.put("width", 9);
-        field.put("height", 9);
-
-        settings.put("field", field);
-
-        game.put("settings", settings);
-
-        // Fast forward to last state
-        TicTacToeState finalState = state;
-        while (finalState.hasNextState()) {
-            finalState = (TicTacToeState)finalState.getNextState();
-        }
-
-        if (processor.getWinnerId(finalState) != null) {
-            game.put("winner", processor.getWinnerId(finalState));
-        } else {
-            game.put("winner", JSONObject.NULL);
-        }
-
-        // put score
-        game.put("score", processor.getScore(finalState));
-
-        return game;
-    }
-
 }
 

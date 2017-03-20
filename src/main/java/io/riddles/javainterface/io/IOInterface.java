@@ -17,41 +17,22 @@
  *     file that was distributed with this source code.
  */
 
-package io.riddles.tictactoe.game.move;
+package io.riddles.javainterface.io;
 
-import java.awt.*;
-
-import io.riddles.javainterface.exception.InvalidInputException;
-import io.riddles.javainterface.game.move.AbstractMove;
+import java.io.IOException;
 
 /**
- * ${PACKAGE_NAME}
+ * io.riddles.javainterface.io.IO - Created on 15-9-16
  *
- * This file is a part of TicTacToe
+ * [description]
  *
- * Copyright 2016 - present Riddles.io
- * For license information see the LICENSE file in the project root
- *
- * @author Niko
+ * @author Jim van Eeden - jim@riddles.io
  */
+public interface IOInterface {
 
+    void sendMessage(String message);
 
-public class TicTacToeMove extends AbstractMove {
+    void waitForMessage(String expected);
 
-    private Point coordinate;
-
-    public TicTacToeMove(Point coordinate) {
-        super();
-        this.coordinate = coordinate;
-    }
-
-    public TicTacToeMove(InvalidInputException exception) {
-        super(exception);
-    }
-
-    public Point getCoordinate() { return this.coordinate; }
-
-    public String toString() {
-        return "TicTacToeMove " + this.coordinate;
-    }
+    String getNextMessage() throws IOException;
 }
