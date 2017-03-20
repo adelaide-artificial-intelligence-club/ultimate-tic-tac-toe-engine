@@ -1,0 +1,19 @@
+{
+  "wrapper": {
+    "timebankMax": 10000,
+    "timePerMove": 100,
+    "maxTimeouts": 0,
+    "resultFile": "./resultfile.json",
+    "debug": true
+  },
+  "match": {
+    "bots": [{
+      "command": "java -cp /home/jim/workspace/ultimate-tic-tac-toe-starter-bot/out/production/ultimate-tic-tac-toe-starter-bot bot.BotStarter"
+    },{
+      "command": "java -cp /home/jim/workspace/ultimate-tic-tac-toe-starter-bot/out/production/ultimate-tic-tac-toe-starter-bot bot.BotStarter"
+    }],
+    "engine": {
+      "command": "java -jar /home/jim/workspace/ultimate-tic-tac-toe-engine/build/libs/game-1.0.2.jar"
+    }
+  }
+}
