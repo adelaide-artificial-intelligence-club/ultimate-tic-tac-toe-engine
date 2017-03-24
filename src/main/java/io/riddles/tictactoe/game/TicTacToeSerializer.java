@@ -23,6 +23,7 @@ import io.riddles.javainterface.game.player.AbstractPlayer;
 import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.javainterface.game.state.AbstractState;
 import io.riddles.tictactoe.TicTacToe;
+import io.riddles.tictactoe.game.data.IncrementGenerator;
 import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
 import io.riddles.tictactoe.game.state.TicTacToeState;
 import io.riddles.tictactoe.game.state.TicTacToeStateSerializer;
@@ -54,20 +55,17 @@ public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcess
         JSONArray states = new JSONArray();
         TicTacToeState state = initialState;
 
-        /* Rewind to first state, which has been added in TicTacToeEngine */
-        while (state.hasPreviousState()) state = (TicTacToeState) state.getPreviousState();
+        TicTacToeStateSerializer stateSerializer = new TicTacToeStateSerializer(new IncrementGenerator(), processor);
 
-        TicTacToeStateSerializer stateSerializer = new TicTacToeStateSerializer();
+        states.put(stateSerializer.traverseToJson(state, false));
+        states.put(stateSerializer.traverseToJson(state, true));
 
         while (state.hasNextState()) {
             state = (TicTacToeState)state.getNextState();
-            if (state.getRoundNumber() == 0) {
-                state.setFieldPresentationString("4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4");
-                states.put(stateSerializer.traverseToJson(state, false));
-            } else {
-                states.put(stateSerializer.traverseToJson(state, false));
+
+            states.put(stateSerializer.traverseToJson(state, false));
+            if (state.hasNextState())
                 states.put(stateSerializer.traverseToJson(state, true));
-            }
         }
         game.put("states", states);
 

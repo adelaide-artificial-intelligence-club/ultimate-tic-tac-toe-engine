@@ -19,15 +19,15 @@
 
 package io.riddles.tictactoe
 
-import io.riddles.javainterface.exception.TerminalException
 import io.riddles.javainterface.game.player.PlayerProvider
 import io.riddles.javainterface.game.state.AbstractState
 import io.riddles.javainterface.io.FileIOHandler
 import io.riddles.tictactoe.engine.TicTacToeEngine
-import io.riddles.javainterface.io.IOHandler
+import io.riddles.tictactoe.game.data.IncrementGenerator
 import io.riddles.tictactoe.game.player.TicTacToePlayer
 import io.riddles.tictactoe.game.processor.TicTacToeProcessor
 import io.riddles.tictactoe.game.state.TicTacToeState
+import io.riddles.tictactoe.game.state.TicTacToeStateSerializer
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -48,7 +48,7 @@ class TicTacToeEngineSpec extends Specification {
         }
     }
 
-    @Ignore
+    //@Ignore
     def "test engine setup 2 players"() {
 
         setup:
@@ -63,20 +63,16 @@ class TicTacToeEngineSpec extends Specification {
 
         def engine = new TestEngine(playerProvider, wrapperInput)
 
-        AbstractState state = engine.willRun()
-        state = engine.run(state);
-        engine.didRun(state);
-
-        /* Fast forward to final state */
-        while (state.hasNextState()) state = state.getNextState();
-
-        //state.getBoard().dumpBoard();
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
         TicTacToeProcessor processor = engine.getProcessor();
 
+
         expect:
-        state instanceof TicTacToeState;
-        state.getBoard().toString() == "1,.,0,.,.,.,.,.,1,.,.,.,.,.,.,0,0,0,.,.,.,1,.,1,1,.,.,.,.,1,0,0,0,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,1,.,.,1,.,.,.,0,.,.,.,.,.,.,.,.,0,.,.,.,.,0,.,.,1,0,.,.,.,1,0,.,.";
-        processor.getWinnerId(state) == 0;
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == "1,.,0,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
     }
 
     @Ignore
@@ -95,20 +91,16 @@ class TicTacToeEngineSpec extends Specification {
 
         def engine = new TestEngine(playerProvider, wrapperInput)
 
-        AbstractState state = engine.willRun()
-        state = engine.run(state);
-        engine.didRun(state);
-
-        /* Fast forward to final state */
-        while (state.hasNextState()) state = state.getNextState();
-
-        //state.getBoard().dumpBoard();
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
         TicTacToeProcessor processor = engine.getProcessor();
 
+
         expect:
-        state instanceof TicTacToeState;
-        state.getBoard().toString() == "1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
-        processor.getWinnerId(state) == null;
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == "1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
     }
 
     @Ignore
@@ -127,23 +119,19 @@ class TicTacToeEngineSpec extends Specification {
 
         def engine = new TestEngine(playerProvider, wrapperInput)
 
-        AbstractState state = engine.willRun()
-        state = engine.run(state);
-        engine.didRun(state);
-
-        /* Fast forward to final state */
-        while (state.hasNextState()) state = state.getNextState();
-
-        //state.getBoard().dumpBoard();
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
         TicTacToeProcessor processor = engine.getProcessor();
 
+
         expect:
-        state instanceof TicTacToeState;
-        state.getBoard().toString() == "1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
-        processor.getWinnerId(state) == null;
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == "1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == null;
     }
 
-    //@Ignore
+    @Ignore
     def "test garbage input"() {
 
         setup:
@@ -159,23 +147,76 @@ class TicTacToeEngineSpec extends Specification {
 
         def engine = new TestEngine(playerProvider, wrapperInput)
 
-        AbstractState state = engine.willRun()
-        state = engine.run(state);
-        engine.didRun(state);
-
-        /* Fast forward to final state */
-        while (state.hasNextState()) state = state.getNextState();
-
-        //state.getBoard().dumpBoard();
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
         TicTacToeProcessor processor = engine.getProcessor();
 
+        //state.getBoard().dumpBoard();
+
         expect:
-        state instanceof TicTacToeState;
-        state.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.";
-        processor.getWinnerId(state) == null;
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == null;
     }
 
     @Ignore
+    def "test bot 0 win by p1 error"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot_input_win.txt"
+        botInputs[1] = "./src/test/resources/bot_input_loose.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
+        processor.getWinnerId(finalState) == 0;
+    }
+
+    @Ignore
+    def "test bot 1 win by p0 error"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot_input_0loose.txt"
+        botInputs[1] = "./src/test/resources/bot_input_0win.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().dump();
+        finalState.getBoard().dumpMacroboard();
+        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
+    }
+
+    //@Ignore
     def "test bot 0 win"() {
 
         setup:
@@ -191,19 +232,45 @@ class TicTacToeEngineSpec extends Specification {
 
         def engine = new TestEngine(playerProvider, wrapperInput)
 
-        AbstractState state = engine.willRun()
-        state = engine.run(state);
-        engine.didRun(state);
-
-        /* Fast forward to final state */
-        while (state.hasNextState()) state = state.getNextState();
-
-        //state.getBoard().dumpBoard();
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
         TicTacToeProcessor processor = engine.getProcessor();
 
         expect:
-        state instanceof TicTacToeState;
-        state.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
-        processor.getWinnerId(state) == 0;
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
+        processor.getWinnerId(finalState) == 0;
+    }
+
+
+    @Ignore
+    def "test TicTacToeStateSerializer getMoveNr"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot_input_win.txt"
+        botInputs[1] = "./src/test/resources/bot_input_loose.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState initialState = engine.willRun()
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        TicTacToeStateSerializer serializer = new TicTacToeStateSerializer(new IncrementGenerator(), processor);
+
+        int moveNrNoPossibleMoves = serializer.getMoveNumber(initialState, false);
+        int moveNrPossibleMoves = serializer.getMoveNumber(initialState, true);
+
+        expect:
+        moveNrNoPossibleMoves == 1;
+        moveNrPossibleMoves == 2;
     }
 }
+

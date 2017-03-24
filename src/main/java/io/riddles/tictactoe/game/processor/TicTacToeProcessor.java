@@ -21,6 +21,7 @@ package io.riddles.tictactoe.game.processor;
 
 import java.util.ArrayList;
 
+import io.riddles.javainterface.engine.AbstractEngine;
 import io.riddles.javainterface.exception.InvalidMoveException;
 import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.javainterface.game.processor.PlayerResponseProcessor;
@@ -60,7 +61,6 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
      */
     @Override
     public TicTacToeState createNextStateFromResponse(TicTacToeState state, PlayerResponse input, int roundNumber) {
-
         /* Clone playerStates for next State */
         ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(state.getPlayerStates());
 
@@ -89,9 +89,6 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
         nextState.setPlayerstates((ArrayList)nextPlayerStates);
         nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
         nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
-
-        //System.out.println(nextState.getFieldPresentationString());
-        //System.out.println(nextState.getPossibleMovesPresentationString());
 
         //nextState.getBoard().dump();
         //nextState.getBoard().dumpMacroboard();
@@ -137,7 +134,19 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     * */
     @Override
     public boolean hasGameEnded(TicTacToeState state) {
-        return getWinnerId(state) != null;
+        boolean returnVal = false;
+        TicTacToePlayerState ps = state.getPlayerStateById(state.getPlayerId());
+        TicTacToeMove move = (TicTacToeMove)ps.getMove();
+
+        if (getWinnerId(state) != null) returnVal = true;
+        if (state.getBoard().boardIsFull()) returnVal = true;
+        if (state.getRoundNumber() > AbstractEngine.configuration.getInt("maxRounds")) returnVal = true;
+        if (move != null && move.getException() != null) {
+            returnVal = true;
+            //System.out.println("Ended with exception " + move.getException());
+        }
+
+        return returnVal;
     }
 
     /**
@@ -147,16 +156,28 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     /* Returns winner playerId, or null if there's no winner. */
     @Override
     public Integer getWinnerId(TicTacToeState state) {
-        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
-
-
+        TicTacToePlayerState ps = state.getPlayerStateById(state.getPlayerId());
         TicTacToeMove move = (TicTacToeMove)ps.getMove();
+
+
         if (move != null && move.getCoordinate() != null) {
             state.getBoard().updateMacroboard(move.getCoordinate());
         } else {
             state.getBoard().updateMacroboard(null);
         }
+        if (move != null && move.getException() != null) {
+            // Player messed up
+            Integer otherPlayerId = getOtherPlayerId(state.getPlayerId());
+            return otherPlayerId;
+        }
         return state.getBoard().getMacroboardWinner();
+    }
+
+    private Integer getOtherPlayerId(int playerId) {
+        for (TicTacToePlayer player : playerProvider.getPlayers()) {
+            if (player.getId() != playerId) return player.getId();
+        }
+        return null;
     }
 
 

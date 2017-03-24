@@ -62,8 +62,8 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
     @Override
     protected void sendSettingsToPlayer(TicTacToePlayer player) {
         player.sendSetting("your_botid", player.getId());
-        player.sendSetting("field_width", configuration.getInt("fieldWidth"));
-        player.sendSetting("field_height", configuration.getInt("fieldHeight"));
+        //player.sendSetting("field_width", configuration.getInt("fieldWidth"));
+        //player.sendSetting("field_height", configuration.getInt("fieldHeight"));
         player.sendSetting("max_rounds", configuration.getInt("maxRounds"));
     }
 
@@ -87,14 +87,12 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
             TicTacToePlayerState playerState = new TicTacToePlayerState(player.getId());
             playerStates.add(playerState);
         }
-        TicTacToeState s = new TicTacToeState(null, playerStates, -1);
+        TicTacToeState s = new TicTacToeState(null, playerStates, 0);
 
         s.setBoard(board);
+        s.setFieldPresentationString("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+        s.setPossibleMovesPresentationString("4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4");
 
-        TicTacToeState s2 = s.createNextState(0);
-        s2.setBoard(board.clone());
-        s2.setPlayerstates(playerStates);
-
-        return s2;
+        return s;
     }
 }
