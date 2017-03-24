@@ -75,7 +75,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    @Ignore
+    //@Ignore
     def "test illegal moves"() {
 
         setup:
@@ -103,7 +103,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    @Ignore
+    //@Ignore
     def "test out of bounds"() {
 
         setup:
@@ -127,11 +127,11 @@ class TicTacToeEngineSpec extends Specification {
 
         expect:
         finalState instanceof TicTacToeState;
-        finalState.getBoard().toString() == "1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
-        processor.getWinnerId(finalState) == null;
+        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
     }
 
-    @Ignore
+    //@Ignore
     def "test garbage input"() {
 
         setup:
@@ -156,11 +156,11 @@ class TicTacToeEngineSpec extends Specification {
 
         expect:
         finalState instanceof TicTacToeState;
-        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,.";
-        processor.getWinnerId(finalState) == null;
+        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
     }
 
-    @Ignore
+    //@Ignore
     def "test bot 0 win by p1 error"() {
 
         setup:
@@ -187,7 +187,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 0;
     }
 
-    @Ignore
+    //@Ignore
     def "test bot 1 win by p0 error"() {
 
         setup:
@@ -244,7 +244,7 @@ class TicTacToeEngineSpec extends Specification {
     }
 
 
-    @Ignore
+    //@Ignore
     def "test TicTacToeStateSerializer getMoveNr"() {
 
         setup:
