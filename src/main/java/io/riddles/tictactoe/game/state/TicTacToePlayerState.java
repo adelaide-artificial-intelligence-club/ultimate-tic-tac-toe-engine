@@ -9,21 +9,13 @@ import io.riddles.tictactoe.game.move.TicTacToeMove;
  */
 public class TicTacToePlayerState extends AbstractPlayerState {
 
-    int playerId = 0;
-
-    public TicTacToePlayerState() {
+    public TicTacToePlayerState(int playerId) {
+        super(playerId);
     }
-
-    public TicTacToePlayerState(TicTacToeMove move) {
-
-        super(move);
-    }
-
 
     public TicTacToePlayerState clone() {
 
-        TicTacToePlayerState psClone = new TicTacToePlayerState();
-        psClone.setPlayerId(this.playerId);
+        TicTacToePlayerState psClone = new TicTacToePlayerState(this.playerId);
         return psClone;
     }
 
@@ -33,13 +25,6 @@ public class TicTacToePlayerState extends AbstractPlayerState {
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
     }
-    public TicTacToeMove getMove() {
-        if (this.getMoves().size() > 0) {
-            return (TicTacToeMove)this.getMoves().get(0);
-        }
-        return null;
-    }
-
 
     public String toString() {
         return "PlayerState p" + this.getPlayerId();

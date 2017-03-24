@@ -19,8 +19,10 @@
 
 package io.riddles.tictactoe.game.state;
 
+import io.riddles.javainterface.game.data.Board;
 import io.riddles.javainterface.game.player.PlayerBound;
 import io.riddles.javainterface.game.state.AbstractState;
+import io.riddles.tictactoe.engine.TicTacToeEngine;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
 
@@ -40,11 +42,6 @@ public class TicTacToeState extends AbstractState<TicTacToePlayerState> implemen
     private String mPossibleMovesString, mFieldPresentationString;
     private int playerId;
 
-
-    public TicTacToeState() {
-        super();
-    }
-
     public TicTacToeState(TicTacToeState previousState, TicTacToePlayerState playerState, int roundNumber, String possibleMovesString, String fieldPresentationString) {
         super(previousState, playerState, roundNumber);
         this.mPossibleMovesString = possibleMovesString;
@@ -55,13 +52,16 @@ public class TicTacToeState extends AbstractState<TicTacToePlayerState> implemen
 
     public TicTacToeState(TicTacToeState previousState, ArrayList<TicTacToePlayerState> playerState, int roundNumber) {
         super(previousState, playerState, roundNumber);
-        this.board = new TicTacToeBoard(previousState.getBoard());
+        if (previousState != null) {
+            this.board = new TicTacToeBoard(previousState.getBoard());
+        } else
+            this.board = new TicTacToeBoard(TicTacToeEngine.configuration.getInt("fieldWidth"), TicTacToeEngine.configuration.getInt("fieldHeight"));
     }
 
     /**
      * createNextState creates new objects needed for a new state.
-     * @param int roundNumber
-     * @return New LightridersState based on this state.
+     * @param roundNumber roundNumber
+     * @return New TicTacToeState based on this state.
      */
     public TicTacToeState createNextState(int roundNumber) {
         TicTacToeState nextState = new TicTacToeState(this, new ArrayList<>(), roundNumber);

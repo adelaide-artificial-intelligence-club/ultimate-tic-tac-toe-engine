@@ -19,10 +19,10 @@
 
 package io.riddles.tictactoe.game.move;
 
-import io.riddles.javainterface.game.data.Point;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.game.move.AbstractMove;
-import io.riddles.tictactoe.game.player.TicTacToePlayer;
+
+import java.awt.*;
 
 /**
  * ${PACKAGE_NAME}

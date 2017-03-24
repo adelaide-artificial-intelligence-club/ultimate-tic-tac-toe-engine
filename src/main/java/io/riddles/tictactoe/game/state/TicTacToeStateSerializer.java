@@ -56,7 +56,7 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
 
         //System.out.println(stateJson.get("round") + " " + stateJson.get("move"));
 
-        TicTacToeMove move = state.getPlayerStates().get(0).getMove();
+        TicTacToeMove move = (TicTacToeMove)state.getPlayerStateById(state.getPlayerId()).getMove();
         TicTacToeBoard board = state.getBoard();
         Integer winner = board.getMacroboardWinner();
         String winnerString = "";

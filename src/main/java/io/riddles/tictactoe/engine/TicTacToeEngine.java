@@ -1,13 +1,11 @@
 package io.riddles.tictactoe.engine;
 
-import io.riddles.javainterface.configuration.CheckedConfiguration;
 import io.riddles.javainterface.configuration.Configuration;
-import io.riddles.javainterface.engine.GameLoop;
+import io.riddles.javainterface.engine.GameLoopInterface;
 import io.riddles.javainterface.engine.TurnBasedGameLoop;
 import io.riddles.javainterface.exception.TerminalException;
 import io.riddles.javainterface.game.player.PlayerProvider;
-import io.riddles.javainterface.io.BotIO;
-import io.riddles.javainterface.io.IO;
+import io.riddles.javainterface.io.IOHandler;
 import io.riddles.tictactoe.game.TicTacToeSerializer;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.player.TicTacToePlayer;
@@ -30,45 +28,39 @@ import java.util.ArrayList;
  */
 public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacToePlayer, TicTacToeState> {
 
-    public TicTacToeEngine(PlayerProvider<TicTacToePlayer> playerProvider, IO ioHandler) throws TerminalException {
+    public TicTacToeEngine(PlayerProvider<TicTacToePlayer> playerProvider, IOHandler ioHandler) throws TerminalException {
         super(playerProvider, ioHandler);
     }
 
     @Override
-    protected CheckedConfiguration getConfiguration() {
-        CheckedConfiguration cc = new CheckedConfiguration();
-        cc.addRequiredKey("maxRounds");
-        cc.addRequiredKey("fieldWidth");
-        cc.addRequiredKey("fieldHeight");
-
+    protected Configuration getDefaultConfiguration() {
+        Configuration cc = new Configuration();
         cc.put("maxRounds", 10);
         cc.put("fieldWidth", 9);
         cc.put("fieldHeight", 9);
-
         return cc;
     }
 
     @Override
-    protected TicTacToePlayer createPlayer(int id, BotIO ioHandler) {
+    protected TicTacToePlayer createPlayer(int id) {
         TicTacToePlayer player = new TicTacToePlayer(id);
-        player.setIoHandler(ioHandler);
         return player;
     }
 
     @Override
     protected TicTacToeProcessor createProcessor() {
 
-        return new TicTacToeProcessor();
+        return new TicTacToeProcessor(playerProvider);
     }
 
     @Override
-    protected GameLoop createGameLoop() {
-
-        return new TurnBasedGameLoop(this.playerProvider);
+    protected GameLoopInterface createGameLoop() {
+        return new TurnBasedGameLoop();
     }
 
+
     @Override
-    protected void sendSettingsToPlayer(TicTacToePlayer player, Configuration configuration) {
+    protected void sendSettingsToPlayer(TicTacToePlayer player) {
         player.sendSetting("your_botid", player.getId());
         player.sendSetting("field_width", configuration.getInt("fieldWidth"));
         player.sendSetting("field_height", configuration.getInt("fieldHeight"));
@@ -77,13 +69,12 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
 
     @Override
     protected String getPlayedGame(TicTacToeState initialState) {
-        TicTacToeSerializer serializer = new TicTacToeSerializer(this.playerProvider);
+        TicTacToeSerializer serializer = new TicTacToeSerializer();
         return serializer.traverseToString(this.processor, initialState);
     }
 
     @Override
-    protected TicTacToeState getInitialState(Configuration configuration) {
-        TicTacToeState s = new TicTacToeState();
+    protected TicTacToeState getInitialState() {
 
         int fieldWidth = configuration.getInt("fieldWidth");
         int fieldHeight = configuration.getInt("fieldHeight");
@@ -93,21 +84,16 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         ArrayList<TicTacToePlayerState> playerStates = new ArrayList<>();
 
         for (TicTacToePlayer player : this.playerProvider.getPlayers()) {
-            TicTacToePlayerState playerState = new TicTacToePlayerState();
-            playerState.setPlayerId(player.getId());
-
+            TicTacToePlayerState playerState = new TicTacToePlayerState(player.getId());
             playerStates.add(playerState);
         }
-        s.setPlayerstates(playerStates);
+        TicTacToeState s = new TicTacToeState(null, playerStates, -1);
 
         s.setBoard(board);
-        s.setRoundNumber(-1);
 
         TicTacToeState s2 = s.createNextState(0);
         s2.setBoard(board.clone());
         s2.setPlayerstates(playerStates);
-
-
 
         return s2;
     }

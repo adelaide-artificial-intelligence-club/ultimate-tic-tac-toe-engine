@@ -39,8 +39,8 @@ import io.riddles.javainterface.game.AbstractGameSerializer;
  */
 public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcessor, TicTacToeState> {
 
-    public TicTacToeSerializer(PlayerProvider playerProvider) {
-        super(playerProvider);
+    public TicTacToeSerializer() {
+        super();
     }
 
 
@@ -86,13 +86,13 @@ public class TicTacToeSerializer extends AbstractGameSerializer<TicTacToeProcess
 
         // put default settings (player settings)
         JSONArray playerNames = new JSONArray();
-        for (Object obj : playerProvider.getPlayers()) {
+        for (Object obj : processor.getPlayerProvider().getPlayers()) {
             AbstractPlayer player = (AbstractPlayer) obj;
             playerNames.put(player.getName());
         }
 
         JSONObject players = new JSONObject();
-        players.put("count", playerProvider.getPlayers().size());
+        players.put("count", processor.getPlayerProvider().getPlayers().size());
         players.put("names", playerNames);
 
         JSONObject settings = new JSONObject();

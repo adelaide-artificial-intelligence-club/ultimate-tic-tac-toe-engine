@@ -22,8 +22,9 @@ package io.riddles.tictactoe.game.processor;
 import java.util.ArrayList;
 
 import io.riddles.javainterface.exception.InvalidMoveException;
-import io.riddles.javainterface.game.player.PlayerBound;
+import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.javainterface.game.processor.PlayerResponseProcessor;
+import io.riddles.javainterface.game.state.AbstractPlayerState;
 import io.riddles.javainterface.io.PlayerResponse;
 import io.riddles.tictactoe.game.move.ActionType;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
@@ -42,22 +43,23 @@ import io.riddles.tictactoe.game.state.TicTacToeState;
  *
  * @author joost
  */
-public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlayer, TicTacToeState> {
 
-    public TicTacToeProcessor() {
-        super();
+public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, TicTacToePlayer> {
+
+    public TicTacToeProcessor(PlayerProvider<TicTacToePlayer> playerProvider) {
+        super(playerProvider);
     }
 
     /**
      *
      * Return
      * the TicTacToeState that will be the state for the next round.
-     * @param TicTacToeState The current state
+     * @param state The current TicTacToeState
      * @param roundNumber The current round number
      * @param input The input to process.
      */
     @Override
-    public TicTacToeState processInput(TicTacToeState state, int roundNumber, PlayerResponse input) {
+    public TicTacToeState createNextStateFromResponse(TicTacToeState state, PlayerResponse input, int roundNumber) {
 
         /* Clone playerStates for next State */
         ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(state.getPlayerStates());
@@ -108,7 +110,6 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         return nextPlayerStates;
     }
 
-
     @Override
     public void sendUpdates(TicTacToeState state, TicTacToePlayer player) {
         if (state.hasPreviousState()) state = (TicTacToeState)state.getPreviousState();
@@ -116,14 +117,20 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), player.getId());
 
         player.sendUpdate("field", state.getBoard().toString());
-        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
-            player.sendUpdate("macroboard", state.getBoard().macroboardToString(ps.getMove().getCoordinate()));
+        TicTacToeMove move = (TicTacToeMove)ps.getMove();
+
+        if (move != null && move.getCoordinate() != null) {
+            player.sendUpdate("macroboard", state.getBoard().macroboardToString(move.getCoordinate()));
         } else {
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(null));
         }
 
     }
 
+    @Override
+    public Enum getActionType(TicTacToeState ticTacToeState, AbstractPlayerState abstractPlayerState) {
+        return ActionType.MOVE;
+    }
 
     /* hasGameEnded should check all conditions on which a game should end
     *  returns: boolean
@@ -143,8 +150,9 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
         TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
 
 
-        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
-            state.getBoard().updateMacroboard(ps.getMove().getCoordinate());
+        TicTacToeMove move = (TicTacToeMove)ps.getMove();
+        if (move != null && move.getCoordinate() != null) {
+            state.getBoard().updateMacroboard(move.getCoordinate());
         } else {
             state.getBoard().updateMacroboard(null);
         }
@@ -155,11 +163,6 @@ public class TicTacToeProcessor implements PlayerResponseProcessor<TicTacToePlay
     @Override
     public double getScore(TicTacToeState state) {
         return state.getRoundNumber();
-    }
-
-    @Override
-    public Enum getActionRequest(TicTacToeState intermediateState, PlayerBound playerState) {
-        return ActionType.MOVE;
     }
 
     private TicTacToePlayerState getActivePlayerState(ArrayList<TicTacToePlayerState> playerStates, int id) {

@@ -1,7 +1,7 @@
 package io.riddles.tictactoe.game.data;
 
 
-import io.riddles.javainterface.game.data.Point;
+import java.awt.*;
 
 /**
  * ${PACKAGE_NAME}
@@ -217,8 +217,8 @@ public class TicTacToeBoard {
                     macroboard[x][y] = EMPTY_FIELD;
             }
         }
-        if (lastMove != null && !microboardFullOrTaken(lastMove.getX()%3, lastMove.getY()%3)) {
-            macroboard[lastMove.getX()%3][lastMove.getY()%3] = AVAILABLE_FIELD;
+        if (lastMove != null && !microboardFullOrTaken(lastMove.x%3, lastMove.y%3)) {
+            macroboard[lastMove.x%3][lastMove.y%3] = AVAILABLE_FIELD;
         } else {
             for (int x = 0; x < 3; x++) {
                 for (int y = 0; y < 3; y++) {
@@ -266,19 +266,17 @@ public class TicTacToeBoard {
     public int getHeight() { return this.height; }
 
 
-    public String getFieldAt(Point c) {
-        return field[c.getX()][c.getY()];
-    }
+    public String getFieldAt(Point c) { return field[c.x][c.y]; }
     public void setFieldAt(Point c, String v) {
-        field[c.getX()][c.getY()] = v;
+        field[c.x][c.y] = v;
     }
 
 
     public String getMacroboardFieldAt(Point c) {
-        return macroboard[c.getX()][c.getY()];
+        return macroboard[c.x][c.y];
     }
     public void setMacroboardFieldAt(Point c, String v) {
-        macroboard[c.getX()][c.getY()] = v;
+        macroboard[c.x][c.y] = v;
     }
 
 
