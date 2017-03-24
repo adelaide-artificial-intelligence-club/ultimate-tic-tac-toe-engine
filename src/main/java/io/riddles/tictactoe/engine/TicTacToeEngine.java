@@ -35,7 +35,7 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
     @Override
     protected Configuration getDefaultConfiguration() {
         Configuration cc = new Configuration();
-        cc.put("maxRounds", 10);
+        cc.put("maxRounds", 81);
         cc.put("fieldWidth", 9);
         cc.put("fieldHeight", 9);
         return cc;

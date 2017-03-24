@@ -6,4 +6,5 @@ package io.riddles.tictactoe.lang;
 // Generator.java
 public interface Generator<T> {
     T next();
+    T getValue();
 }

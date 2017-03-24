@@ -94,6 +94,8 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
     }
 
     private int getMoveNumber(TicTacToeState state, Boolean showPossibleMoves) {
-        return moveNumberGenerator.next();
+        if (state.getPlayerStateById(state.getPlayerId()).getMove() != null)
+            return moveNumberGenerator.next();
+        return moveNumberGenerator.getValue();
     }
 }

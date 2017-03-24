@@ -24,4 +24,6 @@ public class IncrementGenerator implements Generator<Integer> {
         value += incrementBy;
         return value;
     }
+
+    public Integer getValue() { return value; }
 }

@@ -48,7 +48,7 @@ class TicTacToeEngineSpec extends Specification {
         }
     }
 
-    //@Ignore
+    @Ignore
     def "test engine setup 2 players"() {
 
         setup:
@@ -75,7 +75,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    //@Ignore
+    @Ignore
     def "test illegal moves"() {
 
         setup:
@@ -103,7 +103,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    //@Ignore
+    @Ignore
     def "test out of bounds"() {
 
         setup:
@@ -131,7 +131,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    //@Ignore
+    @Ignore
     def "test garbage input"() {
 
         setup:
@@ -160,7 +160,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    //@Ignore
+    @Ignore
     def "test bot 0 win by p1 error"() {
 
         setup:
@@ -187,7 +187,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 0;
     }
 
-    //@Ignore
+    @Ignore
     def "test bot 1 win by p0 error"() {
 
         setup:
@@ -216,7 +216,7 @@ class TicTacToeEngineSpec extends Specification {
         processor.getWinnerId(finalState) == 1;
     }
 
-    //@Ignore
+    @Ignore
     def "test bot 0 win"() {
 
         setup:
@@ -244,7 +244,7 @@ class TicTacToeEngineSpec extends Specification {
     }
 
 
-    //@Ignore
+    @Ignore
     def "test TicTacToeStateSerializer getMoveNr"() {
 
         setup:
@@ -271,6 +271,33 @@ class TicTacToeEngineSpec extends Specification {
         expect:
         moveNrNoPossibleMoves == 1;
         moveNrPossibleMoves == 2;
+    }
+
+    //@Ignore
+    def "test bot 0 test case Hull"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot1_input_hull.txt"
+        botInputs[1] = "./src/test/resources/bot2_input_hull.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
+        processor.getWinnerId(finalState) == 0;
     }
 }
 

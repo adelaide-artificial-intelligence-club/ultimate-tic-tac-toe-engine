@@ -109,14 +109,22 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
 
     @Override
     public void sendUpdates(TicTacToeState state, TicTacToePlayer player) {
-        if (state.hasPreviousState()) state = (TicTacToeState)state.getPreviousState();
+
         player.sendUpdate("round", state.getRoundNumber());
-        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), player.getId());
+        TicTacToeMove move = null;
+
+        ArrayList<TicTacToePlayerState> playerStates = state.getPlayerStates();
+        for (TicTacToePlayerState playerState : playerStates) {
+            if (playerState.getMove() != null) {
+                move = (TicTacToeMove)playerState.getMove();
+            }
+        }
 
         player.sendUpdate("field", state.getBoard().toString());
-        TicTacToeMove move = (TicTacToeMove)ps.getMove();
+
 
         if (move != null && move.getCoordinate() != null) {
+            state.getBoard().updateMacroboard(move.getCoordinate());
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(move.getCoordinate()));
         } else {
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(null));
