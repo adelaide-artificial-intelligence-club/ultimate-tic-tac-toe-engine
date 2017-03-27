@@ -33,18 +33,24 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
     }
 
     @Override
-    protected TicTacToePlayer createPlayer(int id) {
-        return new TicTacToePlayer(id);
+    protected Configuration getDefaultConfiguration() {
+        Configuration cc = new Configuration();
+        cc.put("maxRounds", 81);
+        cc.put("fieldWidth", 9);
+        cc.put("fieldHeight", 9);
+        return cc;
     }
 
     @Override
-    protected Configuration getDefaultConfiguration() {
-        return new Configuration();
+    protected TicTacToePlayer createPlayer(int id) {
+        TicTacToePlayer player = new TicTacToePlayer(id);
+        return player;
     }
 
     @Override
     protected TicTacToeProcessor createProcessor() {
-        return new TicTacToeProcessor(this.playerProvider);
+
+        return new TicTacToeProcessor(playerProvider);
     }
 
     @Override
@@ -52,9 +58,13 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
         return new TurnBasedGameLoop();
     }
 
+
     @Override
     protected void sendSettingsToPlayer(TicTacToePlayer player) {
         player.sendSetting("your_botid", player.getId());
+        //player.sendSetting("field_width", configuration.getInt("fieldWidth"));
+        //player.sendSetting("field_height", configuration.getInt("fieldHeight"));
+        player.sendSetting("max_rounds", configuration.getInt("maxRounds"));
     }
 
     @Override
@@ -65,7 +75,11 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
 
     @Override
     protected TicTacToeState getInitialState() {
-        TicTacToeBoard board = new TicTacToeBoard(9, 9);
+
+        int fieldWidth = configuration.getInt("fieldWidth");
+        int fieldHeight = configuration.getInt("fieldHeight");
+
+        TicTacToeBoard board = new TicTacToeBoard(fieldWidth, fieldHeight);
 
         ArrayList<TicTacToePlayerState> playerStates = new ArrayList<>();
 
@@ -73,8 +87,12 @@ public class TicTacToeEngine extends AbstractEngine<TicTacToeProcessor, TicTacTo
             TicTacToePlayerState playerState = new TicTacToePlayerState(player.getId());
             playerStates.add(playerState);
         }
-        TicTacToeState state = new TicTacToeState(playerStates, board);
+        TicTacToeState s = new TicTacToeState(null, playerStates, 0);
 
-        return state.createNextState(0);
+        s.setBoard(board);
+        s.setFieldPresentationString("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
+        s.setPossibleMovesPresentationString("4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4");
+
+        return s;
     }
 }

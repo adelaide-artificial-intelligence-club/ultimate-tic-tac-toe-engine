@@ -1,5 +1,6 @@
 package io.riddles.tictactoe.game.data;
 
+
 import java.awt.*;
 
 /**
@@ -216,8 +217,8 @@ public class TicTacToeBoard {
                     macroboard[x][y] = EMPTY_FIELD;
             }
         }
-        if (lastMove != null && !microboardFullOrTaken(lastMove.x % 3, lastMove.y % 3)) {
-            macroboard[lastMove.x % 3][lastMove.y % 3] = AVAILABLE_FIELD;
+        if (lastMove != null && !microboardFullOrTaken(lastMove.x%3, lastMove.y%3)) {
+            macroboard[lastMove.x%3][lastMove.y%3] = AVAILABLE_FIELD;
         } else {
             for (int x = 0; x < 3; x++) {
                 for (int y = 0; y < 3; y++) {
@@ -265,9 +266,7 @@ public class TicTacToeBoard {
     public int getHeight() { return this.height; }
 
 
-    public String getFieldAt(Point c) {
-        return field[c.x][c.y];
-    }
+    public String getFieldAt(Point c) { return field[c.x][c.y]; }
     public void setFieldAt(Point c, String v) {
         field[c.x][c.y] = v;
     }

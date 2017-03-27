@@ -19,10 +19,10 @@
 
 package io.riddles.tictactoe.game.move;
 
-import java.awt.*;
-
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.game.move.AbstractMove;
+
+import java.awt.*;
 
 /**
  * ${PACKAGE_NAME}
@@ -40,18 +40,19 @@ public class TicTacToeMove extends AbstractMove {
 
     private Point coordinate;
 
-    public TicTacToeMove(Point coordinate) {
+    public TicTacToeMove(Point c) {
         super();
-        this.coordinate = coordinate;
+        coordinate = c;
+
     }
 
     public TicTacToeMove(InvalidInputException exception) {
         super(exception);
     }
-
     public Point getCoordinate() { return this.coordinate; }
 
     public String toString() {
         return "TicTacToeMove " + this.coordinate;
     }
+
 }

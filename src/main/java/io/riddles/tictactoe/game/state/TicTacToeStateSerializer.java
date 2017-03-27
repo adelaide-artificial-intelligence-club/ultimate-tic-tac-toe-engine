@@ -19,8 +19,11 @@
 
 package io.riddles.tictactoe.game.state;
 
+import io.riddles.tictactoe.engine.TicTacToeEngine;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
+import io.riddles.tictactoe.game.processor.TicTacToeProcessor;
+import io.riddles.tictactoe.lang.Generator;
 import org.json.JSONObject;
 import io.riddles.javainterface.game.state.AbstractStateSerializer;
 
@@ -30,6 +33,14 @@ import io.riddles.javainterface.game.state.AbstractStateSerializer;
  * @author jim
  */
 public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeState> {
+
+    private Generator<Integer> moveNumberGenerator;
+    private TicTacToeProcessor processor;
+
+    public TicTacToeStateSerializer(Generator<Integer> moveNumberGenerator, TicTacToeProcessor processor) {
+        this.moveNumberGenerator = moveNumberGenerator;
+        this.processor = processor;
+    }
 
     @Override
     public String traverseToString(TicTacToeState state) {
@@ -47,18 +58,15 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
 
     private JSONObject visitState(TicTacToeState state, Boolean showPossibleMoves) throws NullPointerException {
         JSONObject stateJson = new JSONObject();
-        stateJson.put("round", state.getRoundNumber()-1);
-        int moveNr = (state.getRoundNumber()-1)*2+1;
-        if (state.getPlayerId() == 1) moveNr++;
-        if (showPossibleMoves) moveNr++;
+
+        stateJson.put("round", state.getRoundNumber());
+        int moveNr = getMoveNumber(state, showPossibleMoves);
         stateJson.put("move", moveNr);
 
+        TicTacToeMove move = (TicTacToeMove)state.getPlayerStateById(state.getPlayerId()).getMove();
 
-        //System.out.println(stateJson.get("round") + " " + stateJson.get("move"));
+        Integer winner = this.processor.getWinnerId(state);
 
-        TicTacToeMove move = state.getPlayerStates().get(0).getMove();
-        TicTacToeBoard board = state.getBoard();
-        Integer winner = board.getMacroboardWinner();
         String winnerString = "";
         if (winner == null) {
             winnerString = "";
@@ -83,5 +91,11 @@ public class TicTacToeStateSerializer extends AbstractStateSerializer<TicTacToeS
             }
         }
         return stateJson;
+    }
+
+    private int getMoveNumber(TicTacToeState state, Boolean showPossibleMoves) {
+        if (state.getPlayerStateById(state.getPlayerId()).getMove() != null)
+            return moveNumberGenerator.next();
+        return moveNumberGenerator.getValue();
     }
 }

@@ -21,6 +21,7 @@ package io.riddles.tictactoe.game.processor;
 
 import java.util.ArrayList;
 
+import io.riddles.javainterface.engine.AbstractEngine;
 import io.riddles.javainterface.exception.InvalidMoveException;
 import io.riddles.javainterface.game.player.PlayerProvider;
 import io.riddles.javainterface.game.processor.PlayerResponseProcessor;
@@ -43,6 +44,7 @@ import io.riddles.tictactoe.game.state.TicTacToeState;
  *
  * @author joost
  */
+
 public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, TicTacToePlayer> {
 
     public TicTacToeProcessor(PlayerProvider<TicTacToePlayer> playerProvider) {
@@ -50,19 +52,20 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     }
 
     /**
-     * Return the TicTacToeState that will be the state for the next round.
-     * @param currentState The current state
+     *
+     * Return
+     * the TicTacToeState that will be the state for the next round.
+     * @param state The current TicTacToeState
      * @param roundNumber The current round number
      * @param input The input to process.
      */
     @Override
-    public TicTacToeState createNextStateFromResponse(TicTacToeState currentState, PlayerResponse input, int roundNumber) {
-
+    public TicTacToeState createNextStateFromResponse(TicTacToeState state, PlayerResponse input, int roundNumber) {
         /* Clone playerStates for next State */
-        ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(currentState.getPlayerStates());
+        ArrayList<TicTacToePlayerState> nextPlayerStates = clonePlayerStates(state.getPlayerStates());
 
         TicTacToeLogic logic = new TicTacToeLogic();
-        TicTacToeState nextState = currentState.createNextState(roundNumber);
+        TicTacToeState nextState = state.createNextState(roundNumber);
 
         nextState.setPlayerId(input.getPlayerId());
 
@@ -72,15 +75,25 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
         TicTacToeMoveDeserializer deserializer = new TicTacToeMoveDeserializer();
         TicTacToeMove move = deserializer.traverse(input.getValue());
 
+        if (move.getException() != null) {
+            //System.out.println("EXCEPTION '" + input.getValue() + "' " + move.getException().toString());
+        }
         playerState.setMove(move);
         try {
             logic.transform(nextState, playerState);
         } catch (Exception e) {
             move.setException(new InvalidMoveException("Error transforming move."));
+            //System.out.println("EXCEPTION " + e.toString());
+            //e.printStackTrace();
         }
         nextState.setPlayerstates((ArrayList)nextPlayerStates);
         nextState.setFieldPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), false));
         nextState.setPossibleMovesPresentationString(nextState.getBoard().toPresentationString(playerState.getPlayerId(), true));
+
+        //nextState.getBoard().dump();
+        //nextState.getBoard().dumpMacroboard();
+
+
 
         return nextState;
     }
@@ -96,13 +109,23 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
 
     @Override
     public void sendUpdates(TicTacToeState state, TicTacToePlayer player) {
-        if (state.hasPreviousState()) state = (TicTacToeState)state.getPreviousState();
+
         player.sendUpdate("round", state.getRoundNumber());
-        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), player.getId());
+        TicTacToeMove move = null;
+
+        ArrayList<TicTacToePlayerState> playerStates = state.getPlayerStates();
+        for (TicTacToePlayerState playerState : playerStates) {
+            if (playerState.getMove() != null) {
+                move = (TicTacToeMove)playerState.getMove();
+            }
+        }
 
         player.sendUpdate("field", state.getBoard().toString());
-        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
-            player.sendUpdate("macroboard", state.getBoard().macroboardToString(ps.getMove().getCoordinate()));
+
+
+        if (move != null && move.getCoordinate() != null) {
+            state.getBoard().updateMacroboard(move.getCoordinate());
+            player.sendUpdate("macroboard", state.getBoard().macroboardToString(move.getCoordinate()));
         } else {
             player.sendUpdate("macroboard", state.getBoard().macroboardToString(null));
         }
@@ -110,7 +133,7 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     }
 
     @Override
-    public Enum getActionType(TicTacToeState currentState, AbstractPlayerState playerState) {
+    public Enum getActionType(TicTacToeState ticTacToeState, AbstractPlayerState abstractPlayerState) {
         return ActionType.MOVE;
     }
 
@@ -119,7 +142,19 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     * */
     @Override
     public boolean hasGameEnded(TicTacToeState state) {
-        return getWinnerId(state) != null;
+        boolean returnVal = false;
+        TicTacToePlayerState ps = state.getPlayerStateById(state.getPlayerId());
+        TicTacToeMove move = (TicTacToeMove)ps.getMove();
+
+        if (getWinnerId(state) != null) returnVal = true;
+        if (state.getBoard().boardIsFull()) returnVal = true;
+        if (state.getRoundNumber() > AbstractEngine.configuration.getInt("maxRounds")) returnVal = true;
+        if (move != null && move.getException() != null) {
+            returnVal = true;
+            //System.out.println("Ended with exception " + move.getException());
+        }
+
+        return returnVal;
     }
 
     /**
@@ -129,14 +164,28 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
     /* Returns winner playerId, or null if there's no winner. */
     @Override
     public Integer getWinnerId(TicTacToeState state) {
-        TicTacToePlayerState ps = getActivePlayerState(state.getPlayerStates(), state.getPlayerId());
+        TicTacToePlayerState ps = state.getPlayerStateById(state.getPlayerId());
+        TicTacToeMove move = (TicTacToeMove)ps.getMove();
 
-        if (ps.getMove() != null && ps.getMove().getCoordinate() != null) {
-            state.getBoard().updateMacroboard(ps.getMove().getCoordinate());
+
+        if (move != null && move.getCoordinate() != null) {
+            state.getBoard().updateMacroboard(move.getCoordinate());
         } else {
             state.getBoard().updateMacroboard(null);
         }
+        if (move != null && move.getException() != null) {
+            // Player messed up
+            Integer otherPlayerId = getOtherPlayerId(state.getPlayerId());
+            return otherPlayerId;
+        }
         return state.getBoard().getMacroboardWinner();
+    }
+
+    private Integer getOtherPlayerId(int playerId) {
+        for (TicTacToePlayer player : playerProvider.getPlayers()) {
+            if (player.getId() != playerId) return player.getId();
+        }
+        return null;
     }
 
 
@@ -151,4 +200,5 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
         }
         return null;
     }
+
 }

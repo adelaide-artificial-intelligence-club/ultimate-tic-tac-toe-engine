@@ -34,13 +34,12 @@ import io.riddles.tictactoe.game.state.TicTacToeState;
 public class TicTacToe {
 
     public static void main(String[] args) throws Exception {
+
         TicTacToeEngine engine;
+        engine = new TicTacToeEngine(new PlayerProvider<TicTacToePlayer>(), new IOHandler());
 
-        engine = new TicTacToeEngine(new PlayerProvider<>(), new IOHandler());
-
-        //new LifecycleRunner().run(engine);
-        TicTacToeState firstState = engine.willRun();
-        TicTacToeState finalstate = engine.run(firstState);
-        engine.didRun(firstState, finalstate);
+        TicTacToeState initialState = engine.willRun();
+        TicTacToeState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
     }
 }

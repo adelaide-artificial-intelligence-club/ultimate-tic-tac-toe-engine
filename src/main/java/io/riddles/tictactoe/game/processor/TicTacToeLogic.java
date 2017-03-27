@@ -1,31 +1,37 @@
 package io.riddles.tictactoe.game.processor;
 
-import java.awt.*;
-import java.util.Objects;
-
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.move.TicTacToeMove;
 import io.riddles.tictactoe.game.state.TicTacToePlayerState;
 import io.riddles.tictactoe.game.state.TicTacToeState;
 
+import java.awt.*;
 
-class TicTacToeLogic {
+/**
+ * Created by joost on 3-7-16.
+ */
+public class TicTacToeLogic {
+
+
+    public TicTacToeLogic() {
+    }
 
     /**
      * Takes a TicTacToeState and transforms it with a TicTacToeMove.
      *
      * Return
      * Returns nothing, but transforms the given TicTacToeState.
-     * @param state The initial state
-     * @param playerState The playerState involved
+     * @param state The initial TicTacToeState
+     * @param playerState The TicTacToePlayerState involved
      * @return
      */
     public void transform(TicTacToeState state, TicTacToePlayerState playerState) throws InvalidInputException {
-        TicTacToeMove move = playerState.getMove();
+        TicTacToeMove move = (TicTacToeMove)playerState.getMove();
 
         if (move.getException() == null) {
             transformMove(state, playerState);
+        } else {
         }
     }
 
@@ -34,22 +40,22 @@ class TicTacToeLogic {
      *
      * Return
      * Returns nothing, but transforms the given TicTacToeState.
-     * @param state The initial state
-     * @param playerState The move of the player
+     * @param state The initial TicTacToeState
+     * @param playerState The TicTacToePlayerState of the player
      * @return
      */
     private void transformMove(TicTacToeState state, TicTacToePlayerState playerState) {
         int pId = playerState.getPlayerId();
-        TicTacToeMove move = playerState.getMove();
+        TicTacToeMove move = (TicTacToeMove)playerState.getMove();
 
         TicTacToeBoard b = state.getBoard();
         Point c = move.getCoordinate();
 
-        if (c.x < b.getWidth() && c.y < b.getHeight() && c.x >= 0 && c.y >= 0) { /* Move within range */
+        if (c.getX() < b.getWidth() && c.getY() < b.getHeight() && c.getX() >= 0 && c.getY() >= 0) { /* Move within range */
             if (b.isInActiveMicroboard(c.x, c.y)) { /* Move in active microboard */
-                if (Objects.equals(b.getFieldAt(c), TicTacToeBoard.EMPTY_FIELD)) { /*Field is available */
+                if (b.getFieldAt(c) == b.EMPTY_FIELD) { /*Field is available */
                     b.setFieldAt(c, String.valueOf(pId));
-                    b.updateMacroboard(playerState.getMove().getCoordinate());
+                    b.updateMacroboard(move.getCoordinate());
 
                     /* Success */
                 } else {

@@ -19,11 +19,11 @@
 
 package io.riddles.tictactoe.game.move;
 
-import java.awt.*;
-
 import io.riddles.tictactoe.game.data.MoveType;
 import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.serialize.Deserializer;
+
+import java.awt.*;
 
 /**
  * ${PACKAGE_NAME}
@@ -37,6 +37,10 @@ import io.riddles.javainterface.serialize.Deserializer;
  */
 
 public class TicTacToeMoveDeserializer implements Deserializer<TicTacToeMove> {
+
+    public TicTacToeMoveDeserializer() {
+
+    }
 
     @Override
     public TicTacToeMove traverse(String string) {
