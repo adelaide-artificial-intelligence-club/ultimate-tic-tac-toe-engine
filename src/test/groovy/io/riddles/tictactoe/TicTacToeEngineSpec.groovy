@@ -296,8 +296,8 @@ class TicTacToeEngineSpec extends Specification {
 
         expect:
         finalState instanceof TicTacToeState;
-        finalState.getBoard().toString() == ".,.,1,.,.,1,.,.,1,.,1,.,.,1,.,0,0,0,1,.,.,.,.,.,.,.,1,.,.,.,0,0,0,.,.,.,.,.,.,.,1,.,.,1,.,.,.,.,1,.,.,.,.,.,0,.,.,.,.,.,0,0,0,.,0,.,.,.,.,.,.,.,.,.,0,.,.,.,1,.,.";
-        processor.getWinnerId(finalState) == 0;
+        finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
+        processor.getWinnerId(finalState) == 1;
     }
 }
 
