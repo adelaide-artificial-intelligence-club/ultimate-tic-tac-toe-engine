@@ -1,23 +1,13 @@
-# Ultimate Tic Tac Toe
-This repository contains Ultimate Tic Tac Toe for the Riddles.io platform and TheAIGames.com.
+# Ultimate Tic Tac Toe game engine
+This repository contains the engine for the Ultimate Tic Tac Toe game for the Riddles.io platform.
 
 ## Setting up
 
 This guide assumes the following software to be installed and globally
 accessible:
 
-- Git
 - Gradle 2.14
-- Groovy 2.4.7
 - JVM 1.8.0_91
-
-Execute the following commands:
-
-```
-git clone git@github.com:riddlesio/ultimate-tic-tac-toe-engine.git
-cd tictactoe
-rm -Rf .git
-```
 
 ## Opening this project in IntelliJ IDEA
 
@@ -30,31 +20,28 @@ rm -Rf .git
 - * Gradle JVM: 1.8
 - * Project format: .idea (directory based)
 
+*Note: for other IDEs, look at online documentation*
 
-### Building assets
+## Building the engine
 
-What can Gradle do?
+Use Gradle to build a .jar of the engine. Go to Tasks -> build -> jar.
+The .jar file can be found at `build/libs/`.
+
+## Running
+
+Running is handled by the MatchWrapper. This application handles all communication between
+the engine and bots and stores the results of the match. To run, firstly edit the
+`wrapper-commands.json` file. This should be pretty self-explanatory. Just change the command
+fields to the right values to run the engine and the bots. In the example, the starterbot
+is run twice, plus the command for the engine built in the previous step.
+
+To run the MatchWrapper, use the following command (Linux):
 ```
-gradle build #Builds your project
-gradle test #Runs all testing scripts
+java -jar match-wrapper.jar "$(cat wrapper-commands.json)"
 ```
 
-### Developing an Engine
+Have a look at the MatchWrapper repo for more details about it:
+[https://github.com/riddlesio/match-wrapper](https://github.com/riddlesio/match-wrapper)
 
-## Application flow
-
-The main Java code is split up in two parts:
-- javainterface: handles everything the game engine needs to do to start, run and finish.
-- tictactoe: contains project specific code and extends most of javainterfaces abstract classes.
-
-The Engine's entry point is the `src/java/io/riddles/gameengine/tictactoe.java` file. This file creates a tictactoe Engine and invokes it's run function.
-
-### Testing
-
-Tests are located in:
-test/groovy/io/riddles/javainterface
-test/groovy/io/riddles/tictactoe
-
-For testing, the Groovy language is used, which is compatible with JDK 8. When you run 'gradle test', all tests located in /test are executed and results are shown.
-
-## Contributions
+*Note: if running on other systems, find how to put the content of wrapper-commands.json as
+argument when running the match-wrapper.jar*
