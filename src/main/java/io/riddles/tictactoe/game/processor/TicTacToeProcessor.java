@@ -113,7 +113,7 @@ public class TicTacToeProcessor extends PlayerResponseProcessor<TicTacToeState, 
 
     @Override
     public boolean hasGameEnded(TicTacToeState state) {
-        return getWinnerId(state) != null || state.getBoard().boardIsFull();
+        return getWinnerId(state) != null || state.getBoard().boardIsFull() || state.getBoard().macroboardIsFull();
     }
 
     @Override

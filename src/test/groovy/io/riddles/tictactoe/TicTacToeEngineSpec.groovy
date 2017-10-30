@@ -244,7 +244,7 @@ class TicTacToeEngineSpec extends Specification {
     }
 
 
-    @Ignore
+    //@Ignore
     def "test TicTacToeStateSerializer getMoveNr"() {
 
         setup:

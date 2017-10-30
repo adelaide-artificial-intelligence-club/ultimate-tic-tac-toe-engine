@@ -19,7 +19,6 @@
 
 package io.riddles.tictactoe.game.processor;
 
-import io.riddles.javainterface.exception.InvalidInputException;
 import io.riddles.javainterface.exception.InvalidMoveException;
 import io.riddles.tictactoe.game.data.TicTacToeBoard;
 import io.riddles.tictactoe.game.move.TicTacToeMove;

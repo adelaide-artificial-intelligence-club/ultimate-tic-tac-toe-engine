@@ -338,5 +338,21 @@ public class TicTacToeBoard {
         }
         return null;
     }
+
+    /**
+     * Returns whether microboard is full OR taken
+     * @return Boolean
+     */
+    public boolean macroboardIsFull() {
+
+
+        for (int my = 0; my < 3; my++) {
+            for (int mx = 0; mx < 3; mx++) {
+                if (macroboard[mx][my]== EMPTY_FIELD || macroboard[mx][my] == AVAILABLE_FIELD)
+                    return false;
+            }
+        }
+        return true; /* microboard is full */
+    }
 }
 
