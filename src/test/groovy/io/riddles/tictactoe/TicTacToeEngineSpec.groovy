@@ -244,7 +244,7 @@ class TicTacToeEngineSpec extends Specification {
     }
 
 
-    //@Ignore
+    @Ignore
     def "test TicTacToeStateSerializer getMoveNr"() {
 
         setup:
@@ -273,7 +273,7 @@ class TicTacToeEngineSpec extends Specification {
         moveNrPossibleMoves == 2;
     }
 
-    //@Ignore
+    @Ignore
     def "test bot 0 test case Hull"() {
 
         setup:
@@ -298,6 +298,34 @@ class TicTacToeEngineSpec extends Specification {
         finalState instanceof TicTacToeState;
         finalState.getBoard().toString() == ".,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,0,.,.,.,.,.,.,.,.,.,.,1,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.";
         processor.getWinnerId(finalState) == 1;
+    }
+
+
+    //@Ignore
+    def "test case Macroboard Draw"() {
+
+        setup:
+        String[] botInputs = new String[2]
+
+        def wrapperInput = "./src/test/resources/wrapper_input.txt"
+        botInputs[0] = "./src/test/resources/bot1_input_mbdraw.txt"
+        botInputs[1] = "./src/test/resources/bot2_input_mbdraw.txt"
+
+        PlayerProvider<TicTacToePlayer> playerProvider = new PlayerProvider<>();
+        TicTacToePlayer player1 = new TicTacToePlayer(0); player1.setIoHandler(new FileIOHandler(botInputs[0])); playerProvider.add(player1);
+        TicTacToePlayer player2 = new TicTacToePlayer(1); player2.setIoHandler(new FileIOHandler(botInputs[1])); playerProvider.add(player2);
+
+        def engine = new TestEngine(playerProvider, wrapperInput)
+
+        AbstractState initialState = engine.willRun()
+        AbstractState finalState = engine.run(initialState);
+        engine.didRun(initialState, finalState);
+        TicTacToeProcessor processor = engine.getProcessor();
+
+        expect:
+        finalState instanceof TicTacToeState;
+        finalState.getBoard().toString() == "0,.,1,1,0,.,0,.,.,.,0,.,.,1,1,.,0,.,1,.,0,.,.,1,.,.,0,1,1,1,.,0,.,.,.,.,0,.,1,1,1,1,.,.,.,1,0,0,.,.,.,0,0,0,.,1,.,0,1,1,1,.,.,0,0,0,0,.,.,1,0,.,.,1,.,0,1,0,1,.,.";
+        processor.getWinnerId(finalState) == null;
     }
 }
 
