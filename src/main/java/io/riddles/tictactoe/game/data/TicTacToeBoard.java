@@ -182,7 +182,7 @@ public class TicTacToeBoard {
     public boolean boardIsFull() {
         for (int y = 0; y < this.height; y++)
             for (int x = 0; x < this.width; x++)
-                if (field[x][y] == EMPTY_FIELD)
+                if (field[x][y].equals(EMPTY_FIELD))
                     return false; // At least one cell is not filled
         // All cells are filled
         return true;
@@ -309,7 +309,7 @@ public class TicTacToeBoard {
      * @return Boolean
      */
     public Boolean isInActiveMicroboard(int x, int y) {
-        return macroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)] == AVAILABLE_FIELD;
+        return macroboard[(int) Math.floor(x/3)][(int) Math.floor(y/3)].equals(AVAILABLE_FIELD);
     }
 
     /**
@@ -348,7 +348,7 @@ public class TicTacToeBoard {
 
         for (int my = 0; my < 3; my++) {
             for (int mx = 0; mx < 3; mx++) {
-                if (macroboard[mx][my]== EMPTY_FIELD || macroboard[mx][my] == AVAILABLE_FIELD)
+                if (macroboard[mx][my].equals(EMPTY_FIELD) || macroboard[mx][my].equals(AVAILABLE_FIELD))
                     return false;
             }
         }
