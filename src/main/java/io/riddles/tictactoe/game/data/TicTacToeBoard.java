@@ -344,11 +344,9 @@ public class TicTacToeBoard {
      * @return Boolean
      */
     public boolean macroboardIsFull() {
-
-
         for (int my = 0; my < 3; my++) {
             for (int mx = 0; mx < 3; mx++) {
-                if (macroboard[mx][my].equals(EMPTY_FIELD) || macroboard[mx][my].equals(AVAILABLE_FIELD))
+                if (!microboardFullOrTaken(mx, my))
                     return false;
             }
         }
