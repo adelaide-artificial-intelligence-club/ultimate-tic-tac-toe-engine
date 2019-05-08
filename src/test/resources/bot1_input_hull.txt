@@ -1,2 +1,0 @@
-place_move 0 5
-place_move 2 7

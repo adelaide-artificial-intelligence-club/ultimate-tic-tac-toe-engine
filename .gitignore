@@ -1,3 +1,6 @@
+# Log files
+*.log
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Gradle template
 .gradle
@@ -22,7 +25,7 @@ gradle-app.setting
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.ear
 
@@ -33,4 +36,5 @@ hs_err_pid*
 *.iml
 
 resultfile.json
+game-resultfile.json
 !match-wrapper*

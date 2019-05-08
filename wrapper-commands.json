@@ -8,12 +8,12 @@
   },
   "match": {
     "bots": [{
-      "command": "java -cp /home/jim/workspace/ultimate-tic-tac-toe-starter-bot/out/production/ultimate-tic-tac-toe-starter-bot bot.BotStarter"
+      "command": "python ./player0/main.py"
     },{
-      "command": "java -cp /home/jim/workspace/ultimate-tic-tac-toe-starter-bot/out/production/ultimate-tic-tac-toe-starter-bot bot.BotStarter"
+      "command": "python ./player1/main.py"
     }],
     "engine": {
-      "command": "java -jar /home/jim/workspace/ultimate-tic-tac-toe-engine/build/libs/ultimate-tic-tac-toe-engine-1.0.6.jar"
+      "command": "java -jar ./ultimate-tic-tac-toe-engine-1.0.7.jar"
     }
   }
 }
