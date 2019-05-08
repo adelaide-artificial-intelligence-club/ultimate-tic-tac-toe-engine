@@ -5,14 +5,13 @@ This repository contains the engine for the Ultimate Tic Tac Toe game for the Ri
 
 - JVM 1.8
 
-On Ubuntu:
-```
-sudo apt install openjdk-8-jdk
-```
+On Ubuntu: `sudo apt install openjdk-8-jre`
 
 ## Running
 
-Running is handled by the MatchWrapper. This application handles all communication between the engine and bots and stores the results of the match. The `wrapper-commands.json` file is configured for python bots. If you wish to use another language, this file will need editing. This should be pretty self-explanatory. Just change the command fields to the right values to run the engine and the bots.
+Running is handled by the match-wrapper. This application handles all communication between the engine and bots and saves the results of the match.
+
+The `wrapper-commands.json` file is currently configured for python bots. If you wish to use another language, this file will need editing. This should be pretty self-explanatory. Just update the command field to the command used to run your bot.
 
 To play the game, run the `match-wrapper-1.3.2.jar` with `wrapper-commands.json` as an argument. On linux, you can use the following command:
 ```
